@@ -25,7 +25,7 @@ export default function compSidebar() {
                 AfterSPM
             </Sidebar.Logo>
             <Sidebar.Items>
-                <Sidebar.ItemGroup >
+                <Sidebar.ItemGroup>
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
@@ -35,7 +35,7 @@ export default function compSidebar() {
                         <Sidebar.Item href="#">3. Test Result</Sidebar.Item>
                         <Sidebar.Item href="#">4. Reccomendation</Sidebar.Item>
                     </Sidebar.Collapse>
-                    <Sidebar.Item href="#" icon={HiViewBoards}>
+                    <Sidebar.Item href="/chat" icon={HiViewBoards}>
                         Chat
                     </Sidebar.Item>
                     <Sidebar.Item href="#" icon={HiInbox}>
@@ -46,7 +46,6 @@ export default function compSidebar() {
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
                 <Sidebar.ItemGroup>
-                    
                     {isLogin ? <Sidebar.Item href="#" icon={HiArrowSmRight}>
                         Sign In
                     </Sidebar.Item> : <Sidebar.Item href="#" icon={HiArrowSmRight}>
