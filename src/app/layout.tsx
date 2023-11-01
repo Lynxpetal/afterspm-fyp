@@ -18,13 +18,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='grid min-h-screen bg-grey-100'>
-        <div className="grid md:grid-cols-sidebar">
-          <Sidebar/>
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
-            {children}
-          </main>
+      <body className='grid gap-2
+        grid-cols-6
+        min-h-screen 
+        bg-grey-100'>
+        <div className='col-span-2 xl:col-span-1'>
+          <Sidebar />
         </div>
+        <main className="col-span-4 xl:col-span-5 
+          overflow-x-hidden overflow-y-auto
+        bg-gray-200">
+          {children}
+        </main>
       </body>
     </html>
   )
