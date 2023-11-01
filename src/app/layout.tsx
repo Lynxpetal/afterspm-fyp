@@ -22,7 +22,7 @@ export default function RootLayout({
         grid-cols-6
         min-h-screen 
         bg-grey-100'>
-        <div className='col-span-2 xl:col-span-1'>
+        <div className='col-span-2 xl:col-span-1 overflow-visible'>
           <Sidebar />
         </div>
         <main className="col-span-4 xl:col-span-5 
