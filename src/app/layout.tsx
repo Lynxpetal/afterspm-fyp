@@ -18,8 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='grid gap-2
+      <body className='grid
         grid-cols-6
+        grid-rows-1
         min-h-screen 
         bg-grey-100'>
         <div className='col-span-2 xl:col-span-1 overflow-visible'>
