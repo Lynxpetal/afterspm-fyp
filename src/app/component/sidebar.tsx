@@ -12,7 +12,7 @@ import React, {useEffect, useState} from 'react';
 
 
 export default function compSidebar() {
-    const [isLogin, setLogin] = useState(false)
+    const [isLogin, setLogin] = useState(true)
     useEffect(() => {
         fetch('https://my-api.com/data')
           .then(response => response.json())
@@ -46,12 +46,12 @@ export default function compSidebar() {
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
                 <Sidebar.ItemGroup>
-                    {isLogin ? <Sidebar.Item href="#" icon={HiArrowSmRight}>
+                    {isLogin ? <Sidebar.Item href="/login" icon={HiArrowSmRight}>
                         Sign In
                     </Sidebar.Item> : <Sidebar.Item href="#" icon={HiArrowSmRight}>
                         Sign Out
                     </Sidebar.Item>}
-                    <Sidebar.Item href="#" icon={HiTable}>
+                    <Sidebar.Item href="/register" icon={HiTable}>
                         Register
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>

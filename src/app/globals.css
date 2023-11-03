@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+.forgetPasswordValidationError,
+.loginValidationError,
+.registerValidationError {
+  color: red;
+  font-size: 12px;
+  text-align: left;
+}
+
+.forgetPasswordHeader,
+.loginHeader,
+.registerHeader {
+  color: black;
+  font-size: 32px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  text-align: center;
+}
+
+.loginDescription,
+.registerDescription {
+  color: #808080;
+  font-size: 20px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  text-align: center;
+}
+
+.haveAnAccountHeader {
+  color: black;
+  font-size: 16px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  text-align: center;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
