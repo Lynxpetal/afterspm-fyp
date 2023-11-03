@@ -65,7 +65,7 @@ export default function Register() {
       sendEmailVerification(user)
       alert("Registered successfully. Please check your email address for verification")
       //Will decide where to go
-      //router.push("/login")
+      router.push("/login")
     })
     .catch((error) => {
       const errorCode = error.errorCode
