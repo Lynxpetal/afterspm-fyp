@@ -1,6 +1,6 @@
 import { defaultPrompt } from "@/app/helpers/constants/chatbot-prompts"
 import { MessageArraySchema } from "@/app/lib/validators/message"
-import { ChatGPTMessage, OpenAIStream, OpenAIStreamPayload } from "@/app/lib/validators/openai-stream"
+import { ChatGPTMessage, OpenAIStreamPayload, OpenAIStreaming } from "@/app/lib/validators/openai-stream"
 
 
 
@@ -33,11 +33,9 @@ export async function POST(req: Request) {
         n: 1
     }
 
-    const stream = await OpenAIStream(payload)
+    const stream = await OpenAIStreaming(payload)
 
     return new Response(stream)
 }
 
-function OpenAIStream(payload: { model: string; messages: ChatGPTMessage[]; temperature: number; top_p: number; frequency_penalty: number; presence_penalty: number; max_tokens: number; stream: boolean; n: number }) {
-    throw new Error("Function not implemented.")
-}
+

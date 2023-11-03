@@ -1,3 +1,5 @@
+import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
+
 export type ChatGPTAgent = "user" | "system"
 
 export interface ChatGPTMessage {
@@ -17,7 +19,7 @@ export interface OpenAIStreamPayload {
     n: number
 }
 
-export async function OpenAIStream(payload: OpenAIStreamPayload) {
+export async function OpenAIStreaming(payload: OpenAIStreamPayload) {
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
   
@@ -40,11 +42,12 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
             const data = event.data;
             // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
             if (data === "[DONE]") {
-              controller.close();
+              controller.close();//close stream
               return;
             }
             try {
               const json = JSON.parse(data);
+              console.log("json", json)
               const text = json.choices[0].delta?.content || "";
               if (counter < 2 && (text.match(/\n/) || []).length) {
                 // this is a prefix character (i.e., "\n\n"), do nothing
@@ -61,7 +64,7 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
         }
   
         // stream response (SSE) from OpenAI may be fragmented into multiple chunks
-        // this ensures we properly read chunks and invoke an event for each SSE event stream
+        // this ensures proper chunks reading and invoke an event for each SSE event stream
         const parser = createParser(onParse);
         // https://web.dev/streams/#asynchronous-iteration
         for await (const chunk of res.body as any) {

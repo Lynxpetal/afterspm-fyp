@@ -8,15 +8,15 @@ import { Message } from "@/app/lib/validators/message";
 export default function chat() {
     const [input, setInput] = useState<string>('')
 
-    const {mutate: sendMessage, isLoading} = useMutation({
+    const {mutate: sendMessage} = useMutation({
         mutationKey: ['sendMessage'],
-        mutationFn: async (message: Message) => {
+        mutationFn: async (messages: Message) => {
             const response = await fetch("/api/message", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ messages: 'hello'}),
+                body: JSON.stringify({messages: [messages]}),
             })
         },
         onSuccess: () => {
@@ -33,8 +33,8 @@ export default function chat() {
                             e.preventDefault()
                             const message = {
                                 id: nanoid(),
-                                isUserInput: true,
-                                text: input
+                                text: input,
+                                isUserMessage: true
                             }
 
                             sendMessage(message)
