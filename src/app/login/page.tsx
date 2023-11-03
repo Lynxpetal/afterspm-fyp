@@ -34,7 +34,7 @@ export default function Login() {
     try {
       const res = await signInWithPopup(auth, googleProvider)
       alert("Successfully logged in")
-    }catch(err) {
+    } catch (err) {
       alert("Authentication Failed")
     }
   }
@@ -43,14 +43,14 @@ export default function Login() {
     signInWithEmailAndPassword(authLogin, email, password)
       .then((userCredential) => {
         const user = userCredential.user
-        if(user.emailVerified) {
+        if (user.emailVerified) {
           //router.push("/login")
           alert("This user has successfully signed in")
         }
-        else{
+        else {
           alert("Please verify your email address")
         }
-        
+
       })
       .catch((error) => {
         const errorCode = error.code
@@ -132,6 +132,9 @@ export default function Login() {
       </div>
       <Button type="submit">Login</Button>
       <Button onClick={SignInBtnClickHandler}>Login With Google</Button>
+      <a href="/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{textAlign:'center'}}>
+        Forgot Password?
+      </a>
     </form>
   );
 }
