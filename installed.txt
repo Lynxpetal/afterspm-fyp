@@ -18,3 +18,12 @@ zod (type protection)
 
 eventsource-parser (collect openai stream)
 - npm install --save eventsource-parser
+
+react communicate with form
+- npm install react-hook-form
+
+react communicate with firebase
+- npm i react-firebase-hooks
+
+firebase 
+- npm install firebase
