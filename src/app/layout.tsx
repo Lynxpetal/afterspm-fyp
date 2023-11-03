@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import Sidebar from "../component/sidebar";
+import Sidebar from "./component/sidebar";
+import Providers from '@/app/component/provider';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,11 +27,13 @@ export default function RootLayout({
         <div className='col-span-2 xl:col-span-1 overflow-visible'>
           <Sidebar />
         </div>
-        <main className="col-span-4 xl:col-span-5 
+        <Providers>
+          <main className="col-span-4 xl:col-span-5 
           overflow-x-hidden overflow-y-auto
         bg-gray-200">
-          {children}
-        </main>
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   )

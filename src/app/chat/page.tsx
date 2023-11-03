@@ -1,10 +1,15 @@
 "use client"
 import TextareaAutosizeProps from "react-textarea-autosize";
 import { FC, HTMLAttributes, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export default function chat() {
     const [input, setInput] = useState<string>('')
-
+    const {mutate: sendMessage, isLoading} = useMutation({
+        mutationFn:async () => {
+            const response = await fetch("/api/message")
+        }
+    })
     return (
         <div className="flex flex-col pl-1 p-4 min-h-screen relative">
             <div className="flex sm:pl-6 xl:pl-16 absolute bottom-3 w-full">
