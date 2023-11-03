@@ -1,6 +1,6 @@
 import { defaultPrompt } from "@/app/helpers/constants/chatbot-prompts"
 import { MessageArraySchema } from "@/app/lib/validators/message"
-import { ChatGPTMessage, OpenAIStreamPayload, OpenAIStreaming } from "@/app/lib/validators/openai-stream"
+import { ChatGPTMessage, OpenAIStreamPayload, OpenAIStream } from "@/app/lib/validators/openai-stream"
 
 
 
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         n: 1
     }
 
-    const stream = await OpenAIStreaming(payload)
+    const stream = await OpenAIStream(payload)
 
     return new Response(stream)
 }
