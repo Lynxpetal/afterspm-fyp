@@ -3,3 +3,9 @@ flowbite
 
 react-icons
 - npm install react-icons --save
+
+tanstack
+- npm i @tanstack/react-query
+
+react-textarea-autosize
+- npm i react-textarea-autosize
