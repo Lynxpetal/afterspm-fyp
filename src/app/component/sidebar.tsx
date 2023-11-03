@@ -9,15 +9,41 @@ import {
     from "react-icons/hi";
 import Link from "next/link";
 import React, {useEffect, useState} from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../FirebaseConfig/firebaseConfig";
+import { signOut } from "firebase/auth";
 
 
 export default function compSidebar() {
-    const [isLogin, setLogin] = useState(false)
+    const [isLogin, setLogin] = useState(true)
+    // useEffect(() => {
+    //     fetch('https://my-api.com/data')
+    //       .then(response => response.json())
+    //       .then(json => setData(json));
+    //   }, []);
+
     useEffect(() => {
-        fetch('https://my-api.com/data')
-          .then(response => response.json())
-          .then(json => setData(json));
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            //user is signed in
+            //sidebar change to sign out
+            console.log("User signed in")
+            setLogin(false);
+          } else {
+            //user is signed out
+            //sidebar change to sign in
+            console.log("User signed out")
+            setLogin(true);
+          }
+        });
+    
+
       }, []);
+
+    //logout function
+    const logout = async () => {
+        await signOut(auth);
+    }
 
     return (
         <Sidebar aria-label="Sidebar with logo branding example">
@@ -46,12 +72,12 @@ export default function compSidebar() {
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
                 <Sidebar.ItemGroup>
-                    {isLogin ? <Sidebar.Item href="#" icon={HiArrowSmRight}>
+                    {isLogin ? <Sidebar.Item href="/login" icon={HiArrowSmRight}>
                         Sign In
-                    </Sidebar.Item> : <Sidebar.Item href="#" icon={HiArrowSmRight}>
+                    </Sidebar.Item> : <Sidebar.Item href="#" icon={HiArrowSmRight} onClick={logout}>
                         Sign Out
-                    </Sidebar.Item>}
-                    <Sidebar.Item href="#" icon={HiTable}>
+                    </Sidebar.Item>} 
+                    <Sidebar.Item href="/register" icon={HiTable}>
                         Register
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
