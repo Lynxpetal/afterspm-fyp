@@ -19,22 +19,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='grid
+      <Providers>
+        <body className='grid
         grid-cols-6
         grid-rows-1
         min-h-screen 
         bg-grey-100'>
-        <div className='col-span-2 xl:col-span-1 overflow-visible'>
-          <Sidebar />
-        </div>
-        <Providers>
+          <div className='col-span-2 xl:col-span-1 overflow-visible'>
+            <Sidebar />
+          </div>
           <main className="col-span-4 xl:col-span-5 
           overflow-x-hidden overflow-y-auto
         bg-gray-200">
             {children}
           </main>
-        </Providers>
-      </body>
+        </body>
+      </Providers>
     </html>
   )
 }

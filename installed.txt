@@ -1,11 +1,20 @@
-flowbite   
+flowbite (easy UI design)  
 - npm install flowbite flowbite-react --save
 
-react-icons
+react-icons (nice icons)
 - npm install react-icons --save
 
-tanstack
+tanstack (get user input as msg)
 - npm i @tanstack/react-query
 
-react-textarea-autosize
+react-textarea-autosize (text input area)
 - npm i react-textarea-autosize
+
+nanoid  (uid generator)
+- npm i nanoid
+
+zod (type protection)
+- npm install zod
+
+eventsource-parser (collect openai stream)
+- npm install --save eventsource-parser
