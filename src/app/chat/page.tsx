@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { Message } from "@/app/lib/validators/message";
 
+
 export default function chat() {
     const [input, setInput] = useState<string>('')
 
@@ -19,8 +20,19 @@ export default function chat() {
                 body: JSON.stringify({messages: [messages]}),
             })
         },
-        onSuccess: () => {
-            console.log("success")
+        onSuccess: async (stream) => {
+            if (!stream) throw new Error("No stream found")
+
+            const reader = stream.getReader()
+            const decoder = new TextDecoder()
+            let done = false
+
+            while (!done) {
+                const {value, done: doneReading} = await reader.read()
+                done = doneReading
+                const chunkValue = decoder.decode(value)
+                console.log(chunkValue)
+            }
         },
     })
     return (
