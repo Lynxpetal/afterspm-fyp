@@ -6,7 +6,13 @@ export const MessageContext = createContext<{
     isMessageUpdating: boolean
     addMessages: (message: Message) => void
     removeMessage: (id: string) => void
-    updateMessage: (id: string, updateFn)
+    updateMessage: (id: string, updateFn: (prevText: string) => string) => void
+    setIsMessageUpdating: (isUpdating: boolean) => void
 }>({
-
+    messages: [],
+    isMessageUpdating: false,
+    addMessages: () => {},
+    removeMessage: () => {},
+    updateMessage: () => {},
+    setIsMessageUpdating: () => {}
 })
