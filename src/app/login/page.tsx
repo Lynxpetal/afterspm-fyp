@@ -141,7 +141,7 @@ export default function Login() {
           Register
         </a>
       </p>
-      <a href="/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{ textAlign: 'center' }}>
+      <a href="/login/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{ textAlign: 'center' }}>
         Forgot Password?
       </a>
     </form>

@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { HiMail } from 'react-icons/hi'
 import { useRouter } from 'next/navigation';
 import { sendPasswordResetEmail } from "firebase/auth";
-import app, { auth } from '../FirebaseConfig/firebaseConfig';
+import app, { auth } from '../../FirebaseConfig/firebaseConfig';
 
 type ForgetPasswordFormValue = {
   email: string;
