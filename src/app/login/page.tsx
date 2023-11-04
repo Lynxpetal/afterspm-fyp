@@ -63,6 +63,9 @@ export default function Login() {
           alert(errorCode);
         }
       })
+
+    setLoginEmail("")
+    setLoginPassword("")
   }
 
   const isLoginEmailValid = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
@@ -79,6 +82,7 @@ export default function Login() {
 
 
   }, [email, password, form]);
+
 
 
   return (
@@ -132,7 +136,12 @@ export default function Login() {
       </div>
       <Button type="submit">Login</Button>
       <Button onClick={SignInBtnClickHandler}>Login With Google</Button>
-      <a href="/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{textAlign:'center'}}>
+      <p className='loginToRegisterHeader'>Don't have an account?
+        <a href="/register" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          Register
+        </a>
+      </p>
+      <a href="/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{ textAlign: 'center' }}>
         Forgot Password?
       </a>
     </form>
