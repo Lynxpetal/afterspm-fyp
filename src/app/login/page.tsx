@@ -8,6 +8,8 @@ import { auth } from '../FirebaseConfig/firebaseConfig';
 import { useRouter } from 'next/navigation';
 import { useAuthState } from "react-firebase-hooks/auth"
 import { HiMail } from 'react-icons/hi'
+import { HiInformationCircle } from 'react-icons/hi';
+import { Alert } from 'flowbite-react';
 
 
 type LoginFormValues = {
@@ -21,6 +23,7 @@ export default function Login() {
   const [password, setLoginPassword] = useState("")
   const { register, handleSubmit, formState } = form
   const { errors } = formState
+  const [failureVerifyEmailAlert, setFailureVerifyEmailAlert] = useState(false);
   const router = useRouter();
 
   //Option 1 - input (email & password)
@@ -44,10 +47,11 @@ export default function Login() {
       .then((userCredential) => {
         const user = userCredential.user
         if (user.emailVerified) {
-          //router.push("/login")
+          setFailureVerifyEmailAlert(false)
           alert("This user has successfully signed in")
         }
         else {
+          setFailureVerifyEmailAlert(true)
           alert("Please verify your email address")
         }
 
@@ -55,34 +59,45 @@ export default function Login() {
       .catch((error) => {
         const errorCode = error.code
         if (errorCode == "auth/invalid-login-credentials") {
+          setFailureVerifyEmailAlert(false)
           form.setError("0.password", {
             type: "manual",
             message: "Incorrect password. Please try again.",
           });
         } else {
+          setFailureVerifyEmailAlert(false)
           alert(errorCode);
         }
       })
+
+
   }
 
-  const isLoginEmailValid = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
+  const isLoginEmailValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
   useEffect(() => {
-    const isEmailValid = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
+    const isEmailValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
     if (isEmailValid.test(email)) {
       form.clearErrors("0.email")
     }
     if (password != '') {
       form.clearErrors("0.password")
+      
     }
 
 
   }, [email, password, form]);
 
 
+
   return (
     <form className="flex max-w-md flex-col gap-4" style={{ margin: '20px' }} onSubmit={handleSubmit(loginAccount)} noValidate>
+      {failureVerifyEmailAlert && (
+        <Alert color="failure" onDismiss={() => setFailureVerifyEmailAlert(false)}>
+          <span className="font-medium">Info alert!</span> Please verify your email address.
+        </Alert>
+      )}
       <h1 className="loginHeader">Welcome Back</h1>
       <h1 className="loginDescription">Welcome Back! Plese enter your details</h1>
       <div>
@@ -131,8 +146,13 @@ export default function Login() {
         <p className="loginValidationError">{errors[0]?.password?.message}</p>
       </div>
       <Button type="submit">Login</Button>
-      <Button onClick={SignInBtnClickHandler}>Login With Google</Button>
-      <a href="/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{textAlign:'center'}}>
+      <Button onClick={SignInBtnClickHandler}> Login With Google</Button>
+      <p className='loginToRegisterHeader'>Don't have an account?
+        <a href="/register" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          Register
+        </a>
+      </p>
+      <a href="/login/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{ textAlign: 'center' }}>
         Forgot Password?
       </a>
     </form>
