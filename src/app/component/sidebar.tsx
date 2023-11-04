@@ -19,11 +19,11 @@ export default function compSidebar() {
     const router = useRouter()
     const [isLogin, setLogin] = useState(true)
     const [isAdminLogin, setAdminLogin] = useState(false);
-    useEffect(() => {
-        fetch('https://my-api.com/data')
-          .then(response => response.json())
-          .then(json => setData(json));
-      }, []);
+    // useEffect(() => {
+    //     fetch('https://my-api.com/data')
+    //       .then(response => response.json())
+    //       .then(json => setData(json));
+    //   }, []);
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -98,7 +98,7 @@ export default function compSidebar() {
 
 
                     {isAdminLogin && !isLogin && (
-                        <Sidebar.Item href="/Ins" icon={HiUser}>
+                        <Sidebar.Item href="/instituteAdmin" icon={HiUser}>
                             Manage Institute<br />Information
                         </Sidebar.Item>
                     )}

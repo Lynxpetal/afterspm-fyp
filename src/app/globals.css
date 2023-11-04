@@ -8,6 +8,7 @@
   text-align: center;
 }
 
+.addInstituteValidationError,
 .forgetPasswordValidationError,
 .loginValidationError,
 .registerValidationError {

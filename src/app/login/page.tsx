@@ -68,10 +68,10 @@ export default function Login() {
     setLoginPassword("")
   }
 
-  const isLoginEmailValid = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
+  const isLoginEmailValid =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
   useEffect(() => {
-    const isEmailValid = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
+    const isEmailValid =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
     if (isEmailValid.test(email)) {
       form.clearErrors("0.email")
@@ -135,7 +135,7 @@ export default function Login() {
         <p className="loginValidationError">{errors[0]?.password?.message}</p>
       </div>
       <Button type="submit">Login</Button>
-      <Button onClick={SignInBtnClickHandler}>Login With Google</Button>
+      <Button onClick={SignInBtnClickHandler}> Login With Google</Button>
       <p className='loginToRegisterHeader'>Don't have an account?
         <a href="/register" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
           Register
