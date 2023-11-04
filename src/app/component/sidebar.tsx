@@ -17,8 +17,7 @@ import { useRouter } from "next/navigation";
 
 export default function compSidebar() {
     const router = useRouter()
-    const [isLogin, setLogin] = useState(true)
-    const [isAdminLogin, setAdminLogin] = useState(false);
+    const [isLogin, setLogin] = useState("")
     // useEffect(() => {
     //     fetch('https://my-api.com/data')
     //       .then(response => response.json())
@@ -31,19 +30,16 @@ export default function compSidebar() {
                 //user is signed in
                 //sidebar change to sign out
                 if (user.email == '2002calvinmok@gmail.com' || user.email == 'foofooronron@gmail.com') {
-                    setAdminLogin(true)
-                    setLogin(false)
+                    setLogin("admin")
                 }
                 else {
-                    setAdminLogin(false)
-                    setLogin(false)
+                    setLogin("student")
                 }
 
             } else {
                 //user is signed out
                 //sidebar change to sign in
-                setLogin(true)
-                setAdminLogin(false)
+                setLogin("user")
             }
         });
 
@@ -56,6 +52,7 @@ export default function compSidebar() {
         alert("Signed out successfully")
         //once user logged out then navigate user at login page
         router.push("/login")
+        setLogin("user")
 
     }
 
@@ -69,7 +66,7 @@ export default function compSidebar() {
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
-                    {!isLogin && !isAdminLogin && (
+                    {isLogin == "student" && (
                         <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
                             <Sidebar.Item href="./Career/Holland">1. Holland's Test</Sidebar.Item>
                             <Sidebar.Item href=".">2. Big Five Test</Sidebar.Item>
@@ -78,32 +75,32 @@ export default function compSidebar() {
                         </Sidebar.Collapse>
                     )}
 
-                    {!isLogin && !isAdminLogin && (
+                    {isLogin == "student" && (
                         <Sidebar.Item href="/chat" icon={HiViewBoards}>
                             Chat
                         </Sidebar.Item>
                     )}
 
-                    {!isLogin && !isAdminLogin && (
+                    {isLogin == "student" && (
                         <Sidebar.Item href="#" icon={HiInbox}>
                             Course Recommend
                         </Sidebar.Item>
                     )}
 
-                    {!isLogin && !isAdminLogin && (
+                    {isLogin == "student" && (
                         <Sidebar.Item href="#" icon={HiUser}>
                             Institute Filter
                         </Sidebar.Item>
                     )}
 
 
-                    {isAdminLogin && !isLogin && (
+                    {isLogin == "admin" && (
                         <Sidebar.Item href="/instituteAdmin" icon={HiUser}>
                             Manage Institute<br />Information
                         </Sidebar.Item>
                     )}
 
-                    {isAdminLogin && !isLogin && (
+                    {isLogin == "admin" && (
                         <Sidebar.Item href="/Prog" icon={HiUser}>
                             Manage Programme<br />Information
                         </Sidebar.Item>
@@ -115,7 +112,6 @@ export default function compSidebar() {
                     </Sidebar.Item> : <Sidebar.Item href="#" icon={HiArrowSmRight} onClick={logout}>
                         Sign Out
                     </Sidebar.Item>}
-
                 </Sidebar.ItemGroup>
             </Sidebar.Items>
         </Sidebar>
