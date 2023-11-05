@@ -13,28 +13,29 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../FirebaseConfig/firebaseConfig";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-// import { useLoginStore } from "../lib/hooks/loginState";
+import { useLoginStore } from "../lib/hooks/loginState";
 
 
 export default function compSidebar() {
     const router = useRouter()
     const [isLogin, setLogin] = useState("admin") //change to await apiroute to fetch user status
 
-    // useEffect(() => {
-    //     setLogin(useLoginStore.getState().loginstate)
-    //     console.log(useLoginStore.getState().loginstate)
-    //     //add listener to listen login or logout
-    // },[useLoginStore.getState().loginstate]);
+
+    useEffect(() => {
+        setLogin(useLoginStore.getState().loginstate)
+        console.log(useLoginStore.getState().loginstate)
+        //add listener to listen login or logout
+    },[useLoginStore.getState().loginstate]);
 
     //logout function
     const logout = async () => {
-        // await signOut(auth)
-        // useLoginStore.setState({
-        //     loginstate: "guest",
-        //     username: ""
-        // })
-        // alert("Signed out successfully")//change to toast later
-        // router.push("/") //push to home page
+        await signOut(auth)
+        useLoginStore.setState({
+            loginstate: "admin",
+            username: ""
+        })
+        alert("Signed out successfully")//change to toast later
+        router.push("/") //push to home page
     }
 
     return (
