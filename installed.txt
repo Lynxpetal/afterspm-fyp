@@ -36,3 +36,6 @@ clsx (tailwind handling)
 
 tailwind-scrollbar (scrollbar styling)
 - npm install --save-dev tailwind-scrollbar
+
+spinners
+- npm install --save react-spinners
