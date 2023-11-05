@@ -8,6 +8,7 @@ import { NewInstituteType } from '../../../types/institute';
 import { AiOutlineEye } from 'react-icons/ai';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { AiOutlineDelete } from 'react-icons/ai';
+import Link from 'next/link';
 
 export default function InstituteAdmin() {
   const [institute, setInstitute] = useState<NewInstituteType[]>([])
@@ -48,14 +49,23 @@ export default function InstituteAdmin() {
                   key={inst.id}
                   style={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#E9FFFB' }}
                 >
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{index+1}</Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{index + 1}</Table.Cell>
                   <Table.Cell style={{ width: '35%' }}>{inst.InstituteName}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteEmailAddress}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstitutePhoneNumber}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteLastUpdateTimestamp?.toDate().toUTCString()}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>
                     <div className="flex flex-wrap gap-1">
-                      <Kbd icon={AiOutlineEye} />
+                      <Link
+                      href={{
+                        pathname: '/instituteAdmin/instituteDetails',
+                        query: {
+                          search: inst.id
+                        }
+                      }}
+                      >
+                        <Kbd icon={AiOutlineEye} />
+                      </Link>
                       <Kbd icon={AiOutlineEdit} />
                       <Kbd icon={AiOutlineDelete} />
                     </div>
