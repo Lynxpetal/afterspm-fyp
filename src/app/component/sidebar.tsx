@@ -18,7 +18,7 @@ import { useLoginStore } from "../lib/hooks/loginState";
 
 export default function compSidebar() {
     const router = useRouter()
-    const [isLogin, setLogin] = useState("admin") //change to await apiroute to fetch user status
+    const [isLogin, setLogin] = useState(useLoginStore.getState().loginstate) //change to await apiroute to fetch user status
 
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function compSidebar() {
     const logout = async () => {
         await signOut(auth)
         useLoginStore.setState({
-            loginstate: "admin",
+            loginstate: "guest",
             username: ""
         })
         alert("Signed out successfully")//change to toast later
