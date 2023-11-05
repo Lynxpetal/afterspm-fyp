@@ -8,6 +8,7 @@ import { BiSolidUser } from 'react-icons/bi'
 import { ImLocation2 } from 'react-icons/im'
 import { BsFillTelephoneFill } from 'react-icons/bs'
 import { HiMail } from 'react-icons/hi'
+import MoonLoader from "react-spinners/MoonLoader";
 
 export default function InstituteDetails() {
   //retrieve the id
@@ -17,7 +18,7 @@ export default function InstituteDetails() {
 
   //Fetch the single document
   //const getHotel = doc(firestore,  `Institute/${instituteId}`)
-  const [isInstituteFetchDataLoading, setIsInstituteFetchDataLoading] = useState(false)
+  const [isInstituteFetchDataLoading, setIsInstituteFetchDataLoading] = useState(true)
   const [institute, setInstitute] = useState({})
 
   const fetchInstituteData = async () => {
@@ -48,7 +49,16 @@ export default function InstituteDetails() {
     fetchInstituteData();
   }, [])
 
-  if (isInstituteFetchDataLoading) return <div><h1>sssssssssssss</h1></div>
+  if (isInstituteFetchDataLoading) 
+  return <div className="grid">
+    <MoonLoader
+      loading={isInstituteFetchDataLoading}
+      size={50}
+      color="#8DD3E2"
+      
+    />
+    <h1>Loading...</h1>
+  </div>
   return (
     <form className="flex max-w-md flex-col gap-4" style={{ margin: '20px', padding: '20px', backgroundColor: '#EDFDFF', width:"500px" }} noValidate>
       <h1 className="loginHeader">View Institute Information</h1>

@@ -27,3 +27,6 @@ react communicate with firebase
 
 firebase 
 - npm install firebase
+
+spinners
+- npm install --save react-spinners

@@ -2,19 +2,24 @@
 import { Button, Label, ListGroup, TextInput, Table, Kbd } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
-import { DocumentData, QuerySnapshot, onSnapshot } from 'firebase/firestore';
-import { instituteCollection } from '../lib/controller';
-import { NewInstituteType } from '../../../types/institute';
-import { AiOutlineEye } from 'react-icons/ai';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { AiOutlineDelete } from 'react-icons/ai';
-import Link from 'next/link';
+import { DocumentData, QuerySnapshot, onSnapshot } from 'firebase/firestore'
+import { instituteCollection } from '../lib/controller'
+import { NewInstituteType } from '../../../types/institute'
+import { AiOutlineEye } from 'react-icons/ai'
+import { AiOutlineEdit } from 'react-icons/ai'
+import { AiOutlineDelete } from 'react-icons/ai'
+import Link from 'next/link'
+import MoonLoader from "react-spinners/MoonLoader";
 
 export default function InstituteAdmin() {
   const [institute, setInstitute] = useState<NewInstituteType[]>([])
+  const [isInstituteFetchAllDataLoading, setIsInstituteFetchAllDataLoading] = useState(true)
 
-  useEffect(() => {
-    onSnapshot(instituteCollection, (snapshot: QuerySnapshot<DocumentData>) => {
+  const fetchAllInstituteData = async () => {
+    //data is fetching = loading
+    setIsInstituteFetchAllDataLoading(true);
+
+    const unsubscribe = onSnapshot(instituteCollection, (snapshot: QuerySnapshot<DocumentData>) => {
       setInstitute(
         snapshot.docs.map((doc) => {
           return {
@@ -23,11 +28,30 @@ export default function InstituteAdmin() {
           };
         })
       );
+      setIsInstituteFetchAllDataLoading(false);
+
     });
-  }, []);
 
-  console.log(institute, "institute")
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe();
+  }
 
+  useEffect(() => {
+    fetchAllInstituteData();
+  }, [])
+
+  console.log(institute, "institute");
+
+  if (isInstituteFetchAllDataLoading)
+    return <div className="grid">
+      <MoonLoader
+        loading={isInstituteFetchAllDataLoading}
+        size={50}
+        color="#8DD3E2"
+
+      />
+      <h1>Loading...</h1>
+    </div>
   return (
     <div className="card" style={{ margin: '30px' }}>
       <h2 className='title'>All Institute</h2>
@@ -57,12 +81,12 @@ export default function InstituteAdmin() {
                   <Table.Cell style={{ width: '15%' }}>
                     <div className="flex flex-wrap gap-1">
                       <Link
-                      href={{
-                        pathname: '/instituteAdmin/instituteDetails',
-                        query: {
-                          search: inst.id
-                        }
-                      }}
+                        href={{
+                          pathname: '/instituteAdmin/instituteDetails',
+                          query: {
+                            search: inst.id
+                          }
+                        }}
                       >
                         <Kbd icon={AiOutlineEye} />
                       </Link>
