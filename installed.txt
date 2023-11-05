@@ -27,3 +27,12 @@ react communicate with firebase
 
 firebase 
 - npm install firebase
+
+zustand (global state for secure login status)
+- npm i zustand
+
+clsx (tailwind handling)
+- npm i clsx
+
+tailwind-scrollbar (scrollbar styling)
+- npm install --save-dev tailwind-scrollbar

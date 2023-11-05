@@ -1,12 +1,15 @@
 "use client"
-import TextareaAutosizeProps from "react-textarea-autosize";
-import { FC, HTMLAttributes, useState } from "react";
+import { Message } from "@/app/lib/validators/message";
 import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
-import { Message } from "@/app/lib/validators/message";
+import TextareaAutosizeProps from "react-textarea-autosize";
+import { FC, HTMLAttributes, useState } from "react";
+import ChatMessages from "../component/ChatMessages";
 
+interface ChatInputProps extends HTMLAttributes<HTMLDivElement>{}
 
-export default function chat() {
+const ChatInput: FC<ChatInputProps> = ({}) => {
+
     const [input, setInput] = useState<string>('')
 
     const {mutate: sendMessage} = useMutation({
@@ -19,6 +22,7 @@ export default function chat() {
                 },
                 body: JSON.stringify({messages: [messages]}),
             })
+            return response.body
         },
         onSuccess: async (stream) => {
             if (!stream) throw new Error("No stream found")
@@ -36,7 +40,8 @@ export default function chat() {
         },
     })
     return (
-        <div className="flex flex-col pl-1 p-4 min-h-screen relative">
+        <div className={"flex flex-col pl-1 p-4 min-h-screen relative"}>
+            <ChatMessages className="px-2 py-3"/>
             <div className="flex sm:pl-6 xl:pl-16 absolute bottom-3 w-full">
                 <TextareaAutosizeProps
                     rows={2}
@@ -62,3 +67,5 @@ export default function chat() {
         </div> //39.50
     )
 }
+
+export default ChatInput

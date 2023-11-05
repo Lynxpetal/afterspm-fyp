@@ -1,4 +1,8 @@
-import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
+import { 
+  createParser, 
+  ParsedEvent, 
+  ReconnectInterval 
+} from "eventsource-parser";
 
 export type ChatGPTAgent = "user" | "system"
 
@@ -48,9 +52,7 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
           }
           try {
             const json = JSON.parse(data);
-            console.log("json", json)
             const text = json.choices[0].delta?.content || "";
-            console.log("text", text)
             if (counter < 2 && (text.match(/\n/) || []).length) {
               // this is a prefix character (i.e., "\n\n"), do nothing
               return;
@@ -75,6 +77,6 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
     },
   });
 
-  return stream;//1.29.58 i think rewatch or till end only test
+  return stream;
 
 }
