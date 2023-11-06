@@ -62,8 +62,6 @@ export default function InstituteAdmin() {
     fetchAllInstituteData();
   }, [currentPage])
 
-  console.log(institute, "institute");
-
   if (isInstituteFetchAllDataLoading)
     return <div className="grid">
       <MoonLoader
@@ -86,7 +84,7 @@ export default function InstituteAdmin() {
       <div>
         <Button style={{ backgroundColor: "#B8FFCC", color: "black", margin: "30px" }}>
           <GrAddCircle className="mr-2 h-5 w-5" />
-          Add Institute
+          <Link href={{pathname: '/instituteAdmin/addInstitute'}}>Add Institute</Link>
         </Button>
       </div>
       <div style={{ overflowX: 'auto' }}>
@@ -138,8 +136,11 @@ export default function InstituteAdmin() {
           </Table.Body>
         </Table>
       </div>
+      <div className="flex overflow-x-auto sm:justify-left" style={{color:"black"}}>
+        <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
+      </div>
       <div className="flex overflow-x-auto sm:justify-left">
-        <Pagination layout="table" currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} showIcons />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} showIcons />
       </div>
     </div>
 

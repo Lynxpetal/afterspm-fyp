@@ -39,3 +39,7 @@ tailwind-scrollbar (scrollbar styling)
 
 spinners
 - npm install --save react-spinners
+
+uuid
+- npm install uuid
+- npm i --save-dev @types/uuid
