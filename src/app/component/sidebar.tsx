@@ -49,7 +49,7 @@ export default function compSidebar() {
                         Home
                     </Sidebar.Item>
                     <Sidebar.Item href="/instituteAdmin" icon={HiUser}>
-                        Institute Info
+                        Manage Institute<br />Information
                     </Sidebar.Item>
                     <Sidebar.Item href="/Prog" icon={HiUser}>
                         Manage Programme<br />Information
