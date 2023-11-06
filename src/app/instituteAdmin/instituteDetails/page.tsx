@@ -79,8 +79,9 @@ export default function InstituteDetails() {
           <Link href ={{pathname: '/instituteAdmin'}}>
             <Kbd icon={BiArrowBack} />
           </Link>
+          <h1 className="loginHeader">View Institute Information</h1>
         </div>
-        <h1 className="loginHeader">View Institute Information</h1>
+        
         <div style={{ paddingBottom: '20px' }}>
           <div className="mb-2 block">
             <Label htmlFor="name" value="Name" />

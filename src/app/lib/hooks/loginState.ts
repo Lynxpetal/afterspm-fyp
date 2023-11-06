@@ -12,7 +12,7 @@ export const useLoginStore = create<LoginState>()(
   devtools(
     persist(
       (set) => ({
-        loginstate: "user",
+        loginstate: "admin",
         username:"",
         changeState: (by) => set((state) => ({ loginstate: by })),
         changeName: (by) => set((state) => ({ username: by })),
