@@ -6,14 +6,15 @@ import TextareaAutosizeProps from "react-textarea-autosize";
 import { FC, HTMLAttributes, useContext, useRef, useState } from "react";
 import ChatMessages from "../component/ChatMessages";
 import { MessageContext } from "../context/messages";
-import { Spinner } from "flowbite-react";
+import { Spinner, Toast } from "flowbite-react";
+import { HiExclamation } from "react-icons/hi";
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
 const ChatInput: FC<ChatInputProps> = ({ }) => {
     const [input, setInput] = useState<string>('')
     const [isLoading, setLoading] = useState<boolean>(false)
-
+    const [showToast, setShowToast] = useState(false);
     const {
         messages,
         addMessage,
@@ -34,6 +35,10 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
                 },
                 body: JSON.stringify({ messages: [messages] }),
             })
+            if (!response.ok) {
+                throw new Error();
+            }
+
             return response.body
         },
         onMutate(message) {
@@ -73,9 +78,22 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
             }, 10)
             setLoading(false)
         },
+        onError(_, message) {
+            removeMessage(message.id)
+            textareaRef.current?.focus()
+            setShowToast(true)
+            setLoading(false)
+        }
     })
     return (
         <div className={"flex flex-col pl-1 p-4 min-h-screen relative"}>
+            {showToast && (<Toast className="absolute top-1 right-3">
+                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+                    <HiExclamation className="h-5 w-5" />
+                </div>
+                <div className="ml-3 text-sm font-normal">Error with ChatGPT fetch.</div>
+                <Toast.Toggle onDismiss={() => setShowToast(false)}/>
+            </Toast>)}
             <ChatMessages className="px-2 py-3" />
             <div className="flex sm:pl-6 xl:pl-16 absolute bottom-3 w-full">
                 <TextareaAutosizeProps
@@ -104,10 +122,10 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
                 <div className=" absolute inset-x-[1195px] flex w-12">
                     <kbd className="inline-flex items-center w-12 h-9 rounded border bg-white border-gray-200 px-2.5 font-sans text-xs text-gray-400">
                         {isLoading ? <Spinner size="md" /> : <button onClick={() => sendMessage({
-                                id: nanoid(),
-                                text: input,
-                                isUserMessage: true
-                            })}>Enter</button>}
+                            id: nanoid(),
+                            text: input,
+                            isUserMessage: true
+                        })}>Enter</button>}
                     </kbd>
                 </div>
                 <div

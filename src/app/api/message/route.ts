@@ -9,6 +9,9 @@ export async function POST(req: Request) {
 
     const parsedMessages = MessageArraySchema.parse(messages)
 
+    throw new Error("IDK");
+    
+
     const outboundMessages: ChatGPTMessage[] = parsedMessages.map((message) => {
         return {
             role: message.isUserMessage ? "user" : "system",
