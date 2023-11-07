@@ -12,6 +12,7 @@ import Link from 'next/link'
 import MoonLoader from "react-spinners/MoonLoader"
 import { GrAddCircle } from 'react-icons/gr'
 import { FaUniversity } from 'react-icons/fa'
+import Swal from 'sweetalert2'
 
 export default function InstituteAdmin() {
   const [institute, setInstitute] = useState<NewInstituteType[]>([])
@@ -55,6 +56,28 @@ export default function InstituteAdmin() {
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
+  }
+
+  const handleDeleteInstituteClick = (id: String) => {
+    console.log(id)
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This process cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Delete"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+      }
+    });
+
   }
 
   //trigger fetch when currentPage changes
@@ -108,7 +131,7 @@ export default function InstituteAdmin() {
                   <Table.Cell style={{ width: '30%' }}>{inst.InstituteName}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteEmailAddress}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstitutePhoneNumber}</Table.Cell>
-                  <Table.Cell style={{ width: '15%' }}>{inst.InstituteLastUpdateTimestamp?.toDate().toUTCString()}</Table.Cell>
+                  <Table.Cell style={{ width: '15%' }}>{inst.InstituteLastUpdateTimestamp?.toDate().toString()}</Table.Cell>
                   <Table.Cell style={{ width: '20%' }}>
                     <div className="flex flex-wrap gap-1">
                       <Link
@@ -122,7 +145,7 @@ export default function InstituteAdmin() {
                         <Kbd icon={AiOutlineEye} />
                       </Link>
                       <Kbd icon={AiOutlineEdit} />
-                      <Kbd icon={AiOutlineDelete} />
+                      <Kbd icon={AiOutlineDelete} onClick={() => handleDeleteInstituteClick(inst.id)}/>
                     </div>
                   </Table.Cell>
                 </Table.Row>

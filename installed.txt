@@ -43,3 +43,6 @@ spinners
 uuid
 - npm install uuid
 - npm i --save-dev @types/uuid
+
+sweetalert2
+- npm install sweetalert2
