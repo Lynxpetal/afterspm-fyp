@@ -1,5 +1,5 @@
 'use client';
-import { Button, Label, TextInput, FileInput, Toast } from 'flowbite-react'
+import { Button, Label, TextInput, FileInput, Toast, Kbd } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { BiSolidUser } from 'react-icons/bi'
@@ -12,7 +12,9 @@ import { storage } from '@/app/FirebaseConfig/firebaseConfig'
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"
 import { db } from '@/app/FirebaseConfig/firebaseConfig'
 import { useRouter } from 'next/navigation'
-import { HiCheck, HiExclamation, HiX } from 'react-icons/hi'
+import { HiCheck } from 'react-icons/hi'
+import Link from 'next/link'
+import { AiOutlineClose } from 'react-icons/ai'
 
 
 type addInstituteFormValues = {
@@ -179,10 +181,21 @@ export default function InstituteAdmin() {
           </button>
         </Toast>
       )}
-      <form style={{ margin: '20px' }} onSubmit={handleSubmit(addInstitute)} noValidate>
+      <form style={{ margin: '20px' }}>
         <div className="card" style={{ margin: '30px' }}>
           <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
-            <h1 className="loginHeader">Add New Institute</h1>
+            <div style={{ paddingBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Link href={{ pathname: '/instituteAdmin' }}>
+                  <Kbd icon={AiOutlineClose} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
+                </Link>
+                <h1 className="loginHeader">Add New Institute</h1>
+                <div>
+                  <Kbd icon={HiCheck} onClick={handleSubmit(addInstitute)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
+                </div>
+              </div>
+            </div>
+
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
                 <Label htmlFor="name" value="Name" />
@@ -308,8 +321,6 @@ export default function InstituteAdmin() {
                 {instituteImageFormatError && <p className="addInstituteValidationError">{instituteImageFormatError}</p>}
               </div>
             </div>
-
-            <Button type="submit">Add</Button>
           </div>
         </div>
       </form>
