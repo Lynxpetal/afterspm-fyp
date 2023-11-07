@@ -113,7 +113,7 @@ export default function InstituteAdmin() {
                     <div className="flex flex-wrap gap-1">
                       <Link
                         href={{
-                          pathname: '/instituteAdmin/instituteDetails',
+                          pathname: '/instituteAdmin/viewInstituteDetails',
                           query: {
                             search: inst.id
                           }
