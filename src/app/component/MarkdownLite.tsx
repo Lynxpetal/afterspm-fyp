@@ -1,12 +1,8 @@
-import { StringFormat } from "firebase/storage";
 import Link from "next/link";
-import { FC } from "react";
+import React from "react";
 
-interface MarkdownLiteProps {
-    text: string
-}
 
-const MarkdownLite: FC<MarkdownLiteProps> = ({ text }) => {
+const MarkdownLite = ({ text }: {text: string}) => {
     const linkRegex = /\[(.+?)\]\((.+?)\)/g
     const parts = []
 
@@ -22,7 +18,14 @@ const MarkdownLite: FC<MarkdownLiteProps> = ({ text }) => {
         }
 
         parts.push(
-            <Link target='blank' rel="noopener noreferrer" className="break-words underline underline-offset-2 text-blue" key={linkUrl} href={linkUrl}>{linkText}</Link>
+            <Link
+                target='blank'
+                rel="noopener noreferrer"
+                className="break-words underline underline-offset-2 text-blue"
+                key={linkUrl}
+                href={linkUrl}>
+                {linkText}
+            </Link>
         )
 
         lastIndex = matchEnd
@@ -32,7 +35,9 @@ const MarkdownLite: FC<MarkdownLiteProps> = ({ text }) => {
     }
 
     return <>
-        {parts.map}
+        {parts.map((part, i) => (
+            <React.Fragment key={i}>{part}</React.Fragment>
+        ))}
     </>
 }
 

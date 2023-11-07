@@ -6,11 +6,14 @@ import TextareaAutosizeProps from "react-textarea-autosize";
 import { FC, HTMLAttributes, useContext, useRef, useState } from "react";
 import ChatMessages from "../component/ChatMessages";
 import { MessageContext } from "../context/messages";
+import { Spinner } from "flowbite-react";
 
-interface ChatInputProps extends HTMLAttributes<HTMLDivElement>{}
+interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
-const ChatInput: FC<ChatInputProps> = ({}) => {
+const ChatInput: FC<ChatInputProps> = ({ }) => {
     const [input, setInput] = useState<string>('')
+    const [isLoading, setLoading] = useState<boolean>(false)
+
     const {
         messages,
         addMessage,
@@ -19,20 +22,21 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
         setIsMessageUpdating,
     } = useContext(MessageContext)
     const textareaRef = useRef<null | HTMLTextAreaElement>(null)
-    
-    const {mutate: sendMessage} = useMutation({
+
+    const { mutate: sendMessage } = useMutation({
         mutationKey: ['sendMessage'],
         mutationFn: async (messages: Message) => {
+            setLoading(true)
             const response = await fetch("/api/message", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({messages: [messages]}),
+                body: JSON.stringify({ messages: [messages] }),
             })
             return response.body
         },
-        onMutate(message){
+        onMutate(message) {
             addMessage(message)
         },
         onSuccess: async (stream) => {
@@ -40,8 +44,8 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
 
             const id = nanoid()
             const responseMessage: Message = {
-                id, 
-                isUserMessage:false,
+                id,
+                isUserMessage: false,
                 text: '',
             }
 
@@ -55,7 +59,7 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
             let done = false
 
             while (!done) {
-                const {value, done: doneReading} = await reader.read()
+                const { value, done: doneReading } = await reader.read()
                 done = doneReading
                 const chunkValue = decoder.decode(value)
                 updateMessage(id, (prev) => prev + chunkValue)
@@ -67,15 +71,17 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
             setTimeout(() => {
                 textareaRef.current?.focus()
             }, 10)
+            setLoading(false)
         },
     })
     return (
         <div className={"flex flex-col pl-1 p-4 min-h-screen relative"}>
-            <ChatMessages className="px-2 py-3"/>
+            <ChatMessages className="px-2 py-3" />
             <div className="flex sm:pl-6 xl:pl-16 absolute bottom-3 w-full">
                 <TextareaAutosizeProps
                     ref={textareaRef}
                     rows={2}
+                    id="userInput"
                     onKeyDownCapture={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault()
@@ -92,8 +98,22 @@ const ChatInput: FC<ChatInputProps> = ({}) => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     autoFocus
+                    disabled={isLoading}
                     placeholder="Write something here!"
-                    className="peer disabled:opacity-50 resize-none block border-0 bg-zinc-100 py-1.5 text-gray-900 focus:ring-0 text-sm sm:leading-6 w-11/12 rounded" />
+                    className="peer z-0 disabled:opacity-50 resize-none block border-0 bg-zinc-100 py-1.5 text-gray-900 focus:ring-0 text-sm sm:leading-6 w-11/12 rounded" />
+                <div className=" absolute inset-x-[1195px] flex w-12">
+                    <kbd className="inline-flex items-center w-12 h-9 rounded border bg-white border-gray-200 px-2.5 font-sans text-xs text-gray-400">
+                        {isLoading ? <Spinner size="md" /> : <button onClick={() => sendMessage({
+                                id: nanoid(),
+                                text: input,
+                                isUserMessage: true
+                            })}>Enter</button>}
+                    </kbd>
+                </div>
+                <div
+                    aria-hidden='true'
+                    className="absolute w-[1114px] z-10 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600 "
+                />
             </div>
         </div> //39.50
     )
