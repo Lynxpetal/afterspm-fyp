@@ -73,7 +73,6 @@ export default function InstituteAdmin() {
       <h1>Loading...</h1>
     </div>
   return (
-
     <div className="card" style={{ margin: '30px' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <h2 style={{ color: 'black', display: 'flex', alignItems: 'center' }}>
@@ -82,7 +81,7 @@ export default function InstituteAdmin() {
         </h2>
       </div>
       <div>
-        <Button style={{ backgroundColor: "#B8FFCC", color: "black", margin: "30px" }}>
+        <Button style={{ backgroundColor: "#B8FFCC", color: "black", marginBottom: "30px", marginTop: "30px" }}>
           <GrAddCircle className="mr-2 h-5 w-5" />
           <Link href={{pathname: '/instituteAdmin/addInstitute'}}>Add Institute</Link>
         </Button>
@@ -114,7 +113,7 @@ export default function InstituteAdmin() {
                     <div className="flex flex-wrap gap-1">
                       <Link
                         href={{
-                          pathname: '/instituteAdmin/instituteDetails',
+                          pathname: '/instituteAdmin/viewInstituteDetails',
                           query: {
                             search: inst.id
                           }
@@ -136,7 +135,7 @@ export default function InstituteAdmin() {
           </Table.Body>
         </Table>
       </div>
-      <div className="flex overflow-x-auto sm:justify-left" style={{color:"black"}}>
+      <div className="flex overflow-x-auto sm:justify-left" style={{color:"black", marginTop:"10px"}}>
         <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
       </div>
       <div className="flex overflow-x-auto sm:justify-left">

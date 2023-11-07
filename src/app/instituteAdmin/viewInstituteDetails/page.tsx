@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 import { useSearchParams } from 'next/navigation'
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../FirebaseConfig/firebaseConfig"
-import {  Label, TextInput, Kbd } from 'flowbite-react'
+import { Label, TextInput, Kbd } from 'flowbite-react'
 import { BiSolidUser } from 'react-icons/bi'
 import { ImLocation2 } from 'react-icons/im'
 import { BsFillTelephoneFill } from 'react-icons/bs'
@@ -73,78 +73,81 @@ export default function InstituteDetails() {
       <h1>Loading...</h1>
     </div>
   return (
+    <form style={{ margin: '20px' }}>
     <div className="card" style={{ margin: '30px' }}>
       <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
-        <div>
-          <Link href ={{pathname: '/instituteAdmin'}}>
-            <Kbd icon={BiArrowBack} />
-          </Link>
-          <h1 className="loginHeader">View Institute Information</h1>
-        </div>
-        
         <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block">
-            <Label htmlFor="name" value="Name" />
-          </div>
-          <TextInput
-            type="text"
-            className="form-control"
-            id="name"
-            icon={BiSolidUser}
-            value={instituteName}
-          />
-        </div>
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block">
-            <Label htmlFor="location" value="Location" />
-          </div>
-          <TextInput
-            type="text"
-            className="form-control"
-            id="location"
-            icon={ImLocation2}
-            value={instituteLocation}
-          />
-        </div>
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block">
-            <Label htmlFor="phone" value="Phone Number" />
-          </div>
-          <TextInput
-            type="tel"
-            className="form-control"
-            id="phoneNumber"
-            icon={BsFillTelephoneFill}
-            value={institutePhoneNumber}
-          />
-        </div>
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block">
-            <Label htmlFor="email" value="Email Address" />
-          </div>
-          <TextInput
-            type="tel"
-            className="form-control"
-            id="emailAddress"
-            icon={HiMail}
-            value={instituteEmailAddress}
-          />
-        </div>
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div id="fileUpload" className="max-w-md">
-            <div className="mb-2 block">
-              <Label htmlFor="file" value="Image" />
-            </div>
-            <img src={instituteImageUrl} height="auto" width="auto" />
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Link href={{ pathname: '/instituteAdmin' }}>
+              <Kbd icon={BiArrowBack} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
+            </Link>
+            <h1 className="loginHeader" style={{ marginLeft: 'auto', marginRight: 'auto' }}>View Institute Information</h1>
           </div>
         </div>
 
+      <div style={{ paddingBottom: '20px' }}>
+        <div className="mb-2 block">
+          <Label htmlFor="name" value="Name" />
+        </div>
+        <TextInput
+          type="text"
+          className="form-control"
+          id="name"
+          icon={BiSolidUser}
+          value={instituteName}
+        />
       </div>
-    </div>
+
+      <div style={{ paddingBottom: '20px' }}>
+        <div className="mb-2 block">
+          <Label htmlFor="location" value="Location" />
+        </div>
+        <TextInput
+          type="text"
+          className="form-control"
+          id="location"
+          icon={ImLocation2}
+          value={instituteLocation}
+        />
+      </div>
+
+      <div style={{ paddingBottom: '20px' }}>
+        <div className="mb-2 block">
+          <Label htmlFor="phone" value="Phone Number" />
+        </div>
+        <TextInput
+          type="tel"
+          className="form-control"
+          id="phoneNumber"
+          icon={BsFillTelephoneFill}
+          value={institutePhoneNumber}
+        />
+      </div>
+
+      <div style={{ paddingBottom: '20px' }}>
+        <div className="mb-2 block">
+          <Label htmlFor="email" value="Email Address" />
+        </div>
+        <TextInput
+          type="tel"
+          className="form-control"
+          id="emailAddress"
+          icon={HiMail}
+          value={instituteEmailAddress}
+        />
+      </div>
+
+      <div style={{ paddingBottom: '20px' }}>
+        <div id="fileUpload" className="max-w-md">
+          <div className="mb-2 block">
+            <Label htmlFor="file" value="Image" />
+          </div>
+          <img src={instituteImageUrl} height="auto" width="auto" />
+          </div>
+          </div>
+        </div>
+      </div>
+    </form>
   )
 
 }
