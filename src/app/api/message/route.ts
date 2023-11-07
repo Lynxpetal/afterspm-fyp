@@ -7,10 +7,7 @@ import { ChatGPTMessage, OpenAIStreamPayload, OpenAIStream } from "@/app/lib/val
 export async function POST(req: Request) {
     const { messages } = await req.json()
 
-    const parsedMessages = MessageArraySchema.parse(messages)
-
-    throw new Error("IDK");
-    
+    const parsedMessages = MessageArraySchema.parse(messages) 
 
     const outboundMessages: ChatGPTMessage[] = parsedMessages.map((message) => {
         return {
