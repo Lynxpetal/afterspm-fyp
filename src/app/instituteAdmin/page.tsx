@@ -23,7 +23,7 @@ export default function InstituteAdmin() {
   const [totalData, setTotalData] = useState(0)
   const [startInstituteIndex, setStartInstituteIndex] = useState(1)
 
-  const itemsPerPage = 5
+  const itemsPerPage = 6
   const onPageChange = (page: number) => setCurrentPage(page)
 
   const fetchAllInstituteData = async () => {
@@ -58,7 +58,7 @@ export default function InstituteAdmin() {
     return () => unsubscribe();
   }
 
-  const handleDeleteInstituteClick = (id: String) => {
+  const handleDeleteInstituteClick = (id: string | undefined) => {
     console.log(id)
     Swal.fire({
       title: "Are you sure?",
@@ -146,7 +146,16 @@ export default function InstituteAdmin() {
                       >
                         <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }}/>
                       </Link>
-                      <Kbd icon={AiOutlineEdit} style={{ fontSize: '18px' }} />
+                      <Link
+                        href={{
+                          pathname: '/instituteAdmin/updateInstitute',
+                          query: {
+                            search: inst.id
+                          }
+                        }}
+                      >
+                        <Kbd icon={AiOutlineEdit} style={{ fontSize: '18px' }} />
+                      </Link>
                       <Kbd icon={AiOutlineDelete}  style={{ fontSize: '18px' }} onClick={() => handleDeleteInstituteClick(inst.id)} />
                     </div>
                   </Table.Cell>

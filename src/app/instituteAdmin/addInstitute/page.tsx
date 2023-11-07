@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
+import { basename } from 'path';
 
 
 type addInstituteFormValues = {
@@ -27,7 +28,7 @@ type addInstituteFormValues = {
 
 export default function InstituteAdmin() {
   const form = useForm<[addInstituteFormValues]>();
-  const [name, setInstituteEmail] = useState("")
+  const [name, setInstituteName] = useState("")
   const [location, setInstituteLocation] = useState("")
   const [phoneNumber, setInstitutePhoneNumber] = useState("")
   const [emailAddress, setInstituteEmailAddress] = useState("")
@@ -85,6 +86,8 @@ export default function InstituteAdmin() {
         const instituteData = await uploadBytes(instituteImageRef, instituteImageFile)
         const instituteUrlVal = await getDownloadURL(instituteData.ref)
 
+        const imageName = instituteImageFile.name
+
         console.log(instituteUrlVal)
         setInstituteImageFileUrl(instituteUrlVal)
 
@@ -96,6 +99,7 @@ export default function InstituteAdmin() {
           location,
           phoneNumber,
           emailAddress,
+          imageName,
           instituteData.metadata.name,
           instituteUrlVal
         )
@@ -114,7 +118,7 @@ export default function InstituteAdmin() {
     }
   }
 
-  async function addRegisterInstituteDataToFirestore(name: string, location: string, phoneNumber: string, emailAddress: string, imagePath: string, imageUrl: string) {
+  async function addRegisterInstituteDataToFirestore(name: string, location: string, phoneNumber: string, emailAddress: string, imageName: string, imagePath: string, imageUrl: string) {
     try {
       // collection - Institute
       const instituteDocRef = await addDoc(collection(db, "Institute"), {
@@ -122,6 +126,7 @@ export default function InstituteAdmin() {
         InstituteLocation: location,
         InstitutePhoneNumber: phoneNumber,
         InstituteEmailAddress: emailAddress,
+        InstituteImageName: imageName,
         InstituteImagePath: imagePath,
         InstituteImageUrl: imageUrl,
         InstituteLastUpdateTimestamp: serverTimestamp(),
@@ -219,7 +224,7 @@ export default function InstituteAdmin() {
                       message: "Invalid institute name"
                     }
                   })}
-                  onChange={(e) => setInstituteEmail(e.target.value)}
+                  onChange={(e) => setInstituteName(e.target.value)}
                 />
                 <p className="addInstituteValidationError">{errors[0]?.name?.message}</p>
               </div>
