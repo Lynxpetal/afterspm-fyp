@@ -1,8 +1,7 @@
 'use client';
 import { Button, Table, Kbd, Pagination } from 'flowbite-react'
-import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
-import { DocumentData, QuerySnapshot, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { DocumentData, QuerySnapshot, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { instituteCollection } from '../lib/controller'
 import { NewInstituteType } from '../../../types/institute'
 import { AiOutlineEye } from 'react-icons/ai'
@@ -13,6 +12,7 @@ import MoonLoader from "react-spinners/MoonLoader"
 import { GrAddCircle } from 'react-icons/gr'
 import { FaUniversity } from 'react-icons/fa'
 import Swal from 'sweetalert2'
+import { db } from '../FirebaseConfig/firebaseConfig';
 
 export default function InstituteAdmin() {
   const [institute, setInstitute] = useState<NewInstituteType[]>([])
@@ -70,6 +70,8 @@ export default function InstituteAdmin() {
       confirmButtonText: "Delete"
     }).then((result) => {
       if (result.isConfirmed) {
+        const instituteDocRef = doc(db, 'Institute', id)
+        deleteDoc(instituteDocRef)
         Swal.fire({
           title: "Deleted!",
           text: "Your file has been deleted.",
@@ -106,7 +108,7 @@ export default function InstituteAdmin() {
       <div>
         <Button style={{ backgroundColor: "#B8FFCC", color: "black", marginBottom: "30px", marginTop: "30px" }}>
           <GrAddCircle className="mr-2 h-5 w-5" />
-          <Link href={{pathname: '/instituteAdmin/addInstitute'}}>Add Institute</Link>
+          <Link href={{ pathname: '/instituteAdmin/addInstitute' }}>Add Institute</Link>
         </Button>
       </div>
       <div style={{ overflowX: 'auto' }}>
@@ -127,13 +129,13 @@ export default function InstituteAdmin() {
                   key={inst.id}
                   style={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#E9FFFB' }}
                 >
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{startInstituteIndex+index+1}</Table.Cell>
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{startInstituteIndex + index + 1}</Table.Cell>
                   <Table.Cell style={{ width: '30%' }}>{inst.InstituteName}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteEmailAddress}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstitutePhoneNumber}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteLastUpdateTimestamp?.toDate().toString()}</Table.Cell>
                   <Table.Cell style={{ width: '20%' }}>
-                    <div className="flex flex-wrap gap-1">
+                    <div>
                       <Link
                         href={{
                           pathname: '/instituteAdmin/viewInstituteDetails',
@@ -142,10 +144,10 @@ export default function InstituteAdmin() {
                           }
                         }}
                       >
-                        <Kbd icon={AiOutlineEye} />
+                        <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }}/>
                       </Link>
-                      <Kbd icon={AiOutlineEdit} />
-                      <Kbd icon={AiOutlineDelete} onClick={() => handleDeleteInstituteClick(inst.id)}/>
+                      <Kbd icon={AiOutlineEdit} style={{ fontSize: '18px' }} />
+                      <Kbd icon={AiOutlineDelete}  style={{ fontSize: '18px' }} onClick={() => handleDeleteInstituteClick(inst.id)} />
                     </div>
                   </Table.Cell>
                 </Table.Row>
@@ -158,7 +160,7 @@ export default function InstituteAdmin() {
           </Table.Body>
         </Table>
       </div>
-      <div className="flex overflow-x-auto sm:justify-left" style={{color:"black", marginTop:"10px"}}>
+      <div className="flex overflow-x-auto sm:justify-left" style={{ color: "black", marginTop: "10px" }}>
         <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
       </div>
       <div className="flex overflow-x-auto sm:justify-left">
