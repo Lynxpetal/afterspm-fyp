@@ -46,3 +46,12 @@ uuid
 
 sweetalert2
 - npm install sweetalert2
+
+//for Flask
+1. Click the title of the project with the search icon
+2. Click 'Show and run commands'
+3. Click 'Python: Create environment'
+4. Click 'Venv'
+5. Click the requirements.txt
+6. Then open a new terminal, it will appears (.venv), indicate a virtual environment is built successfully
+7. run "flask run"
