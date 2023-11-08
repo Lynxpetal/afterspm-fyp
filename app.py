@@ -4,6 +4,13 @@ from werkzeug.utils import secure_filename
 import os
 import pytesseract
 from PIL import Image
+import firebase_admin
+from firebase_admin import db, credentials, firestore
+
+#authenticate to firebase
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred)
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -21,7 +28,22 @@ def readImage(filename):
     uploadImage = Image.open(f'{imageUploadPath}/{filename}')
     text = pytesseract.image_to_string(uploadImage, config=myconfig)
     print(text)
-    return text
+    #initialize firestore
+    db = firestore.client()
+
+    gradesData = db.collection('Grade').get()
+    grade_dict = {}
+    for doc in gradesData:
+        grade_name = doc.get('GradeName')
+        grade_value = doc.get('GradeValue')
+
+        grade_dict[grade_name] = grade_value
+
+    print(grade_dict)
+    #return correctText(text)
+
+
+
 
 @app.route("/uploadResult", methods=['POST'])
 def uploadResult():
