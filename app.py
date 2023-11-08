@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
+import pytesseract
+from PIL import Image
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -14,9 +16,12 @@ app.config['UPLOAD_IMAGE_FOLDER'] = imageUploadPath
 def hello_world():
     return "<p>Hello, World!</p>"
 
-# def readImage(filename):
-#     myconfig = r"--psm 4 --oem 3"
-#     uploadImage = Image.open
+def readImage(filename):
+    myconfig = r"--psm 4 --oem 3"
+    uploadImage = Image.open(f'{imageUploadPath}/{filename}')
+    text = pytesseract.image_to_string(uploadImage, config=myconfig)
+    print(text)
+    return text
 
 @app.route("/uploadResult", methods=['POST'])
 def uploadResult():
@@ -33,11 +38,13 @@ def uploadResult():
         if inputFile:
             #return a secure version
             filename = secure_filename(inputFile.filename)
-            
             #place the image under the specified folder
-            inputFile.save(os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], filename))
-            print(filename)
-            return jsonify({"message": "Ok, received it"})
+            uploaded_file_path = os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], filename)
+            inputFile.save(uploaded_file_path)
+            readResults = readImage(filename)
+            #remove it so the app wont explode
+            os.remove(uploaded_file_path)
+            return jsonify(readResults)
         
     except Exception as e:
         print("Error processing request:", str(e))

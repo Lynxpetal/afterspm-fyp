@@ -18,7 +18,7 @@ export default function uploadResult() {
       body: formData,
     })
     .then((response) => response.json())
-    .then((data) => setMessage(data.message))
+    .then((data) => setMessage(data))
     .catch((error) => console.error("Error:", error))
   }
 
