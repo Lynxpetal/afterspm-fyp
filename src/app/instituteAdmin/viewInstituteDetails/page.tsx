@@ -63,11 +63,11 @@ export default function InstituteDetails() {
   useEffect(() => {
     const fetchData = async () => {
       await fetchInstituteData();
-      console.log("Institute Image Name:", instituteEmailAddress);
+      console.log("Institute Image Name:", instituteImageName);
     };
   
     fetchData();
-  }, [])
+  }, [instituteImageName])
 
   if (isInstituteFetchDataLoading)
     return <div className="grid">
@@ -149,10 +149,9 @@ export default function InstituteDetails() {
               <div className="mb-2 block">
                 <Label htmlFor="file" value="Image" />
               </div>
-              <FileInput 
-                className='form-control'
-                id="file"
-              />
+            </div>
+            <div>
+              <h1 style={{ color: "black" }}>Current File Name: {instituteImageName}</h1>
             </div>
             <div>        
               <img src={instituteImageUrl} height="auto" width="auto" style={{marginTop: "10px"}}/>

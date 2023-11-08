@@ -1,5 +1,5 @@
 'use client';
-import { Button, Label, TextInput, FileInput, Toast, Kbd } from 'flowbite-react'
+import { Label, TextInput, FileInput, Toast, Kbd } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { BiSolidUser } from 'react-icons/bi'
@@ -15,7 +15,6 @@ import { useRouter } from 'next/navigation'
 import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
-import { basename } from 'path';
 
 
 type addInstituteFormValues = {
@@ -77,7 +76,7 @@ export default function InstituteAdmin() {
     }
   }
 
-  //add  inside storage
+  //add inside storage
   //retrieve the image url so that can store inside firestore
   const addInstitute = async (data: [addInstituteFormValues]) => {
     try {
