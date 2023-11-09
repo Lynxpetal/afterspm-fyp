@@ -1,7 +1,7 @@
 "use client"
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { FC, ReactNode } from "react";
-import { MessagesProvider } from "../context/messages";
+import { Provider } from "../context/messages";
 
 interface ProvidersProps {
     children: ReactNode
@@ -12,7 +12,7 @@ const Providers: FC<ProvidersProps> = ({ children }) => {
 
 
     return <QueryClientProvider client={queryClient}>
-        <MessagesProvider>{children}</MessagesProvider>
+        <Provider>{children}</Provider>
     </QueryClientProvider>
 }
 

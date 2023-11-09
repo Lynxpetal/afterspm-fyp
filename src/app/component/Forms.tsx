@@ -1,41 +1,51 @@
 "use client"
+import { Context } from "@/app/context/messages";
+import { FC, HTMLAttributes, useContext } from "react";
+import { cn } from "../lib/validators/utils";
+import MarkdownLite from "./MarkdownLite";
 
-import { FC } from "react"
-import { Label, Radio } from 'flowbite-react';
 
-interface QuestionFormat {
-    questions: string[]
-    category: string[]
-}
+interface ChatMessagesProps extends HTMLAttributes<HTMLDivElement> { }
 
-const Providers: FC<QuestionFormat> = ({ questions, category }) => {
+
+const Forms: FC<ChatMessagesProps> = ({ className, ...props }) => {
+    const { answered } = useContext(Context)
     
 
-    return <fieldset className="flex max-w-md flex-col gap-4">
-    <legend className="mb-4">Choose your favorite country</legend>
-    <div className="flex items-center gap-2">
-      <Radio id="united-state" name="countries" value="USA" defaultChecked />
-      <Label htmlFor="united-state">United States</Label>
-    </div>
-    <div className="flex items-center gap-2">
-      <Radio id="germany" name="countries" value="Germany" />
-      <Label htmlFor="germany">Germany</Label>
-    </div>
-    <div className="flex items-center gap-2">
-      <Radio id="spain" name="countries" value="Spain" />
-      <Label htmlFor="spain">Spain</Label>
-    </div>
-    <div className="flex items-center gap-2">
-      <Radio id="uk" name="countries" value="United Kingdom" />
-      <Label htmlFor="uk">United Kingdom</Label>
-    </div>
-    <div className="flex items-center gap-2">
-      <Radio id="china" name="countries" value="China" disabled />
-      <Label htmlFor="china" disabled>
-        China (disabled)
-      </Label>
-    </div>
-  </fieldset>
+    return (
+        <div
+            {...props}
+            className={cn(
+                'flex flex-col-reverse gap-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch',
+                className
+            )}>
+            <div className='flex-1 flex-grow' />
+            {inverseMessages.map((message) => {
+                return (
+                    <div className='chat-message' key={`${message.id}-${message.id}`}>
+                        <div
+                            className={cn('flex items-end', {
+                                'justify-end': message.isUserMessage,
+                            })}>
+                            <div
+                                className={cn('flex flex-col space-y-2 text-sm max-w-xs mx-2 overflow-x-hidden', {
+                                    'order-1 items-end': message.isUserMessage,
+                                    'order-2 items-start': !message.isUserMessage,
+                                })}>
+                                <p
+                                    className={cn('px-4 py-2 rounded-lg', {
+                                        'bg-blue-600 text-white': message.isUserMessage,
+                                        'bg-white text-gray-900': !message.isUserMessage,
+                                    })}>
+                                    <MarkdownLite text={message.text} />
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    )
 }
 
-export default Providers
+export default Forms
