@@ -3,6 +3,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
 import re
+import difflib
 import pytesseract
 from PIL import Image
 import firebase_admin
@@ -30,7 +31,50 @@ def readImage(filename):
     uploadImage = Image.open(f'{imageUploadPath}/{filename}')
     text = pytesseract.image_to_string(uploadImage, config=myconfig)
     print(text)
+    common_words = []
+    common_words = commonWordsList()
+    print(common_words)
+    corrected_input = correct_input(text, common_words)
+    print(corrected_input)
     #return correctText(text)
+
+#Calculate the similarity score by comparing two words
+def compare_words(word1, word2):
+  # Calculate the similarity score between the two words using the difflib.SequenceMatcher() function
+  similarity_score = difflib.SequenceMatcher(None, word1, word2).ratio()
+  
+  # Return the similarity score
+  return similarity_score
+
+#Correct input 
+def correct_input(user_input, common_words):
+    # Split the OCR-captured text by lines
+    lines = user_input.split("\n")
+
+    # For each line, split by the words by spaces
+    corrected_lines = []
+    for line in lines:
+        words = line.split(" ")
+
+        # For each word, compare it with each common word in the list
+        corrected_words = []
+        for word in words:
+
+            # Calculate the similarity score between the word and each common word
+            similarity_score = 0
+            common_word = None
+            for common_word in common_words:
+                similarity_score = compare_words(word, common_word)
+                
+                # If the similarity score is greater than 0.8, then the word is considered to be correct.
+                if similarity_score > 0.8:
+                    corrected_words.append(common_word)
+        
+        # Add the corrected words to the corrected_lines list
+        corrected_lines.append(" ".join(corrected_words))
+    
+    # Return the corrected_lines list
+    return "\n".join(corrected_lines)
 
 #{"CEMERLANG TERTINGGI": "A+", "CEMERLANG TINGGI": "A"}
 def gradeDictionary():
@@ -61,7 +105,6 @@ def commonWordsList():
         subject_name = subject.get('SubjectName')
         subject_list.append(subject_name)
 
-    print(subject_list)
 
     #modify the list and return the list with new element added at the back of the list
     for data in subject_list:
@@ -71,7 +114,7 @@ def commonWordsList():
         else:
            clean_subject_list.append(data) 
         
-    print(clean_subject_list)
+    return list(set(clean_subject_list))
 
 #["BAHASA MELAYU", "BAHASA INGGERIS"]
 def pureSubjectList():
