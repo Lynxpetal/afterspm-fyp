@@ -2,13 +2,9 @@ import { nanoid } from "nanoid";
 import { Message, Question } from "@/app/lib/validators/message";
 import { ReactNode, createContext, useState } from "react";
 
-export const Context = createContext<{
+export const MessageContext = createContext<{
     messages: Message[]
     isMessageUpdating: boolean
-    tobeAnswered: Question[]
-    answered: Question[]
-    answerQuestion: (question: Question) => void
-    addQuestion: (question: Question[]) => void
     addMessage: (message: Message) => void
     removeMessage: (id: string) => void
     updateMessage: (id: string, updateFn: (prevText: string) => string) => void
@@ -16,17 +12,13 @@ export const Context = createContext<{
 }>({
     messages: [],
     isMessageUpdating: false,
-    tobeAnswered: [],
-    answered: [],
-    answerQuestion: () => {},
-    addQuestion: () => {},
     addMessage: () => {},
     removeMessage: () => {},
     updateMessage: () => {},
     setIsMessageUpdating: () => {}
 })
 
-export function Provider({children} : {children: ReactNode}) {
+export function MessageProvider({children} : {children: ReactNode}) {
     const [isMessageUpdating, setIsMessageUpdating] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -54,25 +46,14 @@ export function Provider({children} : {children: ReactNode}) {
             return message
         }))
     }
-    const answerQuestion = (question: Question) => {
-        setAnswer((prev) => [...prev, question])
-    }
 
-    const addQuestion = (question: Question[] ) => {
-        setQuestion((prev) => prev.concat(question))
-    }
-
-    return <Context.Provider value={{
+    return <MessageContext.Provider value={{
         messages,
         isMessageUpdating,
-        tobeAnswered,
-        answered,
-        answerQuestion,
-        addQuestion,
         addMessage,
         removeMessage,
         updateMessage,
         setIsMessageUpdating,
-    }}>{children}</Context.Provider>
+    }}>{children}</MessageContext.Provider>
     
 }
