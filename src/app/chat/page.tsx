@@ -14,7 +14,7 @@ interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 const ChatInput: FC<ChatInputProps> = ({ }) => {
     const [input, setInput] = useState<string>('')
     const [isLoading, setLoading] = useState<boolean>(false)
-    const [showToast, setShowToast] = useState(false);
+    const [showToast, setShowToast] = useState<boolean>(false);
     const {
         messages,
         addMessage,

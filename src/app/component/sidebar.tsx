@@ -59,7 +59,7 @@ export default function compSidebar() {
                         Home
                     </Sidebar.Item>
                     <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend" disabled={isLogin === "guest"}>
-                        <Sidebar.Item href="./Career/Holland">1. Holland's Test</Sidebar.Item>
+                        <Sidebar.Item href="./career/Holland">1. Holland's Test</Sidebar.Item>
                         <Sidebar.Item href=".">2. Big Five Test</Sidebar.Item>
                         <Sidebar.Item href="#">3. Test Result</Sidebar.Item>
                         <Sidebar.Item href="#">4. Recommendation</Sidebar.Item>

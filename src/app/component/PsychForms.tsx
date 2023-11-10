@@ -16,8 +16,8 @@ interface ChatMessagesProps extends HTMLAttributes<HTMLDivElement> {
 import { Label, Radio } from 'flowbite-react';
 
 
-const Forms: FC<ChatMessagesProps> = ({ className, Form, Title, ...props }) => {
-    const [CurrentForm, setCurrentForm] = useState(Form)
+const PsychForm: FC<ChatMessagesProps> = ({ className, Form, Title, ...props }) => {
+    const [CurrentForm, setCurrentForm] = useState<questionFormat[]>(Form)
 
     function getLabel(value: number) {
         switch (value) {
@@ -64,4 +64,4 @@ const Forms: FC<ChatMessagesProps> = ({ className, Form, Title, ...props }) => {
     )
 }
 
-export default Forms
+export default PsychForm
