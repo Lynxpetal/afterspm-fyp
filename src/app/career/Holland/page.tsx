@@ -8,11 +8,11 @@ import PsychForm from "@/app/component/PsychForms";
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
 const ChatInput: FC<ChatInputProps> = ({ }) => {
-   
+    
     return (
         <div className={"flex flex-col pl-1 p-4 min-h-screen relative"}>
-           
-        </div> 
+            <PsychForm Title="Holland's Career" />
+        </div>
     )
 }
 
