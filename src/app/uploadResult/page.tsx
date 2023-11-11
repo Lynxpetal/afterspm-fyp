@@ -2,22 +2,19 @@
 
 import { FileInput, Label, Button, Alert } from 'flowbite-react'
 import React, { useState, useEffect } from 'react'
-import { db } from '../FirebaseConfig/firebaseConfig'
-import { collection, getDocs } from 'firebase/firestore'
+import { db, storage } from '../FirebaseConfig/firebaseConfig'
+import { addDoc, collection, getDocs } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { HiInformationCircle } from 'react-icons/hi'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { v4 } from "uuid"
+import Swal from 'sweetalert2'
 
 interface SubjectData {
   id?: string
   SubjectAbbreviation?: string
   SubjectCode?: string
   SubjectName?: string
-}
-
-interface GradeData {
-  id?: string
-  GradeName?: string
-  GradeValue?: string
 }
 
 export default function uploadResult() {
@@ -28,14 +25,16 @@ export default function uploadResult() {
   const [emptyGrade, setEmptyGrade] = useState(false)
   const [uploadFileStatus, setUploadFileStatus] = useState(true)
   const [manualInputStatus, setManualInputStatus] = useState(false)
-  const [resultInputStatus, setResultInputStatus] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [uploadFileContainer, setUploadFileContainer] = useState(true)
   const [addRowStatus, setAddRowStatus] = useState(false)
   const [deleteRowStatus, setDeleteRowStatus] = useState(false)
-  const [resultImage, setResultImage] = useState<File | null>(null)
+  const [resultImage, setResultImage] = useState<File | null>(null) 
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
   const compulsorySubject = ["BM", "BI", "MM", "SEJ"]
+  var missingSubjectStatus = false
+  var duplicateSubjectStatus = false
+  var emptyGradeStatus = false
 
   //select from multiple options 
   function createSelect(className: string, name: string, id: string, arialabel: string) {
@@ -149,6 +148,9 @@ export default function uploadResult() {
     setUploadFileStatus(true)
     //user not on "Manual Input" section
     setManualInputStatus(false)
+    setDuplicateSubject(false)
+    setMissingSubject(false)
+    setEmptyGrade(false)
 
     const gradeTableThead = document.getElementById("gradeTableThead")
     if (gradeTableThead) {
@@ -198,8 +200,11 @@ export default function uploadResult() {
 
   //if user wants to manual input
   function showManualInput() {
-    setUploadFileContainer(false)
+    setUploadFileStatus(false)
     setManualInputStatus(true)
+    setDuplicateSubject(false)
+    setMissingSubject(false)
+    setEmptyGrade(false)
 
     //clear the table thead then clear subject container and its row
     const subjectContainersUploadFile = document.querySelectorAll(".qualificationSubject")
@@ -265,6 +270,7 @@ export default function uploadResult() {
 
   }
 
+  //populate field with required subject
   function fillFieldWithCompulsorySubject() {
     const subjectContainers = document.querySelectorAll(".qualificationSubject")
     for (let i = 0; i < subjectContainers.length; i++) {
@@ -280,7 +286,8 @@ export default function uploadResult() {
     }
   }
 
-  const handleResultImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //upload file
+  const handleResultImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     //clear table header, subject container, grade container
     enableUploadResultContainer()
 
@@ -312,7 +319,6 @@ export default function uploadResult() {
     })
       .then((response) => response.json())
       .then((data) => {
-
         if (e.target.files?.length == 0) {
           const gradeTableThead = document.getElementById("gradeTableThead")
           if (gradeTableThead) {
@@ -463,16 +469,17 @@ export default function uploadResult() {
       if (selectedSubjects.has(subjectValue)) {
         //has duplicate subject
         setDuplicateSubject(true)
-        break
-      }
-      else {
-        setDuplicateSubject(false)
+        return true
       }
 
       //add the subject value inside selectedSubjects
       selectedSubjects.add(subjectValue)
 
     }
+
+    //if no duplicate subject found
+    setDuplicateSubject(false)
+    return false
 
 
   }
@@ -485,6 +492,7 @@ export default function uploadResult() {
     setMissingSubject(false)
 
     for (const subject of compulsorySubject) {
+      //initialize
       let found = false
 
       for (let i = 0; i < subjectContainers.length; i++) {
@@ -493,6 +501,7 @@ export default function uploadResult() {
         const subjectValue = subjectSelect.value
         console.log(subjectValue)
 
+        //if got then stop looping
         if (subjectValue == subject) {
           found = true
           break
@@ -500,11 +509,14 @@ export default function uploadResult() {
 
       }
 
+      //if cannot find then push inside list
       if (!found) {
         missingSubjects.push(subject)
         setMissingSubject(true)
       }
     }
+
+    return missingSubjects
   }
 
   //check empty grade
@@ -515,63 +527,211 @@ export default function uploadResult() {
     //intiial wont show error message
     setEmptyGrade(false)
 
-
-    for(let i = 0; i < subjectContainers.length; i++) {
+    for (let i = 0; i < subjectContainers.length; i++) {
       const subjectSelect = subjectContainers[i] as HTMLSelectElement
       const gradeSelect = gradeContainers[i] as HTMLSelectElement
       const subjectValue = subjectSelect.value
       const gradeValue = gradeSelect.value
 
       //if got subject but empty grade then show error message
-      if(subjectValue != "") {
-        if(gradeValue == "") {
+      if (subjectValue != "") {
+        if (gradeValue == "") {
+          //mean got duplicate
           setEmptyGrade(true)
-          break
+          return true
         }
       }
     }
 
+    setEmptyGrade(false)
+    return false
+
   }
 
+  //add image to storage
+  const addImageResult = async () => {
+    try {
+      if (resultImage) {
+        const resultImageRef = ref(storage, `ResultImage/${v4()}`)
+        const resultImageData = await uploadBytes(resultImageRef, resultImage)
+        const resultUrlVal = await getDownloadURL(resultImageData.ref)
+
+        const resultImageName = resultImage.name
+
+        await addImageResultDataToFirestore(
+          userId,
+          resultImageName,
+          resultImageData.metadata.name,
+          resultUrlVal
+        )
+
+      } else {
+        console.error('Image fill is null. Unable to upload')
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  //add data to firebase
+  async function addImageResultDataToFirestore(userId: string | null, imageName: string, imagePath: string, imageUrl: string) {
+    try {
+      const subjectContainers = document.querySelectorAll(".qualificationSubject")
+      const gradeContainers = document.querySelectorAll(".qualificationGrade")
+
+      const latestResultData: Record<string, string> = {}
+
+      for (let i = 0; i < subjectContainers.length; i++) {
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+
+        const subjectValue = subjectSelect.value;
+        const gradeValue = gradeSelect.value;
+
+        if (subjectValue != "") {
+          latestResultData[subjectValue] = gradeValue
+        }
+
+      }
+
+      //collection - Result
+      const resultDocRef = await addDoc(collection(db, "Result"), {
+        ResultBelongTo: userId,
+        ResultData: latestResultData,
+        ResultImageName: imageName,
+        ResultImageFilePath: imagePath,
+        ResultImageFileUrl: imageUrl,
+      })
+      console.log("Document written with ID: ", resultDocRef.id)
+    } catch (error) {
+      console.error("Error adding document", error)
+    }
+  }
+
+  async function addManualInputImage() {
+    try {
+      const subjectContainers = document.querySelectorAll(".qualificationSubject")
+      const gradeContainers = document.querySelectorAll(".qualificationGrade")
+
+      const latestResultData: Record<string, string> = {}
+
+      for (let i = 0; i < subjectContainers.length; i++) {
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+
+        const subjectValue = subjectSelect.value;
+        const gradeValue = gradeSelect.value;
+
+        if (subjectValue != "") {
+          latestResultData[subjectValue] = gradeValue
+        }
+
+      }
+
+      //collection - Result
+      const resultDocRef = await addDoc(collection(db, "Result"), {
+        ResultBelongTo: userId,
+        ResultData: latestResultData,
+        ResultImageName: null,
+        ResultImageFilePath: null,
+        ResultImageFileUrl: null,
+      })
+      console.log("Document written with ID: ", resultDocRef.id)
+    } catch (error) {
+      console.error("Error adding document", error)
+    }
+  }
+
+  //proceed to next
   function proceedToNext() {
+
+    //reset all
+    if (manualInputStatus || uploadFileStatus) {
+      duplicateSubjectStatus = false
+      missingSubjectStatus = false
+      emptyGradeStatus = false
+    }
+
+
     //check whether got duplicate subject or not
-    hasDuplicateSubjects()
+    if (hasDuplicateSubjects()) {
+      duplicateSubjectStatus = true
+    } else {
+      duplicateSubjectStatus = false
+    }
 
     //check whether got missing subject or not
-    hasMissingSubject()
+    const missingSubjects = hasMissingSubject()
+    if (missingSubjects.length > 0) {
+      missingSubjectStatus = true
+    } else {
+      missingSubjectStatus = false
+    }
+
 
     //check whether got empty grade or not
-    hasEmptyGrade()
+    if (hasEmptyGrade() == true) {
+      emptyGradeStatus = true
+    } else {
+      emptyGradeStatus = false
+    }
+
 
     //if got duplicate subject
-    if (duplicateSubject) {
-      console.log("Got duplicate subject")
-    }
-
-    //if got missing subject
-    if (missingSubject) {
-      console.log("Got missing subject")
-    }
-
-    if(emptyGrade) {
-      console.log("Empty grade")
-    }
-
-    
-
-    if (manualInputStatus && errorMessage == null && !duplicateSubject && !missingSubject &&!emptyGrade) {
-      console.log("Congrats")
-    }
-    if (uploadFileStatus && resultImage != null) {
-      console.log("Ok, got d")
+    if (duplicateSubjectStatus || missingSubjectStatus || emptyGradeStatus) {
+      console.log("Fail to add inside database")
     }
 
     //check if user is on "Upload Result" section and has uploaded a file or not
     if (uploadFileStatus && !resultImage) {
       setErrorMessage("Please upload a file")
-      return
     }
 
+    if (manualInputStatus && errorMessage == null && !duplicateSubjectStatus && !missingSubjectStatus && !emptyGradeStatus) {
+      console.log("CongratsAAA")
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Double confirm that information is correctly entered",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          addManualInputImage()
+          Swal.fire({
+            title: "Great",
+            text: "Matching data provided with all programmes in database...",
+            icon: "success"
+          });
+        }
+      });
+
+    }
+
+    if (uploadFileStatus && errorMessage == null && !duplicateSubjectStatus && !missingSubjectStatus && !emptyGradeStatus) {
+      console.log("Congrats")
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Double confirm that information is correctly entered",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          addImageResult()
+          Swal.fire({
+            title: "Great",
+            text: "Matching data provided with all programmes in database...",
+            icon: "success"
+          });
+        }
+      });
+
+    }
 
   }
 
@@ -602,7 +762,7 @@ export default function uploadResult() {
       setResultImage(null)
     }
 
-  }, [addRowStatus, deleteRowStatus, resultImage, uploadFileStatus, manualInputStatus, errorMessage, duplicateSubject, missingSubject, emptyGrade])
+  }, [addRowStatus, deleteRowStatus, resultImage, uploadFileStatus, manualInputStatus, errorMessage])
 
   useEffect(() => {
     async function fetchData() {
@@ -640,24 +800,24 @@ export default function uploadResult() {
     <div style={{ margin: "20px" }}>
       <div>
         {duplicateSubject && (
-        <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setDuplicateSubject(false)}>
-          <span className="font-medium">Info alert!</span> Duplicate Subjects Are Not Allowed
-        </Alert>
-      )}
+          <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setDuplicateSubject(false)}>
+            <span className="font-medium">Info alert!</span> Duplicate Subjects Are Not Allowed
+          </Alert>
+        )}
       </div>
       <div>
         {missingSubject && (
-        <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
-          <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
-        </Alert>
-      )}
+          <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
+            <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
+          </Alert>
+        )}
       </div>
       <div>
         {emptyGrade && (
-        <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setEmptyGrade(false)}>
-          <span className="font-medium">Info alert!</span> Grade cannot be empty
-        </Alert>
-      )}
+          <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setEmptyGrade(false)}>
+            <span className="font-medium">Info alert!</span> Grade cannot be empty
+          </Alert>
+        )}
       </div>
       <div className="flex flex-wrap gap-2">
         <Button pill onClick={enableUploadResultContainer}>
@@ -702,11 +862,9 @@ export default function uploadResult() {
           )}
         </div>
         <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
-          {resultInputStatus && (
-            <Button pill onClick={proceedToNext}>
-              Next
-            </Button>
-          )}
+          <Button pill onClick={proceedToNext}>
+            Next
+          </Button>
         </div>
       </div>
     </div>
