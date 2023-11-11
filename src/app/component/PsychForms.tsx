@@ -8,7 +8,7 @@ interface questionFormat {
     answers: string
     category: string
 }
-interface ChatMessagesProps extends HTMLAttributes<HTMLDivElement> {
+interface FormProps extends HTMLAttributes<HTMLDivElement> {
     Form: questionFormat[]
     Title: string
 }
@@ -16,7 +16,7 @@ interface ChatMessagesProps extends HTMLAttributes<HTMLDivElement> {
 import { Label, Radio } from 'flowbite-react';
 
 
-const PsychForm: FC<ChatMessagesProps> = ({ className, Form, Title, ...props }) => {
+const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
     const [CurrentForm, setCurrentForm] = useState<questionFormat[]>(Form)
 
     function getLabel(value: number) {
