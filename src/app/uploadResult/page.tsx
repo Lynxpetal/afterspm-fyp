@@ -280,7 +280,19 @@ export default function uploadResult() {
 
     const resultFileInput = e.target.files?.[0];
     if (resultFileInput) {
-      setResultImage(resultFileInput)
+      const allowedExtensions = ["jpg", "jpeg", "png"];
+      const fileExtension = resultFileInput.name.split(".").pop()?.toLowerCase();
+      console.log(fileExtension)
+      if(fileExtension) {
+        if (!allowedExtensions.includes(fileExtension)) {
+          setErrorMessage("Invalid file format. Please upload a .jpg, .jpeg, or .png file.");
+          return;
+        }
+      }
+
+      setResultImage(resultFileInput);
+    } else {
+      setErrorMessage("Please upload a file");
     }
 
     //FormData - set a new value for existing key inside object, or add the key/value if it does not exist
@@ -430,29 +442,29 @@ export default function uploadResult() {
   }
 
   function proceedToNext() {
-    if(uploadFileStatus && resultImage != null) {
+    if (uploadFileStatus && resultImage != null) {
       console.log("Ok, got d")
     }
-    
-    if(manualInputStatus && errorMessage == null) {
+
+    if (manualInputStatus && errorMessage == null) {
       console.log("Congrats")
     }
 
     //check if user is on "Upload Result" section and has uploaded a file or not
-    if(uploadFileStatus && !resultImage) {
+    if (uploadFileStatus && !resultImage) {
       setErrorMessage("Please upload a file")
       return
     }
-     
+
   }
 
   useEffect(() => {
     //if user upload result then the error message will disappear
-    if(uploadFileStatus && resultImage != null) {
+    if (uploadFileStatus && resultImage != null) {
       setErrorMessage(null)
     }
     //if user on manual input, then wont have error message and result image
-    if(manualInputStatus) {
+    if (manualInputStatus) {
       setErrorMessage(null)
       setResultImage(null)
     }
