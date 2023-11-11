@@ -11,11 +11,9 @@ import { v4 } from "uuid"
 import { storage } from '@/app/FirebaseConfig/firebaseConfig'
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"
 import { db } from '@/app/FirebaseConfig/firebaseConfig'
-import { useRouter } from 'next/navigation'
 import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
-
 
 type addInstituteFormValues = {
   name: string;
@@ -34,12 +32,9 @@ export default function InstituteAdmin() {
   const [instituteImageFile, setInstituteImageFile] = useState<File | null>(null);
   const [instituteImageSizeError, setInstituteImageSizeError] = useState("")
   const [instituteImageFormatError, setInstituteImageFormatError] = useState("")
-  const [instituteImageFilePath, setInstituteImageFilePath] = useState("")
-  const [instituteImageFileUrl, setInstituteImageFileUrl] = useState("")
   const { register, handleSubmit, formState } = form
   const { errors } = formState
   const [addSuccessfulStatus, setAddSuccessfulStatus] = useState(false)
-  const router = useRouter();
 
   const isInstituteNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
   const isInstitutePhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
@@ -86,12 +81,6 @@ export default function InstituteAdmin() {
         const instituteUrlVal = await getDownloadURL(instituteData.ref)
 
         const imageName = instituteImageFile.name
-
-        console.log(instituteUrlVal)
-        setInstituteImageFileUrl(instituteUrlVal)
-
-        console.log(instituteData.metadata.name)
-        setInstituteImageFilePath(instituteData.metadata.name)
 
         const addedInstituteData = await addRegisterInstituteDataToFirestore(
           name,

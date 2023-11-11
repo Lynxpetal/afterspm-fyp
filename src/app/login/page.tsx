@@ -1,15 +1,14 @@
 'use client';
-import { Button, Label, TextInput } from 'flowbite-react';
+import { Button, Label, TextInput, Alert } from 'flowbite-react';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import app from '../FirebaseConfig/firebaseConfig';
-import { auth } from '../FirebaseConfig/firebaseConfig';
+import { auth } from '../FirebaseConfig/firebaseConfig'
 import { useRouter } from 'next/navigation';
 import { useAuthState } from "react-firebase-hooks/auth"
 import { HiMail } from 'react-icons/hi'
 import { HiInformationCircle } from 'react-icons/hi';
-import { Alert } from 'flowbite-react';
 
 
 type LoginFormValues = {
@@ -94,7 +93,7 @@ export default function Login() {
   return (
     <form className="flex max-w-md flex-col gap-4" style={{ margin: '20px' }} onSubmit={handleSubmit(loginAccount)} noValidate>
       {failureVerifyEmailAlert && (
-        <Alert color="failure" onDismiss={() => setFailureVerifyEmailAlert(false)}>
+        <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setFailureVerifyEmailAlert(false)}>
           <span className="font-medium">Info alert!</span> Please verify your email address.
         </Alert>
       )}

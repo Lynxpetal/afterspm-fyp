@@ -12,7 +12,6 @@ import { v4 } from "uuid"
 import { storage } from '@/app/FirebaseConfig/firebaseConfig'
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore"
 import { db } from '@/app/FirebaseConfig/firebaseConfig'
-import { useRouter } from 'next/navigation'
 import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
