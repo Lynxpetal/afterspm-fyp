@@ -1,6 +1,6 @@
 'use client';
 
-import { FileInput, Label, Button, Alert } from 'flowbite-react'
+import { FileInput, Label, Button, Alert, Timeline } from 'flowbite-react'
 import React, { useState, useEffect } from 'react'
 import { db, storage } from '../FirebaseConfig/firebaseConfig'
 import { addDoc, collection, getDocs } from 'firebase/firestore'
@@ -9,6 +9,10 @@ import { HiInformationCircle } from 'react-icons/hi'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from "uuid"
 import Swal from 'sweetalert2'
+import { HiArrowNarrowRight, HiCalendar } from 'react-icons/hi'
+import { FaFilter } from 'react-icons/fa'
+import { GrDocumentUpload } from 'react-icons/gr'
+import { MdOutlineRecommend } from 'react-icons/md'
 
 interface SubjectData {
   id?: string
@@ -29,7 +33,7 @@ export default function uploadResult() {
   const [uploadFileContainer, setUploadFileContainer] = useState(true)
   const [addRowStatus, setAddRowStatus] = useState(false)
   const [deleteRowStatus, setDeleteRowStatus] = useState(false)
-  const [resultImage, setResultImage] = useState<File | null>(null) 
+  const [resultImage, setResultImage] = useState<File | null>(null)
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
   const compulsorySubject = ["BM", "BI", "MM", "SEJ"]
   var missingSubjectStatus = false
@@ -798,73 +802,107 @@ export default function uploadResult() {
 
   return (
     <div style={{ margin: "20px" }}>
-      <div>
-        {duplicateSubject && (
-          <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setDuplicateSubject(false)}>
-            <span className="font-medium">Info alert!</span> Duplicate Subjects Are Not Allowed
-          </Alert>
-        )}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Timeline horizontal>
+        <Timeline.Item>
+          <Timeline.Point icon={FaFilter}/>
+          <Timeline.Content>
+            <Timeline.Title>Step 1</Timeline.Title>
+            <Timeline.Body>
+              Filter Institute and Programme
+            </Timeline.Body>
+          </Timeline.Content>
+        </Timeline.Item>
+        <Timeline.Item style={{ margin: '0 auto' }}>
+          <Timeline.Point icon={GrDocumentUpload} />
+          <Timeline.Content>
+            <Timeline.Title>Step 2</Timeline.Title>
+            <Timeline.Body>
+              Upload SPM Result
+            </Timeline.Body>
+          </Timeline.Content>
+        </Timeline.Item>
+        <Timeline.Item style={{ marginLeft: 'auto' }}>
+          <Timeline.Point icon={MdOutlineRecommend} />
+          <Timeline.Content>
+            <Timeline.Title>Step 3</Timeline.Title>
+            <Timeline.Body>
+              View Recommended Programmes
+            </Timeline.Body>
+          </Timeline.Content>
+        </Timeline.Item>
+      </Timeline>
       </div>
-      <div>
-        {missingSubject && (
-          <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
-            <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
-          </Alert>
-        )}
-      </div>
-      <div>
-        {emptyGrade && (
-          <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setEmptyGrade(false)}>
-            <span className="font-medium">Info alert!</span> Grade cannot be empty
-          </Alert>
-        )}
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <Button pill onClick={enableUploadResultContainer}>
-          Upload Result
-        </Button>
-        <Button pill onClick={showManualInput}>
-          Input Manually
-        </Button>
-      </div>
-      {uploadFileContainer && (
-        <div id="fileUpload" className="max-w-md">
-          <div className="mb-2 block">
-            <Label htmlFor="file" value="Upload file" />
-          </div>
-          <FileInput
-            id="file"
-            onChange={(e) => { handleResultImageUpload(e) }}
-          />
-          {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-        </div>
-      )}
-      <br />
-      <div>
-        <div style={{ display: 'flex' }}>
-          <table id="table table-borderless" style={{ color: "gray" }}>
-            <thead id="gradeTableThead">
-            </thead>
-            <tbody id="gradeTableBody">
-            </tbody>
-          </table>
-        </div>
-        <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
-          {addRowStatus && (
-            <Button pill onClick={handleAddRowContainer}>
-              Add Row
-            </Button>
-          )}
-          {deleteRowStatus && (
-            <Button pill onClick={handleDeleteRowContainer}>
-              Delete Row
-            </Button>
+      
+      <div style={{ margin: "20px" }}>
+        <div>
+          {duplicateSubject && (
+            <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setDuplicateSubject(false)}>
+              <span className="font-medium">Info alert!</span> Duplicate Subjects Are Not Allowed
+            </Alert>
           )}
         </div>
-        <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
-          <Button pill onClick={proceedToNext}>
-            Next
+        <div>
+          {missingSubject && (
+            <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
+              <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
+            </Alert>
+          )}
+        </div>
+        <div>
+          {emptyGrade && (
+            <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setEmptyGrade(false)}>
+              <span className="font-medium">Info alert!</span> Grade cannot be empty
+            </Alert>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button pill onClick={enableUploadResultContainer}>
+            Upload Result
           </Button>
+          <Button pill onClick={showManualInput}>
+            Input Manually
+          </Button>
+        </div>
+        {uploadFileContainer && (
+          <div id="fileUpload" className="max-w-md">
+            <div className="mb-2 block">
+              <Label htmlFor="file" value="Upload file" />
+            </div>
+            <FileInput
+              id="file"
+              onChange={(e) => { handleResultImageUpload(e) }}
+            />
+            {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+          </div>
+        )}
+        <br />
+        <div>
+          <div style={{ display: 'flex' }}>
+            <table id="table table-borderless" style={{ color: "gray" }}>
+              <thead id="gradeTableThead">
+              </thead>
+              <tbody id="gradeTableBody">
+              </tbody>
+            </table>
+          </div>
+          <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
+            {addRowStatus && (
+              <Button pill onClick={handleAddRowContainer}>
+                Add Row
+              </Button>
+            )}
+            {deleteRowStatus && (
+              <Button pill onClick={handleDeleteRowContainer}>
+                Delete Row
+              </Button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
+            <Button pill onClick={proceedToNext}>
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>
