@@ -5,3 +5,4 @@ export const firestore = getFirestore(app)
 
 //Institute Collection
 export const instituteCollection = collection(firestore, 'Institute')
+export const programmeCollection = collection(firestore, 'Programme')
