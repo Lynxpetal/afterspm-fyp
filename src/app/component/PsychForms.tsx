@@ -1,23 +1,17 @@
 "use client"
 import { FC, HTMLAttributes, useState } from "react";
 import { cn } from "../lib/validators/utils";
+import { Label, Radio } from 'flowbite-react';
+import { Question } from "../lib/validators/message";
 
-interface questionFormat {
-    labels: string
-    options: number[]
-    answers: string
-    category: string
-}
+
 interface FormProps extends HTMLAttributes<HTMLDivElement> {
-    Form: questionFormat[]
+    Form: Question[]
     Title: string
 }
 
-import { Label, Radio } from 'flowbite-react';
-
-
 const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
-    const [CurrentForm, setCurrentForm] = useState<questionFormat[]>(Form)
+    const [CurrentForm, setCurrentForm] = useState<Question[]>(Form)
 
     function getLabel(value: number) {
         switch (value) {
@@ -49,10 +43,17 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                 {
                     CurrentForm.map((questions) => {
                         return <fieldset className="flex max-w-md flex-col gap-4">
-                            <legend className="mb-4">{questions.labels}</legend>
+                            <legend className="mb-4">{questions.label}</legend>
                             {questions.options.map((option) => {
+                                if (option == 3) {
+                                    return <div className="flex items-center gap-2">
+                                    <Radio id="united-state" name={questions.label} value={option} defaultChecked />
+                                    <Label htmlFor="united-state">
+                                        {getLabel(option)}</Label>
+                                </div>
+                                }
                                 return <div className="flex items-center gap-2">
-                                    <Radio id="united-state" name={questions.labels} value={option} defaultChecked />
+                                    <Radio id="united-state" name={questions.label} value={option} />
                                     <Label htmlFor="united-state">
                                         {getLabel(option)}</Label>
                                 </div>

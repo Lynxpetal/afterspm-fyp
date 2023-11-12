@@ -1,4 +1,4 @@
-import { string, z } from 'zod'
+import { number, string, z } from 'zod'
 
 export const MessageSchema = z.object({
   id: z.string(),
@@ -11,9 +11,9 @@ export type Message = z.infer<typeof MessageSchema>
 
 export const QuestionSchema = z.object({
   label: z.string(),
-  question: z.array(string()),
-  category: z.string(),
-  answer: z.number()
+  options: z.array(number()),
+  answer: z.number(),
+  category: z.string()
 })
 
 export const QuestionArraySchema = z.array(QuestionSchema)
