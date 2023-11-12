@@ -191,7 +191,8 @@ export default function InstituteAdmin() {
 
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
-                <Label htmlFor="name" value="Name" />
+                <Label htmlFor="name" value="Name " />
+                <span style={{color:"red"}}>*</span>
                 <TextInput
                   type="text"
                   className="form-control"
@@ -220,7 +221,8 @@ export default function InstituteAdmin() {
 
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
-                <Label htmlFor="location" value="Location" />
+                <Label htmlFor="location" value="Location " />
+                <span style={{color:"red"}}>*</span>
                 <TextInput
                   type="text"
                   className="form-control"
@@ -245,7 +247,8 @@ export default function InstituteAdmin() {
 
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
-                <Label htmlFor="phone" value="Phone Number" />
+                <Label htmlFor="phone" value="Phone Number " />
+                <span style={{color:"red"}}>*</span>
                 <TextInput
                   type="tel"
                   className="form-control"
@@ -270,7 +273,8 @@ export default function InstituteAdmin() {
 
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
-                <Label htmlFor="email" value="Email Address" />
+                <Label htmlFor="email" value="Email Address " />
+                <span style={{color:"red"}}>*</span>
                 <TextInput
                   type="tel"
                   className="form-control"
@@ -296,7 +300,8 @@ export default function InstituteAdmin() {
             <div style={{ paddingBottom: '20px' }}>
               <div id="fileUpload" className="max-w-md">
                 <div className="mb-2 block">
-                  <Label htmlFor="file" value="Image" />
+                  <Label htmlFor="file" value="Image " />
+                  <span style={{color:"red"}}>*</span>
                 </div>
                 <FileInput
                   className="form-control"

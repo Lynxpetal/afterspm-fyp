@@ -8,6 +8,7 @@
   text-align: center;
 }
 
+.addProgrammeValidationError,
 .addInstituteValidationError,
 .forgetPasswordValidationError,
 .loginValidationError,
@@ -18,6 +19,7 @@
   text-align: left;
 }
 
+.programmeHeader,
 .forgetPasswordHeader,
 .loginHeader,
 .registerHeader {
