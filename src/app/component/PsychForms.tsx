@@ -11,9 +11,13 @@ interface FormProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
-    const [CurrentForm, setCurrentForm] = useState<Question[]>(Form)
+    const [Answer, setAnswer] = useState<Number[]>(Array(Form.length).fill(3))
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const onPageChange = (page: number) => setCurrentPage(page);
+    const onPageChange = (page: number) => {
+        
+        setAnswer(Answer.splice(currentPage, 1, document.getElementsByName(Form[currentPage].label).value))
+        setCurrentPage(page)
+    };
     function getLabel(value: number) {
         switch (value) {
             case 1:
@@ -33,17 +37,17 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
     }
     function pageDisplay() {
         return <fieldset className="flex max-w-md pl-11 flex-col gap-4">
-            <legend className="mb-4">{CurrentForm[currentPage].label}</legend>
-            {CurrentForm[currentPage].options.map((option) => {
-                if (option == 3) {
-                    return <div className="flex items-center gap-2">
-                        <Radio id="united-state" name={CurrentForm[currentPage].label} value={option} defaultChecked />
+            <legend className="mb-4 text-lg font-semibold antialiased">{Form[currentPage].label}</legend>
+            {Form[currentPage].options.map((option) => {
+                if (option == Form[currentPage].answer) {
+                    return <div className="flex pl-6 items-center gap-2">
+                        <Radio id={Form[currentPage].label + option} name={Form[currentPage].label} value={option} defaultChecked />
                         <Label htmlFor="united-state">
                             {getLabel(option)}</Label>
                     </div>
                 }
-                return <div className="flex items-center gap-2">
-                    <Radio id="united-state" name={CurrentForm[currentPage].label} value={option} />
+                return <div className="flex pl-6 items-center gap-2">
+                    <Radio id={Form[currentPage].label} name={Form[currentPage].label} value={option} />
                     <Label htmlFor="united-state">
                         {getLabel(option)}</Label>
                 </div>
@@ -58,13 +62,13 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                 '',
                 className
             )}>
-            <div className="flex flex-col gap-60">
-                <fieldset className="flex items-center mt-8 py-10 max-w-md flex-col gap-4 shadow-md rounded bg-white">
+            <div className="flex flex-col gap-40">
+                <fieldset className="flex mt-5 py-10 w-full flex-col gap-4 shadow-md rounded bg-white">
                     <legend className="m-3 p-3 text-2xl font-semibold antialiased bg-slate-50 shadow-md rounded-md">{Title}</legend>
                     {pageDisplay()}
                 </fieldset >
                 <div className="flex overflow-x-auto sm:justify-center">
-                    <Pagination layout="navigation" currentPage={currentPage} totalPages={CurrentForm.length} onPageChange={onPageChange} showIcons />
+                    <Pagination layout="navigation" currentPage={currentPage} totalPages={Form.length} onPageChange={onPageChange} showIcons />
                 </div>
             </div>
         </div >
