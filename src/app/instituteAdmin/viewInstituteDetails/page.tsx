@@ -21,7 +21,6 @@ export default function InstituteDetails() {
   //Fetch the single document
   //const getHotel = doc(firestore,  `Institute/${instituteId}`)
   const [isInstituteFetchDataLoading, setIsInstituteFetchDataLoading] = useState(true)
-  const [institute, setInstitute] = useState({})
   const [instituteImageUrl, setInstituteImageUrl] = useState('')
   const [instituteName, setInstituteName] = useState('')
   const [instituteLocation, setInstituteLocation] = useState('')
@@ -39,7 +38,6 @@ export default function InstituteDetails() {
 
       if (instituteDocSnap.exists()) {
         console.log("Document data: ", instituteDocSnap.data())
-        setInstitute(instituteDocSnap.data())
         setInstituteName(instituteDocSnap.data().InstituteName)
         setInstituteLocation(instituteDocSnap.data().InstituteLocation)
         setInstitutePhoneNumber(instituteDocSnap.data().InstitutePhoneNumber)
