@@ -14,6 +14,8 @@ import { db } from '@/app/FirebaseConfig/firebaseConfig'
 import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
+import Swal from 'sweetalert2'
+import { useRouter } from "next/navigation"
 
 type addInstituteFormValues = {
   name: string;
@@ -35,6 +37,7 @@ export default function InstituteAdmin() {
   const { register, handleSubmit, formState } = form
   const { errors } = formState
   const [addSuccessfulStatus, setAddSuccessfulStatus] = useState(false)
+  const router = useRouter()
 
   const isInstituteNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
   const isInstitutePhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
@@ -74,6 +77,31 @@ export default function InstituteAdmin() {
   //add inside storage
   //retrieve the image url so that can store inside firestore
   const addInstitute = async (data: [addInstituteFormValues]) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Double confirm that information is correctly entered before added in the database.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        addInstituteData()
+        Swal.fire({
+          title: "Great!",
+          text: "Add successfully inside the database",
+          icon: "success",
+        }).then(() => {
+          //Navigate to /instituteAdmin after user presses ok
+          router.push('/instituteAdmin');
+        });
+      }
+    });
+
+  }
+
+  async function addInstituteData() {
     try {
       if (instituteImageFile) {
         const instituteImageRef = ref(storage, `InstituteImage/${v4()}`)

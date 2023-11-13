@@ -74,7 +74,7 @@ export default function InstituteAdmin() {
         deleteDoc(instituteDocRef)
         Swal.fire({
           title: "Deleted!",
-          text: "Your file has been deleted.",
+          text: "This institute data has been deleted.",
           icon: "success"
         });
       }

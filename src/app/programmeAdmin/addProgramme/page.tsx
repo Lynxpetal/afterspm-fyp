@@ -317,7 +317,7 @@ export default function AddProgramme() {
     if (!duplicateSubjectStatus && !missingSubjectStatus && !emptyGradeStatus) {
       Swal.fire({
         title: "Are you sure?",
-        text: "Double confirm that information is correctly entered.",
+        text: "Double confirm that information is correctly entered before added in the database.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
