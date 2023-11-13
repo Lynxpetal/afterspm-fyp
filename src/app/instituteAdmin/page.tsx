@@ -115,9 +115,9 @@ export default function InstituteAdmin() {
         <Table striped>
           <Table.Head>
             <Table.HeadCell style={{ width: '5%', backgroundColor: '#8DD3E2' }}>ID</Table.HeadCell>
-            <Table.HeadCell style={{ width: '30%', backgroundColor: '#8DD3E2' }}>Name</Table.HeadCell>
+            <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Name</Table.HeadCell>
             <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Email Address</Table.HeadCell>
-            <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Phone Number</Table.HeadCell>
+            <Table.HeadCell style={{ width: '10%', backgroundColor: '#8DD3E2' }}>Phone Number</Table.HeadCell>
             <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Last Update</Table.HeadCell>
             <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Actions</Table.HeadCell>
           </Table.Head>
@@ -130,9 +130,9 @@ export default function InstituteAdmin() {
                   style={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#E9FFFB' }}
                 >
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{startInstituteIndex + index + 1}</Table.Cell>
-                  <Table.Cell style={{ width: '30%' }}>{inst.InstituteName}</Table.Cell>
+                  <Table.Cell style={{ width: '15%' }}>{inst.InstituteName}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteEmailAddress}</Table.Cell>
-                  <Table.Cell style={{ width: '15%' }}>{inst.InstitutePhoneNumber}</Table.Cell>
+                  <Table.Cell style={{ width: '10%' }}>{inst.InstitutePhoneNumber}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{inst.InstituteLastUpdateTimestamp?.toDate().toString()}</Table.Cell>
                   <Table.Cell style={{ width: '20%' }}>
                     <div>
