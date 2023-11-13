@@ -10,6 +10,8 @@ import { AiOutlineClose } from 'react-icons/ai'
 import { HiInformationCircle } from 'react-icons/hi'
 import { db } from "@/app/FirebaseConfig/firebaseConfig"
 import MoonLoader from "react-spinners/MoonLoader"
+import Swal from 'sweetalert2'
+import { useRouter } from "next/navigation"
 
 type addProgrammeFormValues = {
   name: string,
@@ -48,6 +50,7 @@ export default function AddProgramme() {
   var missingSubjectStatus = false
   var duplicateSubjectStatus = false
   var emptyGradeStatus = false
+  const router = useRouter()
 
   const isProgrammeNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
 
@@ -312,8 +315,28 @@ export default function AddProgramme() {
 
 
     if (!duplicateSubjectStatus && !missingSubjectStatus && !emptyGradeStatus) {
-      console.log("Congratsaa")
-      addProgrammeDataInsideDatabase()
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Double confirm that information is correctly entered.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          addProgrammeDataInsideDatabase()
+          Swal.fire({
+            title: "Great!",
+            text: "Add successfully inside the database",
+            icon: "success",
+          }).then(() => {
+            //Navigate to /programmeAdmin after user presses ok
+            router.push('/programmeAdmin');
+          });
+        }
+      });
+      
     }
   }
 
