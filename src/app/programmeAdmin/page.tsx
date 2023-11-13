@@ -19,31 +19,13 @@ export default function ProgrammeAdmin() {
   const [programme, setProgramme] = useState<NewProgrammeType[]>([])
   const [isProgrammeFetchAllDataLoading, setIsProgrammeFetchAllDataLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
-  
+
   //know how many pages based on data stored inside firebase
   const [totalPages, setTotalPages] = useState(1)
   const [totalData, setTotalData] = useState(0)
   const [startProgrammeIndex, setStartProgrammeIndex] = useState(1)
   const itemsPerPage = 6
   const onPageChange = (page: number) => setCurrentPage(page)
-
-  //fetch institute name based on institute id
-  const getInstituteName = async (instituteId: string) => {
-    try {
-      console.log(instituteId)
-      const instituteDocRef = doc(db, 'Institute', instituteId)
-      const instituteSnapshot = await getDoc(instituteDocRef)
-
-      if(instituteSnapshot.exists()) {
-        return instituteSnapshot.data().InstituteName
-      } else {
-        console.log("Institute not found")
-      }
-    } catch (error) {
-      console.log("Error fetching institute name")
-    }
-
-  }
 
 
   //fetch programme data from database and display
@@ -58,23 +40,17 @@ export default function ProgrammeAdmin() {
     //display data by latest update timestamp
     const q = query(programmeCollection, orderBy('ProgrammeLastUpdateTimestamp', 'desc'))
 
-    const unsubscribe = onSnapshot(q, async (snapshot: QuerySnapshot<DocumentData>) => {
+    const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const totalItems = snapshot.docs.length
       setTotalData(totalItems)
       //to know total page
       setTotalPages(Math.ceil(totalItems / itemsPerPage))
 
       //only get the data based on the current page
-      const slicedProgrammeData = await Promise.all(
-        snapshot.docs.slice(startIndex, endIndex).map(async (doc) => {
-          const instituteName = await getInstituteName(doc.data().InstituteID);
-          return {
-            id: doc.id,
-            instituteName,
-            ...doc.data(),
-          };
-        })
-      );
+      const slicedProgrammeData = snapshot.docs.slice(startIndex, endIndex).map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       setProgramme(slicedProgrammeData)
       setIsProgrammeFetchAllDataLoading(false)
@@ -100,7 +76,7 @@ export default function ProgrammeAdmin() {
         deleteDoc(instituteDocRef)
         Swal.fire({
           title: "Deleted!",
-          text: "Your file has been deleted.",
+          text: "This programme data has been deleted.",
           icon: "success"
         });
       }
@@ -108,11 +84,11 @@ export default function ProgrammeAdmin() {
 
   }
 
-   //trigger fetch when currentPage changes
-   useEffect(() => {
+  //trigger fetch when currentPage changes
+  useEffect(() => {
     fetchAllProgrammeData();
   }, [currentPage])
-  
+
   if (isProgrammeFetchAllDataLoading)
     return <div className="grid">
       <MoonLoader
@@ -123,7 +99,7 @@ export default function ProgrammeAdmin() {
       />
       <h1>Loading...</h1>
     </div>
-    return (
+  return (
     <div className="card" style={{ margin: '30px' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <h2 style={{ color: 'black', display: 'flex', alignItems: 'center' }}>
@@ -158,7 +134,7 @@ export default function ProgrammeAdmin() {
                 >
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{startProgrammeIndex + index + 1}</Table.Cell>
                   <Table.Cell style={{ width: '20%' }}>{prgm.ProgrammeName}</Table.Cell>
-                  <Table.Cell style={{ width: '20%' }}>{prgm.instituteName}</Table.Cell>
+                  <Table.Cell style={{ width: '20%' }}>{prgm.InstituteName}</Table.Cell>
                   <Table.Cell style={{ width: '5%' }}>{prgm.ProgrammeDuration}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{prgm.ProgrammeStudyLevel}</Table.Cell>
                   <Table.Cell style={{ width: '15%' }}>{prgm.ProgrammeLastUpdateTimestamp?.toDate().toString()}</Table.Cell>
@@ -172,7 +148,7 @@ export default function ProgrammeAdmin() {
                           }
                         }}
                       >
-                        <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }}/>
+                        <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }} />
                       </Link>
                       <Link
                         href={{
@@ -184,7 +160,7 @@ export default function ProgrammeAdmin() {
                       >
                         <Kbd icon={AiOutlineEdit} style={{ fontSize: '18px' }} />
                       </Link>
-                      <Kbd icon={AiOutlineDelete}  style={{ fontSize: '18px' }} onClick={() => handleDeleteProgrammeClick(prgm.id)} />
+                      <Kbd icon={AiOutlineDelete} style={{ fontSize: '18px' }} onClick={() => handleDeleteProgrammeClick(prgm.id)} />
                     </div>
                   </Table.Cell>
                 </Table.Row>

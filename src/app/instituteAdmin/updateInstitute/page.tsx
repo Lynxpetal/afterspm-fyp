@@ -15,6 +15,8 @@ import { db } from '@/app/FirebaseConfig/firebaseConfig'
 import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
+import Swal from 'sweetalert2'
+import { useRouter } from "next/navigation"
 
 type updateInstituteFormValues = {
   name: string;
@@ -43,9 +45,9 @@ export default function InstituteAdmin() {
   const [instituteImageFileUrl, setInstituteImageFileUrl] = useState("")
   const [instituteImageName, setInstituteImageName] = useState("")
   const [previousInstituteImageName, setPreviousInstituteImageName] = useState("")
-  const [updateSuccessfulStatus, setUpdateSuccessfulStatus] = useState(false)
   const { register, handleSubmit, formState } = form
   const { errors } = formState
+  const router = useRouter()
   const isInstituteNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
   const isInstitutePhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
   const isInstituteEmailAddressValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -110,6 +112,31 @@ export default function InstituteAdmin() {
   }
 
   const updateInstitute = async (data: [updateInstituteFormValues]) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Double confirm that information is correctly entered before updated in the database.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateInstituteData()
+        Swal.fire({
+          title: "Great!",
+          text: "Update successfully inside the database",
+          icon: "success",
+        }).then(() => {
+          //Navigate to /instituteAdmin after user presses ok
+          router.push('/instituteAdmin');
+        });
+      }
+    });
+
+  }
+
+  async function updateInstituteData() {
     try {
       console.log(instituteImageName)
       console.log(previousInstituteImageName)
@@ -133,10 +160,6 @@ export default function InstituteAdmin() {
             instituteImageName,
             instituteId
           )
-
-          if (updateInstituteData) {
-            setUpdateSuccessfulStatus(true)
-          }
       
         } 
         else {
@@ -156,9 +179,6 @@ export default function InstituteAdmin() {
           instituteId
         )
 
-        if (updateInstituteData) {
-          setUpdateSuccessfulStatus(true)
-        }
       }
     }
     catch (error) {
@@ -222,27 +242,6 @@ useEffect(() => {
 
 return (
   <div>
-      {updateSuccessfulStatus && (
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1000 }}>
-          {/* Overlay to cover the entire screen */}
-        </div>
-      )}
-      {updateSuccessfulStatus && (
-        <Toast style={{ position: "fixed", top: "5%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 1001 }}>
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-            <HiCheck className="h-5 w-5" />
-          </div>
-          <div className="ml-3 text-sm font-normal">Data updated successfully.</div>
-          <button
-            className="rounded-lg p-1.5 text-sm font-medium text-cyan-600 hover:bg-cyan-100 dark:text-cyan-500 dark:hover:bg-gray-700"
-            onClick={() => {
-              window.location.href = '/instituteAdmin';
-            }}
-          >
-            Ok
-          </button>
-        </Toast>
-      )}
     <form style={{ margin: '20px' }}>
       <div className="card" style={{ margin: '30px' }}>
         <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
