@@ -13,7 +13,7 @@ export interface NewInstituteType {
 }
 
 export interface NewProgrammeType {
-  InstituteID?: string
+  InstituteName?: string
   ProgrammeDuration?: string
   ProgrammeLastUpdateTimestamp?: Timestamp
   ProgrammeMinimumEntryRequirements?: Map<string, string>

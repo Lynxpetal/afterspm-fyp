@@ -1,12 +1,13 @@
 'use client'
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { Label, TextInput, Toast, Kbd, Dropdown, Button } from 'flowbite-react'
+import { Label, TextInput, Alert, Kbd, Dropdown, Button } from 'flowbite-react'
 import { instituteCollection } from "@/app/lib/controller"
-import { collection, getDocs, orderBy, query } from "firebase/firestore"
+import { addDoc, collection, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore"
 import Link from 'next/link'
 import { HiCheck } from 'react-icons/hi'
 import { AiOutlineClose } from 'react-icons/ai'
+import { HiInformationCircle } from 'react-icons/hi'
 import { db } from "@/app/FirebaseConfig/firebaseConfig"
 import MoonLoader from "react-spinners/MoonLoader"
 
@@ -35,15 +36,18 @@ export default function AddProgramme() {
   const [price, setPrice] = useState("")
   const [duration, setDuration] = useState("")
   const [studyLevel, setStudyLevel] = useState("Diploma")
-  const [minimumEntryRequirement, setMinimumEntryRequirement] = useState<Record<string, string>>({})
   const { register, handleSubmit, formState } = form
   const { errors } = formState
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
-  const compulsorySubject = ["BM", "SEJ"]
   const [allReady, setAllReady] = useState(false)
   const [subjectDataFetched, setSubjectDataFetched] = useState(false)
-  const [instituteDataFetched, setInstituteDataFetched] = useState(false)
-  const [subjectContainerReady, setSubjectContainerReady] = useState(false)
+  const [duplicateSubject, setDuplicateSubject] = useState(false)
+  const [missingSubject, setMissingSubject] = useState(false)
+  const [emptyGrade, setEmptyGrade] = useState(false)
+  const compulsorySubject = ["BM", "SEJ"]
+  var missingSubjectStatus = false
+  var duplicateSubjectStatus = false
+  var emptyGradeStatus = false
 
   const isProgrammeNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
 
@@ -145,11 +149,175 @@ export default function AddProgramme() {
 
   }
 
+  //check duplicate subjects
+  function hasDuplicateSubjects() {
+    const subjectContainers = document.querySelectorAll(".qualificationSubject")
+    let selectedSubjects = new Set()
 
-  const addProgramme = async (data: [addProgrammeFormValues]) => {
-    console.log("Ok")
+    for (let i = 0; i < subjectContainers.length; i++) {
+      //iterate over subject container
+      const subjectSelect = subjectContainers[i] as HTMLSelectElement
+
+      //get its value eg BM
+      const subjectValue = subjectSelect.value
+
+      if (selectedSubjects.has(subjectValue)) {
+        //has duplicate subject
+        setDuplicateSubject(true)
+        return true
+      }
+
+      //add the subject value inside selectedSubjects
+      selectedSubjects.add(subjectValue)
+
+    }
+
+    //if no duplicate subject found
+    setDuplicateSubject(false)
+    return false
+
+
   }
 
+  //check missing subject
+  function hasMissingSubject() {
+    const subjectContainers = document.querySelectorAll(".qualificationSubject")
+    //check whether got missing subject or not
+    const missingSubjects: string[] = []
+    setMissingSubject(false)
+
+    for (const subject of compulsorySubject) {
+      //initialize
+      let found = false
+
+      for (let i = 0; i < subjectContainers.length; i++) {
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement
+
+        const subjectValue = subjectSelect.value
+        console.log(subjectValue)
+
+        //if got then stop looping
+        if (subjectValue == subject) {
+          found = true
+          break
+        }
+
+      }
+
+      //if cannot find then push inside list
+      if (!found) {
+        missingSubjects.push(subject)
+        setMissingSubject(true)
+      }
+    }
+
+    return missingSubjects
+  }
+
+  //check empty grade
+  function hasEmptyGrade() {
+    const subjectContainers = document.querySelectorAll(".qualificationSubject")
+    const gradeContainers = document.querySelectorAll(".qualificationGrade")
+
+    //intiial wont show error message
+    setEmptyGrade(false)
+
+    for (let i = 0; i < subjectContainers.length; i++) {
+      const subjectSelect = subjectContainers[i] as HTMLSelectElement
+      const gradeSelect = gradeContainers[i] as HTMLSelectElement
+      const subjectValue = subjectSelect.value
+      const gradeValue = gradeSelect.value
+
+      //if got subject but empty grade then show error message
+      if (subjectValue != "") {
+        if (gradeValue == "") {
+          //mean got duplicate
+          setEmptyGrade(true)
+          return true
+        }
+      }
+    }
+
+    setEmptyGrade(false)
+    return false
+
+  }
+
+  //store programme data inside firebase
+  async function addProgrammeDataInsideDatabase() {
+    try {
+      const subjectContainers = document.querySelectorAll(".qualificationSubject")
+      const gradeContainers = document.querySelectorAll(".qualificationGrade")
+
+      const latestResultData: Record<string, string> = {}
+
+      for (let i = 0; i < subjectContainers.length; i++) {
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+
+        const subjectValue = subjectSelect.value;
+        const gradeValue = gradeSelect.value;
+
+        if (subjectValue != "") {
+          latestResultData[subjectValue] = gradeValue
+        }
+
+      }
+
+      //collection - Programme
+      const programmeDocRef = await addDoc(collection(db, "Programme"), {
+        InstituteName: instituteName,
+        ProgrammeDuration: duration,
+        ProgrammeName: name,
+        ProgrammeStudyLevel: studyLevel,
+        ProgrammePrice: price,
+        ProgrammeLastUpdateTimestamp: serverTimestamp(),
+        ProgrammeMinimumEntryRequirement: latestResultData
+      })
+      console.log("Document written with ID: ", programmeDocRef.id)
+
+    } catch (error) {
+      console.error("Error adding document", error)
+    }
+  }
+
+  //add programme
+  const addProgramme = async (data: [addProgrammeFormValues]) => {
+    console.log("Ok")
+    duplicateSubjectStatus = false
+    missingSubjectStatus = false
+    emptyGradeStatus = false
+
+    //check whether got duplicate subject or not
+    if (hasDuplicateSubjects()) {
+      duplicateSubjectStatus = true
+    }
+
+    //check whether got missing subject or not
+    const missingSubjects = hasMissingSubject()
+    if (missingSubjects.length > 0) {
+      missingSubjectStatus = true
+    }
+
+
+    //check whether got empty grade or not
+    if (hasEmptyGrade()) {
+      emptyGradeStatus = true
+    }
+
+    //if got duplicate subject
+    if (duplicateSubjectStatus || missingSubjectStatus || emptyGradeStatus) {
+      console.log("Fail to add inside database")
+    }
+
+
+    if (!duplicateSubjectStatus && !missingSubjectStatus && !emptyGradeStatus) {
+      console.log("Congratsaa")
+      addProgrammeDataInsideDatabase()
+    }
+  }
+
+  //fetch subject data from database
   const fetchSubjectData = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "Subject"));
@@ -172,7 +340,6 @@ export default function AddProgramme() {
 
       //put it inside subjectAbbreviation
       setSubjectAbbreviation(subjectAbbreviationDictionary)
-      //setSubjectDataFetched(true)
       console.log(subjectDataFetched)
 
 
@@ -203,19 +370,18 @@ export default function AddProgramme() {
       //update the state with the sorted institute name
       setInstituteNames(sortedInstituteNames)
       //all institute data is fetched successfully
-      //setInstituteDataFetched(true)
 
     } catch (error) {
       console.error("Error fetching institute names")
     }
   }
 
+  //wait to fetch institute name and subject data
   useEffect(() => {
     const fetchData = async () => {
       try {
         await fetchInstituteName()
         await fetchSubjectData()
-        setInstituteDataFetched(true)
         setSubjectDataFetched(true)
 
       } catch (error) {
@@ -227,6 +393,7 @@ export default function AddProgramme() {
   }, [])
 
 
+  //once fetch subject data successfully, then ready to display
   useEffect(() => {
     console.log(subjectDataFetched)
     if (subjectDataFetched == true) {
@@ -234,7 +401,6 @@ export default function AddProgramme() {
       setAllReady(true)
     }
   }, [subjectDataFetched])
-
 
 
 
@@ -269,9 +435,8 @@ export default function AddProgramme() {
   }
   return (
     <div>
-      <form style={{ margin: '20px' }}>
-
-        <div className="card" style={{ margin: '30px' }}>
+      <form>
+        <div className="card" style={{ margin: '30px', width: "100%" }}>
           <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
             <div style={{ paddingBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -395,53 +560,76 @@ export default function AddProgramme() {
                 <Label htmlFor="minimumEntryReq" value="Minimum Entry Requirement Details " />
                 <span style={{ color: "red" }}>*</span>
               </div>
-              <div style={{ display: 'flex' }}>
-                <table id="table table-borderless" style={{ color: "gray" }}>
-                  <thead id="gradeTableThead">
-                    <tr>
-                      <th style={{ width: "35%" }}>Subject</th>
-                      <th style={{ width: "15%" }}>Grade</th>
-                      <th style={{ width: "35%" }}>Subject</th>
-                      <th style={{ width: "15%" }}>Grade</th>
-                    </tr>
-                  </thead>
-                  <tbody id="gradeTableBody">
-                    <tr>
-                      <td style={{ width: "35%" }}>
-                        <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
-                          <option selected disabled value="">Select an option</option>
-                          {Object.entries(subjectAbbreviation).map(([value, text]) => (
-                            <option key={value} value={value} selected={value == "BM"}>{text}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td style={{ width: "15%" }}>
-                        <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
-                          <option selected disabled value="">Select an option</option>
-                          {gradeOptions.map((optionValue) => (
-                            <option key={optionValue} value={optionValue}>{optionValue}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td style={{ width: "35%" }}>
-                        <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
-                          <option selected disabled value="">Select an option</option>
-                          {Object.entries(subjectAbbreviation).map(([value, text]) => (
-                            <option key={value} value={value} selected={value == "SEJ"}>{text}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td style={{ width: "15%" }}>
-                        <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
-                          <option selected disabled value="">Select an option</option>
-                          {gradeOptions.map((optionValue) => (
-                            <option key={optionValue} value={optionValue}>{optionValue}</option>
-                          ))}
-                        </select>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div>
+                {duplicateSubject && (
+                  <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setDuplicateSubject(false)}>
+                    <span className="font-medium">Info alert!</span> Duplicate Subjects Are Not Allowed
+                  </Alert>
+                )}
+              </div>
+              <div>
+                {missingSubject && (
+                  <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
+                    <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
+                  </Alert>
+                )}
+              </div>
+              <div>
+                {emptyGrade && (
+                  <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setEmptyGrade(false)}>
+                    <span className="font-medium">Info alert!</span> Grade cannot be empty
+                  </Alert>
+                )}
+              </div>
+              <div>
+                <div style={{ display: 'flex' }}>
+                  <table id="table table-borderless" style={{ color: "gray" }}>
+                    <thead id="gradeTableThead">
+                      <tr>
+                        <th style={{ width: "35%", color: 'black' }}>Subject</th>
+                        <th style={{ width: "15%", color: 'black' }}>Grade</th>
+                        <th style={{ width: "35%", color: 'black' }}>Subject</th>
+                        <th style={{ width: "15%", color: 'black' }}>Grade</th>
+                      </tr>
+                    </thead>
+                    <tbody id="gradeTableBody">
+                      <tr>
+                        <td style={{ width: "35%" }}>
+                          <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
+                            <option selected disabled value="">Select an option</option>
+                            {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                              <option key={value} value={value} selected={value == "BM"}>{text}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td style={{ width: "15%" }}>
+                          <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
+                            <option selected disabled value="">Select an option</option>
+                            {gradeOptions.map((optionValue) => (
+                              <option key={optionValue} value={optionValue}>{optionValue}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td style={{ width: "35%" }}>
+                          <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
+                            <option selected disabled value="">Select an option</option>
+                            {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                              <option key={value} value={value} selected={value == "SEJ"}>{text}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td style={{ width: "15%" }}>
+                          <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
+                            <option selected disabled value="">Select an option</option>
+                            {gradeOptions.map((optionValue) => (
+                              <option key={optionValue} value={optionValue}>{optionValue}</option>
+                            ))}
+                          </select>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
                 <Button pill onClick={handleAddRowContainer}>
