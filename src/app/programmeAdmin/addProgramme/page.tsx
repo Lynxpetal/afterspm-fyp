@@ -41,7 +41,9 @@ export default function AddProgramme() {
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
   const compulsorySubject = ["BM", "SEJ"]
   const [allReady, setAllReady] = useState(false)
-  const [dataFetched, setDataFetched] = useState(false)
+  const [subjectDataFetched, setSubjectDataFetched] = useState(false)
+  const [instituteDataFetched, setInstituteDataFetched] = useState(false)
+  const [subjectContainerReady, setSubjectContainerReady] = useState(false)
 
   const isProgrammeNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
 
@@ -125,35 +127,11 @@ export default function AddProgramme() {
 
   }
 
-  //add table header
-  function createTableHeader(text: string, width: string) {
-    const header = document.createElement("th")
-    header.textContent = text
-    header.style.width = width
-    return header
-
-  }
-
   //add one row
   function handleAddRowContainer() {
     addTableDetails()
   }
 
-  //populate field with required subject
-  function fillFieldWithCompulsorySubject() {
-    const subjectContainers = document.querySelectorAll(".qualificationSubject")
-    for (let i = 0; i < subjectContainers.length; i++) {
-      const subjectSelect = subjectContainers[i] as HTMLSelectElement
-
-      if (i < compulsorySubject.length) {
-        const compulsorySubjectValue = compulsorySubject[i]
-        console.log(compulsorySubjectValue)
-        //set the selected subject in the subject container
-        subjectSelect.value = compulsorySubjectValue
-        console.log(subjectSelect.value)
-      }
-    }
-  }
 
   //delete one row
   function handleDeleteRowContainer() {
@@ -167,123 +145,98 @@ export default function AddProgramme() {
 
   }
 
-  //2 default programme minimum entry requirements 
-  async function manualInputProgrammeMinimumEntryRequirements() {
-    const gradeTableThead = document.getElementById("gradeTableThead")
-    if (gradeTableThead) {
-      gradeTableThead.innerHTML = ''
-    }
-    const headerRow = document.createElement("tr")
-
-    //create the header for first subject and grade
-    headerRow.appendChild(createTableHeader("Subject", "35%"))
-    headerRow.appendChild(createTableHeader("Grade", "15%"))
-
-    //create the header for second subject and grade
-    headerRow.appendChild(createTableHeader("Subject", "35%"))
-    headerRow.appendChild(createTableHeader("Grade", "15%"))
-
-    //add inside th section
-    gradeTableThead?.appendChild(headerRow)
-
-    //show compulsory subject so get how many data first
-    //then find need how many rows to display
-    const count = compulsorySubject.length
-    const numRowsToDisplay = Math.ceil(count / 2)
-
-    console.log(numRowsToDisplay)
-    for (let i = 0; i < numRowsToDisplay; i++) {
-      addTableDetails()
-
-    }
-
-    //default: 2 ninimum entry requirements
-    fillFieldWithCompulsorySubject()
-    setAllReady(true)
-    console.log("done")
-
-  }
-
 
   const addProgramme = async (data: [addProgrammeFormValues]) => {
     console.log("Ok")
   }
 
+  const fetchSubjectData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "Subject"));
+
+      //declare the data type of the data
+      const data: SubjectData[] = []
+
+      //get all the data and push inside the data variable
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() } as SubjectData)
+      })
+
+      //declare a dictionary cuz want to get {"BC": "BAHASA CINA", ...}
+      const subjectAbbreviationDictionary: Record<string, string> = {}
+      data.forEach(({ SubjectAbbreviation, SubjectName }) => {
+        if (SubjectAbbreviation && SubjectName) {
+          subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
+        }
+      });
+
+      //put it inside subjectAbbreviation
+      setSubjectAbbreviation(subjectAbbreviationDictionary)
+      //setSubjectDataFetched(true)
+      console.log(subjectDataFetched)
+
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+
+  //fetch data from firebase for drop down list
+  const fetchInstituteName = async () => {
+    try {
+      const q = query(instituteCollection, orderBy('InstituteName'))
+      const querySnapshot = await getDocs(q)
+      const instituteName: string[] = []
+      querySnapshot.forEach((doc) => {
+        instituteName.push(doc.data().InstituteName)
+      })
+
+      //sort it based on alphabetical order
+      const sortedInstituteNames = instituteName.sort()
+
+      //default: first institute name
+      if (sortedInstituteNames.length > 0) {
+        setInstituteName(sortedInstituteNames[0])
+      }
+
+      //update the state with the sorted institute name
+      setInstituteNames(sortedInstituteNames)
+      //all institute data is fetched successfully
+      //setInstituteDataFetched(true)
+
+    } catch (error) {
+      console.error("Error fetching institute names")
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
-      setDataFetched(false)
       try {
-        const querySnapshot = await getDocs(collection(db, "Subject"));
-
-        //declare the data type of the data
-        const data: SubjectData[] = []
-
-        //get all the data and push inside the data variable
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() } as SubjectData)
-        })
-
-        //declare a dictionary cuz want to get {"BC": "BAHASA CINA", ...}
-        const subjectAbbreviationDictionary: Record<string, string> = {}
-        data.forEach(({ SubjectAbbreviation, SubjectName }) => {
-          if (SubjectAbbreviation && SubjectName) {
-            subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
-          }
-        });
-
-        //put it inside subjectAbbreviation
-        setSubjectAbbreviation(subjectAbbreviationDictionary)
-        setDataFetched(true)
-
+        await fetchInstituteName()
+        await fetchSubjectData()
+        setInstituteDataFetched(true)
+        setSubjectDataFetched(true)
 
       } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    //fetch data from firebase for drop down list
-    const fetchInstituteName = async () => {
-      setAllReady(false)
-      try {
-        const q = query(instituteCollection, orderBy('InstituteName'))
-        const querySnapshot = await getDocs(q)
-        const instituteName: string[] = []
-        querySnapshot.forEach((doc) => {
-          instituteName.push(doc.data().InstituteName)
-        })
-
-        //sort it based on alphabetical order
-        const sortedInstituteNames = instituteName.sort()
-
-        //default: first institute name
-        if (sortedInstituteNames.length > 0) {
-          setInstituteName(sortedInstituteNames[0])
-        }
-
-        //update the state with the sorted institute name
-        setInstituteNames(sortedInstituteNames)
-
-        //fetch subject name , abbreviation data 
-        //await cuz asynchronization
-        await fetchData()
-
-      } catch (error) {
-        console.error("Error fetching institute names")
+        console.error(error)
       }
     }
 
-    //first fetch institute name from database first
-    fetchInstituteName()
-
+    fetchData()
   }, [])
 
+
   useEffect(() => {
-    //after fetch subject data successfully then display subject and grade container
-    if (dataFetched == true) {
-      manualInputProgrammeMinimumEntryRequirements()
+    console.log(subjectDataFetched)
+    if (subjectDataFetched == true) {
+      console.log(subjectAbbreviation)
+      setAllReady(true)
     }
-  })
+  }, [subjectDataFetched])
+
+
+
 
   useEffect(() => {
     const isNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
@@ -299,7 +252,12 @@ export default function AddProgramme() {
     if (duration != '') {
       form.clearErrors("0.duration")
     }
-  })
+
+    if (studyLevel != '') {
+      form.clearErrors("0.studyLevel")
+    }
+
+  }, [name, price, duration, studyLevel])
 
   if (!allReady) {
     return (
@@ -440,8 +398,48 @@ export default function AddProgramme() {
               <div style={{ display: 'flex' }}>
                 <table id="table table-borderless" style={{ color: "gray" }}>
                   <thead id="gradeTableThead">
+                    <tr>
+                      <th style={{ width: "35%" }}>Subject</th>
+                      <th style={{ width: "15%" }}>Grade</th>
+                      <th style={{ width: "35%" }}>Subject</th>
+                      <th style={{ width: "15%" }}>Grade</th>
+                    </tr>
                   </thead>
                   <tbody id="gradeTableBody">
+                    <tr>
+                      <td style={{ width: "35%" }}>
+                        <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
+                          <option selected disabled value="">Select an option</option>
+                          {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                            <option key={value} value={value} selected={value == "BM"}>{text}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td style={{ width: "15%" }}>
+                        <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
+                          <option selected disabled value="">Select an option</option>
+                          {gradeOptions.map((optionValue) => (
+                            <option key={optionValue} value={optionValue}>{optionValue}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td style={{ width: "35%" }}>
+                        <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
+                          <option selected disabled value="">Select an option</option>
+                          {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                            <option key={value} value={value} selected={value == "SEJ"}>{text}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td style={{ width: "15%" }}>
+                        <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
+                          <option selected disabled value="">Select an option</option>
+                          {gradeOptions.map((optionValue) => (
+                            <option key={optionValue} value={optionValue}>{optionValue}</option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
