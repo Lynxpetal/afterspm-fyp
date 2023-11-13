@@ -3,6 +3,7 @@ import { FC, HTMLAttributes, useState } from "react";
 import { cn } from "../lib/validators/utils";
 import { Carousel, Label, Pagination, Radio } from 'flowbite-react';
 import { Question } from "../lib/validators/message";
+import { map } from "zod";
 
 
 interface FormProps extends HTMLAttributes<HTMLDivElement> {
@@ -14,10 +15,12 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
     const [Answer, setAnswer] = useState<Number[]>(Array(Form.length).fill(3))
     const [currentPage, setCurrentPage] = useState<number>(1);
     const onPageChange = (page: number) => {
-        
-        setAnswer(Answer.splice(currentPage, 1, document.getElementsByName(Form[currentPage].label).value))
+        console.log(document.getElementsByName(Form[currentPage].label))
         setCurrentPage(page)
     };
+
+    
+
     function getLabel(value: number) {
         switch (value) {
             case 1:
@@ -47,7 +50,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                     </div>
                 }
                 return <div className="flex pl-6 items-center gap-2">
-                    <Radio id={Form[currentPage].label} name={Form[currentPage].label} value={option} />
+                    <Radio id={Form[currentPage].label + option} name={Form[currentPage].label} value={option} />
                     <Label htmlFor="united-state">
                         {getLabel(option)}</Label>
                 </div>

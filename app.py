@@ -204,7 +204,8 @@ def uploadResult():
     except Exception as e:
         print("Error processing request:", str(e))
         return jsonify({"message": "Error processing request"})
-
- 
+@app.route("/career/reccomend", methods=['POST'])
+def reccomendCareer():
+    return 0
 if __name__ == '__main__':
     app.run(debug=True)
