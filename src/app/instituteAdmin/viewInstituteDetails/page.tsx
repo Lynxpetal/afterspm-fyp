@@ -4,13 +4,13 @@ import { useSearchParams } from 'next/navigation'
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "../../FirebaseConfig/firebaseConfig"
 import { Label, TextInput, Kbd, FileInput } from 'flowbite-react'
-import { BiSolidUser } from 'react-icons/bi'
 import { ImLocation2 } from 'react-icons/im'
 import { BsFillTelephoneFill } from 'react-icons/bs'
 import { HiMail } from 'react-icons/hi'
 import MoonLoader from "react-spinners/MoonLoader"
 import { BiArrowBack } from "react-icons/bi"
 import Link from "next/link"
+import { FaUniversity } from "react-icons/fa"
 
 export default function InstituteDetails() {
   //retrieve the id
@@ -98,7 +98,7 @@ export default function InstituteDetails() {
               type="text"
               className="form-control"
               id="name"
-              icon={BiSolidUser}
+              icon={FaUniversity}
               value={instituteName}
             />
           </div>

@@ -3,7 +3,6 @@ import { Label, TextInput, FileInput, Toast, Kbd } from 'flowbite-react'
 import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
-import { BiSolidUser } from 'react-icons/bi'
 import { ImLocation2 } from 'react-icons/im'
 import { BsFillTelephoneFill } from 'react-icons/bs'
 import { HiMail } from 'react-icons/hi'
@@ -17,6 +16,7 @@ import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import { useRouter } from "next/navigation"
+import { FaUniversity } from 'react-icons/fa';
 
 type updateInstituteFormValues = {
   name: string;
@@ -264,7 +264,7 @@ return (
                 type="text"
                 className="form-control"
                 id="name"
-                icon={BiSolidUser}
+                icon={FaUniversity}
                 value={instituteName}
                 {...register("0.name", {
                   minLength: {
