@@ -657,7 +657,7 @@ export default function updateProgramme() {
                           <tr key={index}>
                             <td style={{ width: "35%" }}>
                               <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
-                                <option value="" selected>Select an option</option>
+                                <option key="" value="" selected disabled style={{ width: "100%" }}>Select an option</option>
                                 {Object.entries(subjectAbbreviation).map(([value, text]) => (
                                   <option key={value} value={value} selected={value == subjectGrades[index][0]}>{text}</option>
                                 ))}
@@ -666,9 +666,9 @@ export default function updateProgramme() {
                             </td>
                             <td style={{ width: "15%" }}>
                               <select className="form-select qualificationGrade" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
-                                <option key="" value="">Select an option</option>
+                                <option key="" value="" selected disabled style={{ width: "100%" }}>Select an option</option>
                                 {gradeOptions.map((optionValue) => (
-                                  <option key={optionValue} value={optionValue} selected={optionValue == subjectGrades[index][1]}>{optionValue}</option>
+                                  <option key={optionValue} value={optionValue} style={{ width: "100%" }} selected={optionValue == subjectGrades[index][1]}>{optionValue}</option>
                                 ))}
                               </select>
                             </td>
@@ -677,7 +677,7 @@ export default function updateProgramme() {
                               <>
                                 <td style={{ width: "35%" }}>
                                   <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
-                                    <option value="" selected>Select an option</option>
+                                    <option key="" value="" selected disabled style={{ width: "100%" }}>Select an option</option>
                                     {Object.entries(subjectAbbreviation).map(([value, text]) => (
                                       <option key={value} value={value} selected={value == subjectGrades[index + 1][0]}>{text}</option>
                                     ))}
@@ -685,7 +685,7 @@ export default function updateProgramme() {
                                 </td>
                                 <td style={{ width: "15%" }}>
                                   <select className="form-select qualificationGrade" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
-                                    <option key="" value="">Select an option</option>
+                                    <option key="" value="" selected disabled style={{ width: "100%" }}>Select an option</option>
                                     {gradeOptions.map((optionValue) => (
                                       <option key={optionValue} value={optionValue} selected={optionValue == subjectGrades[index + 1][1]}>{optionValue}</option>
                                     ))}
@@ -697,7 +697,7 @@ export default function updateProgramme() {
                                 {/*render default options if next index does not exist */}
                                 <td style={{ width: "35%" }}>
                                   <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
-                                    <option value="" selected>Select an option</option>
+                                    <option key="" value="" selected disabled style={{ width: "100%" }}>Select an option</option>
                                     {Object.entries(subjectAbbreviation).map(([value, text]) => (
                                       <option key={value} value={value}>{text}</option>
                                     ))}
@@ -705,7 +705,7 @@ export default function updateProgramme() {
                                 </td>
                                 <td style={{ width: "15%" }}>
                                   <select className="form-select qualificationGrade" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
-                                    <option value="" selected>Select an option</option>
+                                    <option key="" value="" selected disabled style={{ width: "100%" }}>Select an option</option>
                                     {gradeOptions.map((optionValue) => (
                                       <option key={optionValue} value={optionValue}>{optionValue}</option>
                                     ))}
