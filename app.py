@@ -178,6 +178,9 @@ def subjectAbbreviationDictionary():
 
     return subjectAbbreviation_dict
 
+def reccomendCareer():
+    return 0
+
 @app.route("/uploadResult", methods=['POST'])
 def uploadResult():
     try:
