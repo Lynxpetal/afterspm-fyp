@@ -1,28 +1,31 @@
 'use client'
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { Label, TextInput, Alert, Kbd, Dropdown, Button } from 'flowbite-react'
-import { instituteCollection } from "@/app/lib/controller"
-import { addDoc, collection, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore"
-import Link from 'next/link'
-import { HiCheck } from 'react-icons/hi'
-import { AiOutlineClose } from 'react-icons/ai'
-import { HiInformationCircle } from 'react-icons/hi'
+
 import { db } from "@/app/FirebaseConfig/firebaseConfig"
+import { collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, updateDoc } from "firebase/firestore"
+import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useForm } from 'react-hook-form'
 import MoonLoader from "react-spinners/MoonLoader"
+import { AiOutlineClose } from 'react-icons/ai'
+import Link from 'next/link'
+import { Label, TextInput, Kbd, Dropdown, Button, Alert } from 'flowbite-react'
+import { HiCheck } from 'react-icons/hi'
+import { instituteCollection } from "@/app/lib/controller"
 import Swal from 'sweetalert2'
 import { useRouter } from "next/navigation"
+import { HiInformationCircle } from 'react-icons/hi'
 import { FaBookOpen } from "react-icons/fa"
 import { MdAttachMoney } from "react-icons/md"
 import { IoMdTime } from "react-icons/io"
 
-type addProgrammeFormValues = {
-  name: string,
-  instituteName: string,
-  price: string,
-  duration: string
-  studyLevel: string
-  minimumEntryRequirement: Map<string, string>
+
+type updateProgrammeFormValues = {
+  name: string;
+  instituteName: string;
+  price: string;
+  duration: string;
+  studyLevel: string;
+  minEntryRequirements: Record<string, string>;
 }
 
 interface SubjectData {
@@ -32,31 +35,68 @@ interface SubjectData {
   SubjectName?: string
 }
 
+export default function updateProgramme() {
+  //retrieve the id
+  const searchParams = useSearchParams()
+  const programmeId = searchParams.get('search')
+  console.log(programmeId)
 
-export default function AddProgramme() {
-  const form = useForm<[addProgrammeFormValues]>()
-  const [subjectAbbreviation, setSubjectAbbreviation] = useState<Record<string, string>>({})
-  const [name, setProgrammeName] = useState("")
-  const [instituteNames, setInstituteNames] = useState<string[]>([]);
+  const form = useForm<[updateProgrammeFormValues]>()
+  const [programmeDataFetched, setProgrammeDataFetched] = useState(false)
+  const [programmeName, setProgrammeName] = useState('')
   const [instituteName, setInstituteName] = useState('')
-  const [price, setPrice] = useState("")
-  const [duration, setDuration] = useState("")
-  const [studyLevel, setStudyLevel] = useState("Diploma")
+  const [instituteNames, setInstituteNames] = useState<string[]>([])
+  const [programmePrice, setProgrammePrice] = useState('')
+  const [programmeDuration, setProgrammeDuration] = useState('')
+  const [programmeStudyLevel, setProgrammeStudyLevel] = useState('')
   const { register, handleSubmit, formState } = form
   const { errors } = formState
+  const [subjectAbbreviation, setSubjectAbbreviation] = useState<Record<string, string>>({})
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
-  const [allReady, setAllReady] = useState(false)
   const [subjectDataFetched, setSubjectDataFetched] = useState(false)
+  const [allReady, setAllReady] = useState(false)
+  const [subjectGrades, setSubjectGrades] = useState<[string, string][]>([])
   const [duplicateSubject, setDuplicateSubject] = useState(false)
   const [missingSubject, setMissingSubject] = useState(false)
   const [emptyGrade, setEmptyGrade] = useState(false)
-  const compulsorySubject = ["BM", "SEJ"]
   var missingSubjectStatus = false
   var duplicateSubjectStatus = false
   var emptyGradeStatus = false
+  const compulsorySubject = ["BM", "SEJ"]
   const router = useRouter()
 
   const isProgrammeNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+
+  //fetch programme data
+  const fetchUpdateProgrammeData = async () => {
+    try {
+      setProgrammeDataFetched(false)
+      const updateProgrammeDocRef = doc(db, "Programme", programmeId)
+      const updateProgrammeDocSnap = await getDoc(updateProgrammeDocRef)
+
+      if (updateProgrammeDocSnap.exists()) {
+        console.log("Document data: ", updateProgrammeDocSnap.data())
+        setProgrammeName(updateProgrammeDocSnap.data().ProgrammeName)
+        setInstituteName(updateProgrammeDocSnap.data().InstituteName)
+        setProgrammePrice(updateProgrammeDocSnap.data().ProgrammePrice)
+        setProgrammeDuration(updateProgrammeDocSnap.data().ProgrammeDuration)
+        setProgrammeStudyLevel(updateProgrammeDocSnap.data().ProgrammeStudyLevel)
+
+        //turn it into array
+        const entries: [string, string][] = Object.entries(updateProgrammeDocSnap.data().ProgrammeMinimumEntryRequirement)
+        setSubjectGrades(entries)
+
+      } else {
+        console.log("No document")
+      }
+    } catch (error) {
+      console.error("Error fetching document: ", error)
+
+      //data is fetched successfully
+    } finally {
+      setProgrammeDataFetched(true)
+    }
+  }
 
   //select from multiple options 
   function createSelect(className: string, name: string, id: string, arialabel: string) {
@@ -93,7 +133,6 @@ export default function AddProgramme() {
     subjectContainer.style.width = "35%"
     const gradeContainer = document.createElement("td")
     gradeContainer.style.width = "15%"
-    gradeContainer.style.marginRight = "10px"
 
     const subjectSelect = createSelect("form-select qualificationSubject", "qualificationSubject", "inputQualification", "Default select example")
     subjectSelect.appendChild(createDefaultOption())
@@ -143,7 +182,6 @@ export default function AddProgramme() {
     addTableDetails()
   }
 
-
   //delete one row
   function handleDeleteRowContainer() {
     const gradeTableBody = document.getElementById("gradeTableBody")
@@ -184,6 +222,37 @@ export default function AddProgramme() {
     return false
 
 
+  }
+
+  //fetch subject data from database
+  const fetchSubjectData = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "Subject"));
+
+      //declare the data type of the data
+      const data: SubjectData[] = []
+
+      //get all the data and push inside the data variable
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() } as SubjectData)
+      })
+
+      //declare a dictionary cuz want to get {"BC": "BAHASA CINA", ...}
+      const subjectAbbreviationDictionary: Record<string, string> = {}
+      data.forEach(({ SubjectAbbreviation, SubjectName }) => {
+        if (SubjectAbbreviation && SubjectName) {
+          subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
+        }
+      });
+
+      //put it inside subjectAbbreviation
+      setSubjectAbbreviation(subjectAbbreviationDictionary)
+      console.log(subjectDataFetched)
+
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
 
   //check missing subject
@@ -250,46 +319,8 @@ export default function AddProgramme() {
 
   }
 
-  //store programme data inside firebase
-  async function addProgrammeDataInsideDatabase() {
-    try {
-      const subjectContainers = document.querySelectorAll(".qualificationSubject")
-      const gradeContainers = document.querySelectorAll(".qualificationGrade")
-
-      const latestResultData: Record<string, string> = {}
-
-      for (let i = 0; i < subjectContainers.length; i++) {
-        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
-        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
-
-        const subjectValue = subjectSelect.value;
-        const gradeValue = gradeSelect.value;
-
-        if (subjectValue != "") {
-          latestResultData[subjectValue] = gradeValue
-        }
-
-      }
-
-      //collection - Programme
-      const programmeDocRef = await addDoc(collection(db, "Programme"), {
-        InstituteName: instituteName,
-        ProgrammeDuration: duration,
-        ProgrammeName: name,
-        ProgrammeStudyLevel: studyLevel,
-        ProgrammePrice: price,
-        ProgrammeLastUpdateTimestamp: serverTimestamp(),
-        ProgrammeMinimumEntryRequirement: latestResultData
-      })
-      console.log("Document written with ID: ", programmeDocRef.id)
-
-    } catch (error) {
-      console.error("Error adding document", error)
-    }
-  }
-
-  //add programme
-  const addProgramme = async (data: [addProgrammeFormValues]) => {
+  //update programme
+  const updateProgramme = async (data: [updateProgrammeFormValues]) => {
     console.log("Ok")
     duplicateSubjectStatus = false
     missingSubjectStatus = false
@@ -321,7 +352,7 @@ export default function AddProgramme() {
     if (!duplicateSubjectStatus && !missingSubjectStatus && !emptyGradeStatus) {
       Swal.fire({
         title: "Are you sure?",
-        text: "Double confirm that information is correctly entered before added in the database.",
+        text: "Double confirm that information is correctly entered before updated in the database.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -329,10 +360,10 @@ export default function AddProgramme() {
         confirmButtonText: "Yes"
       }).then((result) => {
         if (result.isConfirmed) {
-          addProgrammeDataInsideDatabase()
+          updateProgrammeDataInsideDatabase()
           Swal.fire({
             title: "Great!",
-            text: "Add successfully inside the database",
+            text: "Update successfully inside the database",
             icon: "success",
           }).then(() => {
             //Navigate to /programmeAdmin after user presses ok
@@ -340,59 +371,93 @@ export default function AddProgramme() {
           });
         }
       });
-      
+
     }
+
   }
 
-  //fetch subject data from database
-  const fetchSubjectData = async () => {
+  //update programme data inside firebase
+  async function updateProgrammeDataInsideDatabase() {
     try {
-      const querySnapshot = await getDocs(collection(db, "Subject"));
+      const subjectContainers = document.querySelectorAll(".qualificationSubject")
+      const gradeContainers = document.querySelectorAll(".qualificationGrade")
 
-      //declare the data type of the data
-      const data: SubjectData[] = []
+      const latestResultData: Record<string, string> = {}
 
-      //get all the data and push inside the data variable
-      querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() } as SubjectData)
-      })
+      for (let i = 0; i < subjectContainers.length; i++) {
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
 
-      //declare a dictionary cuz want to get {"BC": "BAHASA CINA", ...}
-      const subjectAbbreviationDictionary: Record<string, string> = {}
-      data.forEach(({ SubjectAbbreviation, SubjectName }) => {
-        if (SubjectAbbreviation && SubjectName) {
-          subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
+        const subjectValue = subjectSelect.value;
+        const gradeValue = gradeSelect.value;
+
+        if (subjectValue != "") {
+          latestResultData[subjectValue] = gradeValue
         }
-      });
 
-      //put it inside subjectAbbreviation
-      setSubjectAbbreviation(subjectAbbreviationDictionary)
-      console.log(subjectDataFetched)
+      }
 
+      //collection - Programme
+      const updateProgrammeDocRef = doc(db, 'Programme', programmeId)
+      updateDoc(updateProgrammeDocRef, {
+        ProgrammeName: programmeName,
+        InstituteName: instituteName,
+        ProgrammePrice: programmePrice,
+        ProgrammeDuration: programmeDuration,
+        ProgrammeStudyLevel: programmeStudyLevel,
+        ProgrammeMinimumEntryRequirement: latestResultData,
+        ProgrammeLastUpdateTimestamp: serverTimestamp(),
+      })
+      console.log("Complete Updating")
 
     } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+      console.error("Error updating document", error)
 
+    }
+
+  }
+
+
+
+  //fetch programme data from database first then fetch institute name data from database
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchUpdateProgrammeData()
+        await fetchInstituteName()
+        await fetchSubjectData()
+        setSubjectDataFetched(true)
+
+      } catch (error) {
+        console.error(error)
+
+      }
+    }
+    fetchData()
+
+  }, [])
+
+  useEffect(() => {
+    console.log(subjectDataFetched)
+    if (subjectDataFetched == true) {
+      console.log(subjectAbbreviation)
+      setAllReady(true)
+    }
+  }, [subjectDataFetched])
 
   //fetch data from firebase for drop down list
   const fetchInstituteName = async () => {
     try {
       const q = query(instituteCollection, orderBy('InstituteName'))
       const querySnapshot = await getDocs(q)
-      const instituteName: string[] = []
+      const instituteNameList: string[] = []
       querySnapshot.forEach((doc) => {
-        instituteName.push(doc.data().InstituteName)
+        instituteNameList.push(doc.data().InstituteName)
       })
 
       //sort it based on alphabetical order
-      const sortedInstituteNames = instituteName.sort()
+      const sortedInstituteNames = instituteNameList.sort()
 
-      //default: first institute name
-      if (sortedInstituteNames.length > 0) {
-        setInstituteName(sortedInstituteNames[0])
-      }
 
       //update the state with the sorted institute name
       setInstituteNames(sortedInstituteNames)
@@ -403,53 +468,16 @@ export default function AddProgramme() {
     }
   }
 
-  //wait to fetch institute name and subject data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchInstituteName()
-        await fetchSubjectData()
-        setSubjectDataFetched(true)
-
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    fetchData()
-  }, [])
-
-
-  //once fetch subject data successfully, then ready to display
-  useEffect(() => {
-    console.log(subjectDataFetched)
-    if (subjectDataFetched == true) {
-      console.log(subjectAbbreviation)
-      setAllReady(true)
-    }
-  }, [subjectDataFetched])
 
 
   useEffect(() => {
     const isNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
 
-    if (isNameValid.test(name) && name.length >= 20) {
+    if (isNameValid.test(programmeName) && programmeName.length >= 20) {
       form.clearErrors("0.name")
     }
+  }, [programmeName])
 
-    if (price != '') {
-      form.clearErrors("0.price")
-    }
-
-    if (duration != '') {
-      form.clearErrors("0.duration")
-    }
-
-    if (studyLevel != '') {
-      form.clearErrors("0.studyLevel")
-    }
-
-  }, [name, price, duration, studyLevel])
 
   if (!allReady) {
     return (
@@ -469,9 +497,9 @@ export default function AddProgramme() {
                 <Link href={{ pathname: '/programmeAdmin' }}>
                   <Kbd icon={AiOutlineClose} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
                 </Link>
-                <h1 className="programmeHeader">Add New Programme</h1>
+                <h1 className="programmeHeader">Update Programme Information</h1>
                 <div>
-                  <Kbd icon={HiCheck} onClick={handleSubmit(addProgramme)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
+                  <Kbd icon={HiCheck} onClick={handleSubmit(updateProgramme)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
                 </div>
               </div>
             </div>
@@ -484,8 +512,8 @@ export default function AddProgramme() {
                   type="text"
                   className="form-control"
                   id="name"
-                  placeholder="Diploma in Computer Science"
                   icon={FaBookOpen}
+                  value={programmeName}
                   {...register("0.name", {
                     required: {
                       value: true,
@@ -512,9 +540,9 @@ export default function AddProgramme() {
                 <span style={{ color: "red" }}>*</span>
                 <Dropdown
                   label={instituteName}
+                  dismissOnClick={true}
                   style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
-                  placement="bottom"
-                  >
+                  placement="bottom">
                   {instituteNames.map((name) => (
                     <Dropdown.Item key={name} onClick={() => setInstituteName(name)}>{name}</Dropdown.Item>
                   ))}
@@ -530,16 +558,16 @@ export default function AddProgramme() {
                   type="number"
                   className="form-control"
                   id="price"
-                  placeholder="17600"
                   min="1"
                   icon={MdAttachMoney}
+                  value={programmePrice}
                   {...register("0.price", {
                     required: {
                       value: true,
                       message: "Price is required"
                     }
                   })}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => setProgrammePrice(e.target.value)}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.price?.message}</p>
               </div>
@@ -553,17 +581,17 @@ export default function AddProgramme() {
                   type="number"
                   className="form-control"
                   id="duration"
-                  placeholder="1.5"
                   min="1"
                   step="0.5"
                   icon={IoMdTime}
+                  value={programmeDuration}
                   {...register("0.duration", {
                     required: {
                       value: true,
                       message: "Programme duration is required"
                     }
                   })}
-                  onChange={(e) => setDuration(e.target.value)}
+                  onChange={(e) => setProgrammeDuration(e.target.value)}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.duration?.message}</p>
               </div>
@@ -574,12 +602,12 @@ export default function AddProgramme() {
                 <Label htmlFor="name" value="Study Level " />
                 <span style={{ color: "red" }}>*</span>
                 <Dropdown
-                  label={studyLevel}
+                  label={programmeStudyLevel}
                   dismissOnClick={true}
                   style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
                   placement="bottom">
-                  <Dropdown.Item onClick={() => setStudyLevel('Foundation')}>Foundation</Dropdown.Item>
-                  <Dropdown.Item onClick={() => setStudyLevel('Diploma')}>Diploma</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setProgrammeStudyLevel('Foundation')}>Foundation</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setProgrammeStudyLevel('Diploma')}>Diploma</Dropdown.Item>
                 </Dropdown>
               </div>
             </div>
@@ -622,40 +650,68 @@ export default function AddProgramme() {
                       </tr>
                     </thead>
                     <tbody id="gradeTableBody">
-                      <tr>
-                        <td style={{ width: "35%" }}>
-                          <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
-                            <option selected disabled value="">Select an option</option>
-                            {Object.entries(subjectAbbreviation).map(([value, text]) => (
-                              <option key={value} value={value} selected={value == "BM"}>{text}</option>
-                            ))}
-                          </select>
-                        </td>
-                        <td style={{ width: "15%" }}>
-                          <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
-                            <option selected disabled value="">Select an option</option>
-                            {gradeOptions.map((optionValue) => (
-                              <option key={optionValue} value={optionValue}>{optionValue}</option>
-                            ))}
-                          </select>
-                        </td>
-                        <td style={{ width: "35%" }}>
-                          <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification">
-                            <option selected disabled value="">Select an option</option>
-                            {Object.entries(subjectAbbreviation).map(([value, text]) => (
-                              <option key={value} value={value} selected={value == "SEJ"}>{text}</option>
-                            ))}
-                          </select>
-                        </td>
-                        <td style={{ width: "15%" }}>
-                          <select className="form-select qualificationGrade" name="qualificationGrade" id="inputQualification">
-                            <option selected disabled value="">Select an option</option>
-                            {gradeOptions.map((optionValue) => (
-                              <option key={optionValue} value={optionValue}>{optionValue}</option>
-                            ))}
-                          </select>
-                        </td>
-                      </tr>
+                      {subjectGrades.map(([subject, grade], index) => (
+                        //if the index is even then open new row
+                        //then map the subject abbreviation to get the text
+                        index % 2 == 0 && (
+                          <tr key={index}>
+                            <td style={{ width: "35%" }}>
+                              <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
+                                {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                                  <option key={value} value={value} selected={value == subjectGrades[index][0]}>{text}</option>
+                                ))}
+                              </select>
+
+                            </td>
+                            <td style={{ width: "15%" }}>
+                              <select className="form-select qualificationGrade" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
+                                {gradeOptions.map((optionValue) => (
+                                  <option key={optionValue} value={optionValue} selected={optionValue == subjectGrades[index][1]}>{optionValue}</option>
+                                ))}
+                              </select>
+                            </td>
+                            {/*will check whether next index exists or not*/}
+                            {subjectGrades[index + 1] ? (
+                              <>
+                                <td style={{ width: "35%" }}>
+                                  <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
+                                    {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                                      <option key={value} value={value} selected={value == subjectGrades[index + 1][0]}>{text}</option>
+                                    ))}
+                                  </select>
+                                </td>
+                                <td style={{ width: "15%" }}>
+                                  <select className="form-select qualificationGrade" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
+                                    {gradeOptions.map((optionValue) => (
+                                      <option key={optionValue} value={optionValue} selected={optionValue == subjectGrades[index + 1][1]}>{optionValue}</option>
+                                    ))}
+                                  </select>
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                {/*render default options if next index does not exist */}
+                                <td style={{ width: "35%" }}>
+                                  <select className="form-select qualificationSubject" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
+                                    <option value="" selected>Select an option</option>
+                                    {Object.entries(subjectAbbreviation).map(([value, text]) => (
+                                      <option key={value} value={value}>{text}</option>
+                                    ))}
+                                  </select>
+                                </td>
+                                <td style={{ width: "15%" }}>
+                                  <select className="form-select qualificationGrade" name="qualificationSubject" id="inputQualification" style={{ width: "100%" }}>
+                                    <option value="" selected>Select an option</option>
+                                    {gradeOptions.map((optionValue) => (
+                                      <option key={optionValue} value={optionValue}>{optionValue}</option>
+                                    ))}
+                                  </select>
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        )
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -670,10 +726,10 @@ export default function AddProgramme() {
               </div>
             </div>
 
-
           </div>
         </div>
-      </form>
-    </div>
+      </form >
+    </div >
   )
+
 }

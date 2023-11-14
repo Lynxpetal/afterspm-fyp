@@ -12,7 +12,8 @@ import MoonLoader from "react-spinners/MoonLoader"
 import { GrAddCircle } from 'react-icons/gr'
 import { FaUniversity } from 'react-icons/fa'
 import Swal from 'sweetalert2'
-import { db } from '../FirebaseConfig/firebaseConfig';
+import { db } from '../FirebaseConfig/firebaseConfig'
+
 
 export default function InstituteAdmin() {
   const [institute, setInstitute] = useState<NewInstituteType[]>([])
