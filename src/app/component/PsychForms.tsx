@@ -3,9 +3,10 @@ import { FC, HTMLAttributes, useEffect, useState } from "react";
 import { cn } from "../lib/validators/utils";
 import { Button, Label, Pagination, Progress, Radio, Tooltip } from 'flowbite-react';
 import { Question } from "../lib/validators/message";
-import { addDoc, collection, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 import { db } from "../FirebaseConfig/firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { testCollection } from "../lib/controller";
 
 
 
@@ -21,32 +22,37 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
     const onPageChange = (page: number) => {
         setCurrentPage(page)
     };
-    async function submitForms(testResult: string, testName: string) {
+    async function submitForms(HollandResult: string, BigFiveResult: string) {
         const auth = getAuth()
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const q = query(resultCollection, where("user", "==", user.uid))
-                const
-            }D
+                const q = query(testCollection, where("user", "==", user.uid))
+                const querySnapshot = await getDocs(q)
+
+                if (querySnapshot.size == 0) {
+                    try {
+                        // collection - Test
+                        await addDoc(collection(db, "Test"), {
+                            UserID: user.uid,
+                            BigFiveResult: BigFiveResult,
+                            HollandResult: HollandResult, 
+                        })
+                        console.log("Document written with ID")
+                        return true
+                    } catch (error) {
+                        console.error("Error adding document", error)
+                        return false
+                    }
+                }
+                else{
+                    querySnapshot[0]
+                }
+            }
+            else {
+                console.log("no id")
+            }
         })
-        try {
-            // collection - Institute
-            const instituteDocRef = await addDoc(collection(db, "Test"), {
-                UserID: user,
-                BigFiveResult: testResult,
-                HollandResult: phoneNumber,
-                InstituteEmailAddress: emailAddress,
-                InstituteImageName: imageName,
-                InstituteImagePath: imagePath,
-                InstituteImageUrl: imageUrl,
-                InstituteLastUpdateTimestamp: serverTimestamp(),
-            });
-            console.log("Document written with ID: ", instituteDocRef.id)
-            return true
-        } catch (error) {
-            console.error("Error adding document", error)
-            return false
-        }
+
     }
 
     function onSubmit() {
