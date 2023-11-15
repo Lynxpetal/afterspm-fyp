@@ -1,9 +1,12 @@
 "use client"
 import { FC, HTMLAttributes, useEffect, useState } from "react";
 import { cn } from "../lib/validators/utils";
-import { Button, Carousel, Label, Pagination, Progress, Radio } from 'flowbite-react';
+import { Button, Label, Pagination, Progress, Radio, Tooltip } from 'flowbite-react';
 import { Question } from "../lib/validators/message";
-import { map } from "zod";
+import { addDoc, collection, query, serverTimestamp, where } from "firebase/firestore";
+import { db } from "../FirebaseConfig/firebaseConfig";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 
 interface FormProps extends HTMLAttributes<HTMLDivElement> {
@@ -18,6 +21,33 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
     const onPageChange = (page: number) => {
         setCurrentPage(page)
     };
+    async function submitForms(testResult: string, testName: string) {
+        const auth = getAuth()
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const q = query(resultCollection, where("user", "==", user.uid))
+                const
+            }D
+        })
+        try {
+            // collection - Institute
+            const instituteDocRef = await addDoc(collection(db, "Test"), {
+                UserID: user,
+                BigFiveResult: testResult,
+                HollandResult: phoneNumber,
+                InstituteEmailAddress: emailAddress,
+                InstituteImageName: imageName,
+                InstituteImagePath: imagePath,
+                InstituteImageUrl: imageUrl,
+                InstituteLastUpdateTimestamp: serverTimestamp(),
+            });
+            console.log("Document written with ID: ", instituteDocRef.id)
+            return true
+        } catch (error) {
+            console.error("Error adding document", error)
+            return false
+        }
+    }
 
     function onSubmit() {
         console.log("halo")
@@ -34,10 +64,10 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
         }
         let count = 0
         Answer.forEach(element => {
-           if (element != 0) {
-            count++
-           } 
-           console.log("working")
+            if (element != 0) {
+                count++
+            }
+            console.log("working")
         });
         console.log(count / Answer.length * 100)
         setProgressState(count / Answer.length * 100)
@@ -76,15 +106,15 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
     }
     function progressDisplay() {
         return (
-        <div className="flex flex-col gap-3">
-            <Progress progress={ProgressState} />
-            <div className=" flex flex-wrap gap-1 shadow-md rounded-md">{Answer.map(element => {
-            return <div className={cn(" h-10 w-10 border-solid border-2 border-white rounded-md", {
-                " bg-slate-600": element == 0,
-                " bg-green-400": element != 0 && element != null,
-            })} />
-        })
-        }</div></div>)
+            <div className="flex flex-col gap-3">
+                <Progress progress={ProgressState} />
+                <div className=" flex flex-wrap gap-1 shadow-md rounded-md">{Answer.map(element => {
+                    return <div className={cn(" h-10 w-10 border-solid border-2 border-white rounded-md", {
+                        " bg-slate-600": element == 0,
+                        " bg-green-400": element != 0 && element != null,
+                    })} />
+                })
+                }</div></div>)
     }
 
     return (
@@ -104,7 +134,11 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                     <Pagination layout="navigation" currentPage={currentPage} totalPages={Form.length} onPageChange={onPageChange} showIcons />
                 </div>
             </div>
-            <div className="absolute inset-y-40 w-40 h-40 right-6 content-center rounded-lg shadow-lg bg-neutral-600"> hola</div>
+            <div className="absolute inset-y-40 right-10 content-center">
+                <Tooltip className="" content="Make sure you answer all the questions">
+                    <Button gradientDuoTone="greenToBlue" className="w-40 h-40 text-center justify-center rounded-lg shadow-lg" >Submit Form</Button>
+                </Tooltip>
+            </div>
         </div >
     )
 }

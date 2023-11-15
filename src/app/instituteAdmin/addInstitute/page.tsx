@@ -106,7 +106,7 @@ export default function InstituteAdmin() {
       if (instituteImageFile) {
         const instituteImageRef = ref(storage, `InstituteImage/${v4()}`)
         const instituteData = await uploadBytes(instituteImageRef, instituteImageFile)
-        const instituteUrlVal = await getDownloadURL(instituteData.ref)
+        const instituteUrlVal = await getDownloadURL(instituteData.ref) 
 
         const imageName = instituteImageFile.name
 
