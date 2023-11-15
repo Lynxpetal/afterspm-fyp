@@ -47,6 +47,9 @@ uuid
 sweetalert2
 - npm install sweetalert2
 
+mui/material
+- npm install @mui/material @emotion/react @emotion/styled
+
 //for Flask
 1. Click the title of the project with the search icon
 2. Click 'Show and run commands'
