@@ -1,12 +1,12 @@
 'use client'
-import { Label, RangeSlider, TextInput } from 'flowbite-react'
+import { Label, RangeSlider, TextInput, Dropdown } from 'flowbite-react'
 import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Slider from '@mui/material/Slider'
 
-
 export default function FilterInstituteProgramme() {
   const [value, setValue] = React.useState<number[]>([6000, 30000])
+  const [studyLevel, setStudyLevel] = useState("Diploma")
 
   //setValue([6000, 30000]) - set an array containing 2 number
   const handleChange = (event: Event, newValue: number | number[]) => {
@@ -70,12 +70,19 @@ export default function FilterInstituteProgramme() {
           </div>
         </div>
 
-        <div>
-          <div style={{ paddingBottom: '20px' }}>
-            <Label htmlFor="minimumPrice" value="Minimum Price" />
-
-          </div>
-        </div>
+        <div style={{ paddingBottom: '20px' }}>
+              <div className="mb-2 block">
+                <Label htmlFor="name" value="Study Level " />
+                <Dropdown
+                  label={studyLevel}
+                  dismissOnClick={true}
+                  style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+                  placement="bottom">
+                  <Dropdown.Item onClick={() => setStudyLevel('Foundation')}>Foundation</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setStudyLevel('Diploma')}>Diploma</Dropdown.Item>
+                </Dropdown>
+              </div>
+            </div>
 
       </div>
       <div className="flex-1 p-10 m-6 bg-slate-100" style={{ flex: '65%' }}>

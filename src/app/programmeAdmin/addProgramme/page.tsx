@@ -18,6 +18,7 @@ import { IoMdTime } from "react-icons/io"
 
 type addProgrammeFormValues = {
   name: string,
+  category: string,
   instituteName: string,
   price: string,
   duration: string
@@ -37,6 +38,12 @@ export default function AddProgramme() {
   const form = useForm<[addProgrammeFormValues]>()
   const [subjectAbbreviation, setSubjectAbbreviation] = useState<Record<string, string>>({})
   const [name, setProgrammeName] = useState("")
+  const courseCategory = ["Accounting & Business", "Arts & Communication", "Aviation & Maritime",
+  "Computer & Multimedia","Education & Languages", "Engineering & Architecture",
+  "Hospitality & Tourism", "Law & Humanities", "Maths, Sciences & Technology",
+  "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
+  const [allReady, setAllReady] = useState(false)
+  const [programmeCategory, setProgrammeCategory] = useState(courseCategory[0])
   const [instituteNames, setInstituteNames] = useState<string[]>([]);
   const [instituteName, setInstituteName] = useState('')
   const [price, setPrice] = useState("")
@@ -45,7 +52,6 @@ export default function AddProgramme() {
   const { register, handleSubmit, formState } = form
   const { errors } = formState
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
-  const [allReady, setAllReady] = useState(false)
   const [subjectDataFetched, setSubjectDataFetched] = useState(false)
   const [duplicateSubject, setDuplicateSubject] = useState(false)
   const [missingSubject, setMissingSubject] = useState(false)
@@ -274,6 +280,7 @@ export default function AddProgramme() {
       //collection - Programme
       const programmeDocRef = await addDoc(collection(db, "Programme"), {
         InstituteName: instituteName,
+        ProgrammeCategory: programmeCategory,
         ProgrammeDuration: duration,
         ProgrammeName: name,
         ProgrammeStudyLevel: studyLevel,
@@ -445,11 +452,7 @@ export default function AddProgramme() {
       form.clearErrors("0.duration")
     }
 
-    if (studyLevel != '') {
-      form.clearErrors("0.studyLevel")
-    }
-
-  }, [name, price, duration, studyLevel])
+  }, [name, price, duration])
 
   if (!allReady) {
     return (
@@ -508,6 +511,22 @@ export default function AddProgramme() {
 
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
+                <Label htmlFor="name" value="Course Category " />
+                <span style={{ color: "red" }}>*</span>
+                <Dropdown
+                  label={programmeCategory}
+                  style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+                  placement="bottom"
+                  >
+                  {courseCategory.map((name) => (
+                    <Dropdown.Item key={name} onClick={() => setProgrammeCategory(name)}>{name}</Dropdown.Item>
+                  ))}
+                </Dropdown>
+              </div>
+            </div>
+
+            <div style={{ paddingBottom: '20px' }}>
+              <div className="mb-2 block">
                 <Label htmlFor="name" value="Institute Name " />
                 <span style={{ color: "red" }}>*</span>
                 <Dropdown
@@ -521,6 +540,7 @@ export default function AddProgramme() {
                 </Dropdown>
               </div>
             </div>
+
 
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">

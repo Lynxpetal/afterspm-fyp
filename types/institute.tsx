@@ -14,6 +14,7 @@ export interface NewInstituteType {
 
 export interface NewProgrammeType {
   InstituteName?: string
+  ProgrammeCategory?: string
   ProgrammeDuration?: string
   ProgrammeLastUpdateTimestamp?: Timestamp
   ProgrammeMinimumEntryRequirements?: Map<string, string>
