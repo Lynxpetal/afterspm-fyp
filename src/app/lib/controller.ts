@@ -7,5 +7,4 @@ export const firestore = getFirestore(app)
 export const instituteCollection = collection(firestore, 'Institute')
 export const programmeCollection = collection(firestore, 'Programme')
 
-//
 export const userCollection = collection(firestore, 'User')
