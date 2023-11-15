@@ -24,6 +24,7 @@ export default function ViewProgrammeDetails() {
   //fetch the single document
   const [isProgrammeFetchDataLoading, setIsProgrammeFetchDataLoading] = useState(true)
   const [programmeName, setProgrammeName] = useState('')
+  const [programmeCourseCategory, setProgrammeCourseCategory] = useState('')
   const [instituteName, setInstituteName] = useState('')
   const [programmeDuration, setProgrammeDuration] = useState('')
   const [programmePrice, setProgrammePrice] = useState('')
@@ -34,7 +35,6 @@ export default function ViewProgrammeDetails() {
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
   const [subjectDataFetched, setSubjectDataFetched] = useState(false)
   const [allReady, setAllReady] = useState(false)
-
 
   const fetchProgrammeData = async () => {
     //data is fetching = loading
@@ -47,6 +47,7 @@ export default function ViewProgrammeDetails() {
       if (programmeDocSnap.exists()) {
         console.log("Programme data: ", programmeDocSnap.data())
         setProgrammeName(programmeDocSnap.data().ProgrammeName)
+        setProgrammeCourseCategory(programmeDocSnap.data().ProgrammeCategory)
         setInstituteName(programmeDocSnap.data().InstituteName)
         setProgrammeDuration(programmeDocSnap.data().ProgrammeDuration)
         setProgrammePrice(programmeDocSnap.data().ProgrammePrice)
@@ -155,6 +156,19 @@ export default function ViewProgrammeDetails() {
                   className="form-control"
                   id="name"
                   value={programmeName}
+                />
+              </div>
+            </div>
+
+            <div style={{ paddingBottom: '20px' }}>
+              <div className="mb-2 block">
+                <Label htmlFor="name" value="Course Category " />
+                <span style={{ color: "red" }}>*</span>
+                <TextInput
+                  type="text"
+                  className="form-control"
+                  id="name"
+                  value={programmeCourseCategory}
                 />
               </div>
             </div>

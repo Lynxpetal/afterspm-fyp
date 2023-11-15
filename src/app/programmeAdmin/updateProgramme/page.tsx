@@ -43,6 +43,11 @@ export default function updateProgramme() {
 
   const form = useForm<[updateProgrammeFormValues]>()
   const [programmeDataFetched, setProgrammeDataFetched] = useState(false)
+  const courseCategory = ["Accounting & Business", "Arts & Communication", "Aviation & Maritime",
+  "Computer & Multimedia","Education & Languages", "Engineering & Architecture",
+  "Hospitality & Tourism", "Law & Humanities", "Maths, Sciences & Technology",
+  "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
+  const [programmeCourseCategory, setProgrammeCourseCategory] = useState(courseCategory[0])
   const [programmeName, setProgrammeName] = useState('')
   const [instituteName, setInstituteName] = useState('')
   const [instituteNames, setInstituteNames] = useState<string[]>([])
@@ -77,6 +82,7 @@ export default function updateProgramme() {
       if (updateProgrammeDocSnap.exists()) {
         console.log("Document data: ", updateProgrammeDocSnap.data())
         setProgrammeName(updateProgrammeDocSnap.data().ProgrammeName)
+        setProgrammeCourseCategory(updateProgrammeDocSnap.data().ProgrammeCategory)
         setInstituteName(updateProgrammeDocSnap.data().InstituteName)
         setProgrammePrice(updateProgrammeDocSnap.data().ProgrammePrice)
         setProgrammeDuration(updateProgrammeDocSnap.data().ProgrammeDuration)
@@ -401,6 +407,7 @@ export default function updateProgramme() {
       const updateProgrammeDocRef = doc(db, 'Programme', programmeId)
       updateDoc(updateProgrammeDocRef, {
         ProgrammeName: programmeName,
+        ProgrammeCategory: programmeCourseCategory,
         InstituteName: instituteName,
         ProgrammePrice: programmePrice,
         ProgrammeDuration: programmeDuration,
@@ -531,6 +538,22 @@ export default function updateProgramme() {
                   onChange={(e) => setProgrammeName(e.target.value)}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.name?.message}</p>
+              </div>
+            </div>
+
+            <div style={{ paddingBottom: '20px' }}>
+              <div className="mb-2 block">
+                <Label htmlFor="name" value="Course Category " />
+                <span style={{ color: "red" }}>*</span>
+                <Dropdown
+                  label={programmeCourseCategory}
+                  style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+                  placement="bottom"
+                  >
+                  {courseCategory.map((name) => (
+                    <Dropdown.Item key={name} onClick={() => setProgrammeCourseCategory(name)}>{name}</Dropdown.Item>
+                  ))}
+                </Dropdown>
               </div>
             </div>
 
