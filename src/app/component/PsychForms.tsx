@@ -3,7 +3,7 @@ import { FC, HTMLAttributes, useEffect, useState } from "react";
 import { cn } from "../lib/validators/utils";
 import { Button, Label, Pagination, Progress, Radio, Tooltip } from 'flowbite-react';
 import { Question } from "../lib/validators/message";
-import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "../FirebaseConfig/firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { testCollection } from "../lib/controller";
@@ -26,7 +26,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
         const auth = getAuth()
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const q = query(testCollection, where("user", "==", user.uid))
+                const q = query(testCollection, where("UserID", "==", user.uid))
                 const querySnapshot = await getDocs(q)
 
                 if (querySnapshot.size == 0) {
@@ -35,7 +35,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                         await addDoc(collection(db, "Test"), {
                             UserID: user.uid,
                             BigFiveResult: BigFiveResult,
-                            HollandResult: HollandResult, 
+                            HollandResult: HollandResult,
                         })
                         console.log("Document written with ID")
                         return true
@@ -44,8 +44,19 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                         return false
                     }
                 }
-                else{
-                    querySnapshot[0]
+                else {
+                    const Testref = doc(db, 'Test', querySnapshot.docs[0].id)
+                    if (HollandResult == "none") {
+                        HollandResult = querySnapshot.docs[0].data().HollandResult
+                    }
+                    if (BigFiveResult == "none") {
+                        BigFiveResult = querySnapshot.docs[0].data().BigFiveResult
+                    }
+                    await updateDoc(Testref, {
+                        BigFiveResult: BigFiveResult,
+                        HollandResult: HollandResult,
+                        UserID: user,
+                    })
                 }
             }
             else {
@@ -53,6 +64,21 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
             }
         })
 
+    }
+
+    async function onSubmitForm() {
+        let holland: string = "none", bigfive: string = "none"
+        let temp: string = Answer.toString()
+
+
+        if (Title == "Holland's Career Test") {
+            holland = temp
+        }
+        if (Title == "Big Five Personality Test") {
+            bigfive = temp
+        }
+
+        await submitForms(holland, bigfive)
     }
 
     function onSubmit() {
@@ -142,7 +168,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
             </div>
             <div className="absolute inset-y-40 right-10 content-center">
                 <Tooltip className="" content="Make sure you answer all the questions">
-                    <Button gradientDuoTone="greenToBlue" className="w-40 h-40 text-center justify-center rounded-lg shadow-lg" >Submit Form</Button>
+                    <Button gradientDuoTone="greenToBlue" className="w-40 h-40 text-center justify-center rounded-lg shadow-lg" onClick={onSubmitForm} >Submit Form</Button>
                 </Tooltip>
             </div>
         </div >
