@@ -14,7 +14,7 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
     return (
         <div className={"flex flex-col min-h-screen "}>
             <div className="p-10 m-6 bg-slate-100">
-            <PsychForm Title="Big Five Personality Test" Form={hollandForm} />
+            <PsychForm Title="Big Five Personality Test" Desc="Answer the following based on how much do you agree on these statement : " Form={hollandForm} />
             </div>
         </div>
     )

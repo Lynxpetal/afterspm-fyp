@@ -13,9 +13,10 @@ import { testCollection } from "../lib/controller";
 interface FormProps extends HTMLAttributes<HTMLDivElement> {
     Form: Question[]
     Title: string
+    Desc: string
 }
 
-const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
+const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) => {
     const [Answer, setAnswer] = useState<Number[]>(Array(Form.length).fill(0))
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [ProgressState, setProgressState] = useState<number>(0)
@@ -124,7 +125,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
         }
     }
     function pageDisplay() {
-        return <fieldset className="flex max-w-md pl-11 flex-col gap-4">
+        return <fieldset className="flex max-w-lg pl-11 flex-col gap-4">
             <legend className="mb-4 text-lg font-semibold antialiased">{Form[currentPage].label}</legend>
             {Form[currentPage].options.map((option) => {
                 return <div className="flex pl-6 items-center gap-2">
@@ -156,9 +157,10 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                 'relative',
                 className
             )}>
-            <div className="flex flex-col gap-10">
-                <fieldset className="flex mt-5 py-10 w-full flex-col gap-4 shadow-md rounded bg-white">
+            <div className="flex flex-col gap-8">
+                <fieldset className="flex py-10 w-full flex-col gap-4 shadow-md rounded bg-white">
                     <legend className="m-3 p-3 text-2xl font-semibold antialiased bg-slate-50 shadow-md rounded-md">{Title}</legend>
+                    <legend className=" pl-8 m-3 text-xl font-medium antialiased">{Desc}</legend>
                     {pageDisplay()}
                 </fieldset >
                 {progressDisplay()}
