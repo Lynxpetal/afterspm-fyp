@@ -55,7 +55,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, ...props }) => {
                     await updateDoc(Testref, {
                         BigFiveResult: BigFiveResult,
                         HollandResult: HollandResult,
-                        UserID: user,
+                        UserID: user.uid,
                     })
                 }
             }
