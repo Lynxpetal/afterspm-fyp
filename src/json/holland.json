@@ -1,0 +1,580 @@
+{
+    "content": [
+        {
+            "label": "Test the quality of parts before shipment.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Lay brick or tile.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Work on an offshore oil-drilling rig.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Assemble electronic parts.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Operate a grinding machine in a factory.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Fix a broken faucet.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Assemble products in a factory.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Install flooring in houses.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Study the structure of the human body.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Study animal behavior.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EXT"
+        },
+        {
+            "label": "Do research on plants or animals.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Develop a new medical treatment or procedure.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Conduct biological research.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Study whales and other types of marine life.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Work in a biology lab.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Make a map of the bottom of an ocean.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Conduct a musical choir.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Direct a play.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Design artwork for magazines.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Write a song.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "EST"
+        },
+        {
+            "label": "Write books or plays.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Play a musical instrument.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Perform stunts for a movie or television show.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Design sets for plays.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Give career guidance to people.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Do volunteer work at a non-profit organization.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Help people who have problems with drugs or alcohol.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Teach an individual an exercise routine.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Help people with family-related problems.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Supervise the activities of children at a camp.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "ARG"
+        },
+        {
+            "label": "Teach children how to read.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Help elderly people with their daily activities.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Sell restaurant franchises to individuals.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Sell merchandise at a department store.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Manage the operations of a hotel.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Operate a beauty salon or barber shop. ",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Manage a department within a large company.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Manage a clothing store.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Sell houses.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Run a toy store.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "CSN"
+        },
+        {
+            "label": "Generate the monthly payroll checks for an office.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Inventory supplies using a hand-held computer.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Use a computer program to generate customer bills.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Maintain employee records.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Compute and record statistical and other numerical data.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Operate a calculator.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Handle customers' bank transactions.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        },
+        {
+            "label": "Keep shipping and receiving records.",
+            "options": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "answer": 3,
+            "category": "OPN"
+        }
+    ]
+}

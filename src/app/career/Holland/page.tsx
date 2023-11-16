@@ -1,10 +1,8 @@
 "use client"
 
-import { nanoid } from "nanoid";
-import { FC, HTMLAttributes, useContext, useRef, useState } from "react";
-import { Spinner, Toast } from "flowbite-react";
+import { FC, HTMLAttributes} from "react";
 import PsychForm from "@/app/component/PsychForms";
-import holland from "@/json/hollands.json";
+import holland from "@/json/holland.json";
 import { Question } from "@/app/lib/validators/message";
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
