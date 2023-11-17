@@ -209,6 +209,29 @@ def uploadResult():
         return jsonify({"message": "Error processing request"})
 @app.route("/career/reccomend", methods=['POST'])
 def reccomendCareer():
-    return 0
+    try:
+        if 'file' not in request.files:
+            print("No file part.")
+            return jsonify({'message': 'No file part'})
+
+        inputFile = request.files['file']
+        
+        if inputFile.filename == "":
+            return jsonify({"message": "No selected file"})
+        
+        if inputFile:
+            #return a secure version
+            filename = secure_filename(inputFile.filename)
+            #place the image under the specified folder
+            uploaded_file_path = os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], filename)
+            inputFile.save(uploaded_file_path)
+            readResults = readImage(filename)
+            #remove it so the app wont explode
+            os.remove(uploaded_file_path)
+            return jsonify(readResults)
+        
+    except Exception as e:
+        print("Error processing request:", str(e))
+        return jsonify({"message": "Error processing request"})
 if __name__ == '__main__':
     app.run(debug=True)
