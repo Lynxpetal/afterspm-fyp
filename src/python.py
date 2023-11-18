@@ -7,20 +7,23 @@ def euclidean(v1, v2):
     
     
 class ReccomendCareer:
-    def Reccomend(centroids, inputTestResult):
+    def ReccomendKNN(centroids, inputTestResult):
         distance = []
         for centroid in centroids:
             distance.append([euclidean(centroid[0], inputTestResult), centroid[1]])  
         reccomendations = sorted(distance, key=lambda x: x[0])
+        print(reccomendations[0][1])
         return reccomendations[0][1]
     
-    def Reccomend(resultGPT):
+    def ReccomendGPT(resultGPT):
         caughtCareer = re.finditer(r'\[.*?\]', resultGPT)
         return caughtCareer
     
+testdata = [[[1,2],["laber"]],[[3,4],["suck"]]]
+
+ReccomendCareer.ReccomendKNN(testdata, [1,3])
 
 
-ReccomendCareer.Reccomend([[1,2],[3,4]], [1,3])
 bigfiveCetroids = [
     [[31.45659936, 26.47391025, 31.6864952,  31.92530977, 29.72198911],["labels"]],
     [[30.29006996, 34.79278687, 33.18295628, 28.69416131, 34.96391661],["labels"]],
