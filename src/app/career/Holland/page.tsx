@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, HTMLAttributes} from "react";
+import { FC, HTMLAttributes, useEffect, useState} from "react";
 import PsychForm from "@/app/component/PsychForms";
 import holland from "@/json/holland.json";
 import { Question } from "@/app/lib/validators/message";
@@ -10,7 +10,7 @@ interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
 const ChatInput: FC<ChatInputProps> = ({ }) => {
     const hollandForm: Question[] =  holland.content
-    
+
     return (
         <div className={"flex flex-col min-h-screen "}>
             <div className="p-10 m-6 bg-slate-100">

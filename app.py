@@ -208,13 +208,12 @@ def uploadResult():
         print("Error processing request:", str(e))
         return jsonify({"message": "Error processing request"})
     
-@app.route("/Reccomend", methods=['POST'])
-def reccomendCareer():
-    try:
-        hello_world()
-        
-    except Exception as e:
-        print("Error processing request:", str(e))
-        return jsonify({"message": "Error processing request"})
+@app.route("/Career/Recommend")
+def recommend():
+    
+    return jsonify({'message': 'Hello aaaa Flask!'})
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
