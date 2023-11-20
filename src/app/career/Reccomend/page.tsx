@@ -12,11 +12,7 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
     const hollandForm: Question[] =  holland.content
     
     return (
-        <div className={"flex flex-col min-h-screen "}>
-            <div className="p-10 m-6 bg-slate-100">
-                Reccomending Result...
-            </div>
-        </div>
+        <></>
     )
 }
 
