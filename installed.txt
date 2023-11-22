@@ -50,6 +50,12 @@ sweetalert2
 mui/material
 - npm install @mui/material @emotion/react @emotion/styled
 
+react google maps api
+- npm i -S @react-google-maps/api
+
+string similarity
+- npm i string-similarity-js
+
 //for Flask
 1. Click the title of the project with the search icon
 2. Click 'Show and run commands'

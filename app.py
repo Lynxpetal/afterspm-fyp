@@ -210,9 +210,7 @@ def uploadResult():
     
 @app.route("/Career/Recommend")
 def recommend():
-    
     return jsonify({'message': 'Hello aaaa Flask!'})
-
 
 
 if __name__ == '__main__':
