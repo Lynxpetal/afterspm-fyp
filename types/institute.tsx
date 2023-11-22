@@ -19,9 +19,8 @@ export interface NewProgrammeType {
   ProgrammeLastUpdateTimestamp?: Timestamp
   ProgrammeMinimumEntryRequirements?: Map<string, string>
   ProgrammeName?: string
-  ProgrammePrice?: string
+  ProgrammePrice?: number
   ProgrammeStudyLevel?: string
-  instituteName?: string
   id?: string
 
 }

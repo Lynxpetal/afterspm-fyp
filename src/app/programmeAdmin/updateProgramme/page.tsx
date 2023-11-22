@@ -20,12 +20,12 @@ import { IoMdTime } from "react-icons/io"
 
 
 type updateProgrammeFormValues = {
-  name: string;
-  instituteName: string;
-  price: string;
-  duration: string;
-  studyLevel: string;
-  minEntryRequirements: Record<string, string>;
+  name: string
+  instituteName: string
+  price: number
+  duration: number
+  studyLevel: string
+  minEntryRequirements: Record<string, string>
 }
 
 interface SubjectData {
@@ -51,8 +51,8 @@ export default function updateProgramme() {
   const [programmeName, setProgrammeName] = useState('')
   const [instituteName, setInstituteName] = useState('')
   const [instituteNames, setInstituteNames] = useState<string[]>([])
-  const [programmePrice, setProgrammePrice] = useState('')
-  const [programmeDuration, setProgrammeDuration] = useState('')
+  const [programmePrice, setProgrammePrice] = useState(0)
+  const [programmeDuration, setProgrammeDuration] = useState(0)
   const [programmeStudyLevel, setProgrammeStudyLevel] = useState('')
   const { register, handleSubmit, formState } = form
   const { errors } = formState
@@ -590,7 +590,7 @@ export default function updateProgramme() {
                       message: "Price is required"
                     }
                   })}
-                  onChange={(e) => setProgrammePrice(e.target.value)}
+                  onChange={(e) => setProgrammePrice(parseInt(e.target.value))}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.price?.message}</p>
               </div>
@@ -614,7 +614,7 @@ export default function updateProgramme() {
                       message: "Programme duration is required"
                     }
                   })}
-                  onChange={(e) => setProgrammeDuration(e.target.value)}
+                  onChange={(e) => setProgrammeDuration(parseFloat(e.target.value))}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.duration?.message}</p>
               </div>

@@ -17,11 +17,11 @@ import { MdAttachMoney } from "react-icons/md"
 import { IoMdTime } from "react-icons/io"
 
 type addProgrammeFormValues = {
-  name: string,
-  category: string,
-  instituteName: string,
-  price: string,
-  duration: string
+  name: string
+  category: string
+  instituteName: string
+  price: number
+  duration: number
   studyLevel: string
   minimumEntryRequirement: Map<string, string>
 }
@@ -46,8 +46,8 @@ export default function AddProgramme() {
   const [programmeCategory, setProgrammeCategory] = useState(courseCategory[0])
   const [instituteNames, setInstituteNames] = useState<string[]>([]);
   const [instituteName, setInstituteName] = useState('')
-  const [price, setPrice] = useState("")
-  const [duration, setDuration] = useState("")
+  const [price, setPrice] = useState(0)
+  const [duration, setDuration] = useState(0)
   const [studyLevel, setStudyLevel] = useState("Diploma")
   const { register, handleSubmit, formState } = form
   const { errors } = formState
@@ -444,15 +444,7 @@ export default function AddProgramme() {
       form.clearErrors("0.name")
     }
 
-    if (price != '') {
-      form.clearErrors("0.price")
-    }
-
-    if (duration != '') {
-      form.clearErrors("0.duration")
-    }
-
-  }, [name, price, duration])
+  }, [name])
 
   if (!allReady) {
     return (
@@ -559,7 +551,7 @@ export default function AddProgramme() {
                       message: "Price is required"
                     }
                   })}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => setPrice(parseInt(e.target.value))}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.price?.message}</p>
               </div>
@@ -583,7 +575,7 @@ export default function AddProgramme() {
                       message: "Programme duration is required"
                     }
                   })}
-                  onChange={(e) => setDuration(e.target.value)}
+                  onChange={(e) => setDuration(parseFloat(e.target.value))}
                 />
                 <p className="addProgrammeValidationError">{errors[0]?.duration?.message}</p>
               </div>

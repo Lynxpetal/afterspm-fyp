@@ -1,5 +1,5 @@
 'use client';
-import { Label, TextInput, FileInput, Toast, Kbd } from 'flowbite-react'
+import { Label, TextInput, FileInput, Kbd } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { ImLocation2 } from 'react-icons/im'
@@ -16,6 +16,12 @@ import { AiOutlineClose } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import { useRouter } from "next/navigation"
 import { FaUniversity } from "react-icons/fa"
+
+declare global {
+  interface Window {
+    initAutocomplete: () => void
+  }
+}
 
 type addInstituteFormValues = {
   name: string;
@@ -36,13 +42,47 @@ export default function InstituteAdmin() {
   const [instituteImageFormatError, setInstituteImageFormatError] = useState("")
   const { register, handleSubmit, formState } = form
   const { errors } = formState
-  const [addSuccessfulStatus, setAddSuccessfulStatus] = useState(false)
   const router = useRouter()
 
-  const isInstituteNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
   const isInstitutePhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
   const isInstituteEmailAddressValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
+  let autocomplete: google.maps.places.Autocomplete
+  let locationField: HTMLInputElement
+
+  function initAutocomplete(): void {
+    console.log("Autocomplete initialized")
+    locationField = document.querySelector("#location") as HTMLInputElement
+
+    //create the autocomplete object, restricting the search predictions
+    //to addresses in Malaysia
+    autocomplete = new google.maps.places.Autocomplete(locationField, {
+      componentRestrictions: { country: ["my"] },
+      fields: ["address_components", "geometry"],
+      types: ["address"],
+    })
+    locationField?.focus()
+
+    //when the user selects an address from the drop down, 
+    //then get the place details so that can store it inside firebase
+    autocomplete.addListener("place_changed", getAddress)
+
+  }
+
+  function getAddress() {
+    const place = autocomplete.getPlace()
+
+    //check if place has valid address components
+    if (place.address_components && place.address_components.length > 0) {
+      const fullAddress = place.address_components.map((component) => component.long_name).join(', ')
+
+      //contains the complete location details
+      console.log(fullAddress)
+      setInstituteLocation(fullAddress)
+    }
+
+
+  }
 
   const handleInstituteImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const instituteFile = e.target.files?.[0];
@@ -53,21 +93,24 @@ export default function InstituteAdmin() {
       setInstituteImageSizeError("");
     }
 
-    if (instituteFile && instituteFile.type != "image/jpeg") {
-      setInstituteImageFormatError("Invalid image format");
+    if (instituteFile && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
+      setInstituteImageFormatError("Invalid image format")
     } else {
       setInstituteImageFormatError("");
     }
 
     //Check both conditions and set error messages accordingly
-    if (instituteFile && instituteFile.size > 100000000 && instituteFile.type != "image/jpeg") {
-      setInstituteImageSizeError("Image size too large");
-      setInstituteImageFormatError("Invalid image format");
+    if (instituteFile && instituteFile.size > 100000000 && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
+      setInstituteImageSizeError("Image size too large")
+      setInstituteImageFormatError("Invalid image format")
     }
 
     //If both conditions pass, set the image file
-    if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type == "image/jpeg") {
-      setInstituteImageFile(instituteFile);
+    if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type == "image/png") {
+      setInstituteImageFile(instituteFile)
+    }
+    else if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type != "image/jpeg") {
+      setInstituteImageFile(instituteFile)
     }
     else {
       setInstituteImageFile(null);
@@ -94,7 +137,7 @@ export default function InstituteAdmin() {
           icon: "success",
         }).then(() => {
           //Navigate to /instituteAdmin after user presses ok
-          router.push('/instituteAdmin');
+          router.push('/instituteAdmin')
         });
       }
     });
@@ -106,11 +149,12 @@ export default function InstituteAdmin() {
       if (instituteImageFile) {
         const instituteImageRef = ref(storage, `InstituteImage/${v4()}`)
         const instituteData = await uploadBytes(instituteImageRef, instituteImageFile)
-        const instituteUrlVal = await getDownloadURL(instituteData.ref) 
+        const instituteUrlVal = await getDownloadURL(instituteData.ref)
 
         const imageName = instituteImageFile.name
 
-        const addedInstituteData = await addRegisterInstituteDataToFirestore(
+
+        await addRegisterInstituteDataToFirestore(
           name,
           location,
           phoneNumber,
@@ -119,10 +163,6 @@ export default function InstituteAdmin() {
           instituteData.metadata.name,
           instituteUrlVal
         )
-
-        if (addedInstituteData) {
-          setAddSuccessfulStatus(true)
-        }
 
       }
       else {
@@ -148,24 +188,19 @@ export default function InstituteAdmin() {
         InstituteLastUpdateTimestamp: serverTimestamp(),
       });
       console.log("Document written with ID: ", instituteDocRef.id)
-      return true
     } catch (error) {
       console.error("Error adding document", error)
-      return false
     }
   }
 
   useEffect(() => {
-    const isNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
     const isPhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
     const isEmailAddressValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
-    if (isNameValid.test(name) && name.length >= 20) {
+    if (name != "" && name.length > 20) {
       form.clearErrors("0.name")
     }
-    if (location.length >= 25) {
-      form.clearErrors("0.location")
-    }
+
     if (isPhoneNumberValid.test(phoneNumber)) {
       form.clearErrors("0.phoneNumber")
     }
@@ -177,31 +212,38 @@ export default function InstituteAdmin() {
     }
 
 
-  }, [name, location, phoneNumber, emailAddress, instituteImageFile, form])
+  }, [name, phoneNumber, emailAddress, instituteImageFile, form])
+
+  useEffect(() => {
+    if (!window.initAutocomplete) {
+      const newScript = document.createElement('script');
+      newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
+      newScript.async = true
+      newScript.defer = true
+
+      //define onLoad callback
+      newScript.onload = () => {
+        window.initAutocomplete = initAutocomplete
+        initAutocomplete()
+      }
+
+      //append script to document
+      document.head.appendChild(newScript)
+
+    } else {
+      initAutocomplete()
+    }
+
+    return () => {
+      //cleanup code if needed
+    };
+
+  }, []);
+
+
 
   return (
     <div>
-      {addSuccessfulStatus && (
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 1000 }}>
-          {/* Overlay to cover the entire screen */}
-        </div>
-      )}
-      {addSuccessfulStatus && (
-        <Toast style={{ position: "fixed", top: "5%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 1001 }}>
-          <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
-            <HiCheck className="h-5 w-5" />
-          </div>
-          <div className="ml-3 text-sm font-normal">Data added successfully.</div>
-          <button
-            className="rounded-lg p-1.5 text-sm font-medium text-cyan-600 hover:bg-cyan-100 dark:text-cyan-500 dark:hover:bg-gray-700"
-            onClick={() => {
-              window.location.href = '/instituteAdmin';
-            }}
-          >
-            Ok
-          </button>
-        </Toast>
-      )}
       <form style={{ margin: '20px' }}>
         <div className="card" style={{ margin: '30px' }}>
           <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
@@ -220,13 +262,14 @@ export default function InstituteAdmin() {
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
                 <Label htmlFor="name" value="Name " />
-                <span style={{color:"red"}}>*</span>
+                <span style={{ color: "red" }}>*</span>
                 <TextInput
                   type="text"
                   className="form-control"
                   id="name"
                   icon={FaUniversity}
                   placeholder="Tunku Abdul Rahman University of Management and Technology"
+                  maxLength={100}
                   {...register("0.name", {
                     required: {
                       value: true,
@@ -236,10 +279,6 @@ export default function InstituteAdmin() {
                       value: 20,
                       message: "At least 20 characters long"
                     },
-                    pattern: {
-                      value: isInstituteNameValid,
-                      message: "Invalid institute name"
-                    }
                   })}
                   onChange={(e) => setInstituteName(e.target.value)}
                 />
@@ -248,23 +287,19 @@ export default function InstituteAdmin() {
             </div>
 
             <div style={{ paddingBottom: '20px' }}>
-              <div className="mb-2 block">
-                <Label htmlFor="location" value="Location " />
-                <span style={{color:"red"}}>*</span>
+              <div className="mb-2 block" style={{ color: "black" }}>
+                <Label htmlFor="name" value="Location " />
+                <span style={{ color: "red" }}>*</span>
                 <TextInput
                   type="text"
-                  className="form-control"
                   id="location"
                   icon={ImLocation2}
-                  placeholder="Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur"
+                  required
+                  autoComplete="off"
                   {...register("0.location", {
                     required: {
                       value: true,
                       message: "Location is required"
-                    },
-                    minLength: {
-                      value: 25,
-                      message: "At least 25 characters long"
                     },
                   })}
                   onChange={(e) => setInstituteLocation(e.target.value)}
@@ -276,7 +311,7 @@ export default function InstituteAdmin() {
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
                 <Label htmlFor="phone" value="Phone Number " />
-                <span style={{color:"red"}}>*</span>
+                <span style={{ color: "red" }}>*</span>
                 <TextInput
                   type="tel"
                   className="form-control"
@@ -302,7 +337,7 @@ export default function InstituteAdmin() {
             <div style={{ paddingBottom: '20px' }}>
               <div className="mb-2 block">
                 <Label htmlFor="email" value="Email Address " />
-                <span style={{color:"red"}}>*</span>
+                <span style={{ color: "red" }}>*</span>
                 <TextInput
                   type="tel"
                   className="form-control"
@@ -329,7 +364,7 @@ export default function InstituteAdmin() {
               <div id="fileUpload" className="max-w-md">
                 <div className="mb-2 block">
                   <Label htmlFor="file" value="Image " />
-                  <span style={{color:"red"}}>*</span>
+                  <span style={{ color: "red" }}>*</span>
                 </div>
                 <FileInput
                   className="form-control"
@@ -349,8 +384,8 @@ export default function InstituteAdmin() {
             </div>
           </div>
         </div>
-      </form>
-    </div>
+      </form >
+    </div >
   )
 
 

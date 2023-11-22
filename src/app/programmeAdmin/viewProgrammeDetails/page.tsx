@@ -26,10 +26,9 @@ export default function ViewProgrammeDetails() {
   const [programmeName, setProgrammeName] = useState('')
   const [programmeCourseCategory, setProgrammeCourseCategory] = useState('')
   const [instituteName, setInstituteName] = useState('')
-  const [programmeDuration, setProgrammeDuration] = useState('')
-  const [programmePrice, setProgrammePrice] = useState('')
+  const [programmeDuration, setProgrammeDuration] = useState(0)
+  const [programmePrice, setProgrammePrice] = useState(0)
   const [programmeStudyLevel, setProgrammeStudyLevel] = useState('')
-  const [programmeMinimumEntryRequirement, setProgrammeMinimumEntryRequirement] = useState<Record<string, string>>({})
   const [subjectGrades, setSubjectGrades] = useState<[string, string][]>([])
   const [subjectAbbreviation, setSubjectAbbreviation] = useState<Record<string, string>>({})
   const gradeOptions = ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G", "X"]
@@ -52,8 +51,6 @@ export default function ViewProgrammeDetails() {
         setProgrammeDuration(programmeDocSnap.data().ProgrammeDuration)
         setProgrammePrice(programmeDocSnap.data().ProgrammePrice)
         setProgrammeStudyLevel(programmeDocSnap.data().ProgrammeStudyLevel)
-        setProgrammeMinimumEntryRequirement(programmeDocSnap.data().ProgrammeMinimumEntryRequirement)
-        console.log(programmeDocSnap.data().ProgrammeMinimumEntryRequirement)
 
         const entries: [string, string][] = Object.entries(programmeDocSnap.data().ProgrammeMinimumEntryRequirement)
         setSubjectGrades(entries)
