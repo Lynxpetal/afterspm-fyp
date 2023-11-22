@@ -2,26 +2,11 @@
 import re as re
 import numpy as np
 
-def euclidean(v1, v2):
-    return sum((p-q)**2 for p, q in zip(v1, v2)) ** .5
-    
-    
-class ReccomendCareer:
-    def ReccomendKNN(centroids, inputTestResult):
-        distance = []
-        for centroid in centroids:
-            distance.append([euclidean(centroid[0], inputTestResult), centroid[1]])  
-        reccomendations = sorted(distance, key=lambda x: x[0])
-        print(reccomendations[0][1])
-        return reccomendations[0][1]
-    
-    def ReccomendGPT(resultGPT):
-        caughtCareer = re.finditer(r'\[.*?\]', resultGPT)
-        return caughtCareer
-    
-testdata = [[[1,2],["laber"]],[[3,4],["suck"]]]
 
-ReccomendCareer.ReccomendKNN(testdata, [1,3])
+mes = "\n"    
+testdata = [[[1,2],["laber"]],[[3,4],["suck"]]]
+mes += str(testdata)
+print(mes) 
 
 
 bigfiveCetroids = [

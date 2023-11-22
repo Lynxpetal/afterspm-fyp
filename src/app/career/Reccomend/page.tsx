@@ -1,35 +1,143 @@
 "use client"
 
-import { Message } from "@/app/lib/validators/message";
-import { useMutation } from "@tanstack/react-query";
-import { nanoid } from "nanoid";
-import { FC, HTMLAttributes, useContext, useEffect, useRef, useState } from "react";
-import { MessageContext } from "../../context/messages";
-import { Spinner, Toast } from "flowbite-react";
-import { HiExclamation } from "react-icons/hi";
+import { FC, HTMLAttributes, useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { testCollection } from "@/app/lib/controller";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { Table } from 'flowbite-react';
+import { map } from "zod";
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
 
 const ChatInput: FC<ChatInputProps> = ({ }) => {
     const [message, setMessage] = useState('')
-    
+    const [displayResult, setDisplayResult] = useState([[0], [0]])
+    const defaultTable = [['No Result Found'], ['No Result Found']]
+
     useEffect(() => {
         fetch("http://localhost:5000/Career/Recommend")
-          .then(response => response.json())
-          .then(data => setMessage(data.message))
-          .catch(error => console.error('Error:', error));
-      }, []);
+            .then(response => response.json())
+            .then(data => setMessage(data.message))
+            .catch(error => console.error('Error:', error));
+    }, []);
+
+    const auth = getAuth()
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const q = query(testCollection, where("UserID", "==", user.uid))
+            const querySnapshot = await getDocs(q)
+            //check if doc exist
+            if (querySnapshot.size != 0) {
+                var hollandResult: number[] = [0, 0, 0, 0, 0, 0]
+                var bigFiveResult: number[] = [0, 0, 0, 0, 0]
+                //holland RIASEC result processing for easier display
+                if (querySnapshot.docs[0].data().HollandResult != "none") {
+                    var hollandArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().HollandResult + "]")
+                    for (let i = 0; i < 6; i++) {
+                        for (let j = 0; j < 8; j++) {
+                            hollandResult[i] += hollandArr[i * j]
+
+                        }
+                        hollandResult[i] = hollandResult[i] / 8
+                        console.log(hollandResult)
+                    }
+                }
+                //big5 OCEAN result processing for easier display  **ENACO in this case
+                if (querySnapshot.docs[0].data().BigFiveResult != "none") {
+                    var bigFiveArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().BigFiveResult + "]")
+                    for (let i = 0; i < 5; i++) {
+                        for (let j = 0; j < 10; j++) {
+                            bigFiveResult[i] += bigFiveArr[i * j]
+                        }
+                        bigFiveResult[i] /= 10
+                    }
+                }
+                setDisplayResult([hollandResult, bigFiveResult])
+            }
+        }
+
+    })
+
+
 
     return (
         <div className={"flex flex-col min-h-screen "}>
             <div className="p-10 m-6 bg-slate-100">
+                <legend className=" text-xl font-bold antialiased pl-20 p-4 m-3 bg-slate-300"> Your Test Results </legend>
+                <Table striped hoverable>
+                    <Table.Body className="divide-y">
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Test Name
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Realistic
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Investigative
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Artistic
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Social
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Enterprising
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Conventional
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Holland's Test
+                            </Table.Cell>
+                            {displayResult[0][0] != 0 ? displayResult[0].map((individual) => {
+                                return <Table.Cell>{individual}</Table.Cell>
+                            }) : <Table.Cell>{defaultTable[0]}</Table.Cell>}
+                        </Table.Row>
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Test Name
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Extraversion
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Neuroticism
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Agreeableness
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Conscientiousness
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Openness
+                            </Table.Cell>
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                -
+                            </Table.Cell>
+
+                        </Table.Row>
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                Big Five Test
+                            </Table.Cell>
+                            {displayResult[1][0] != 0 ? displayResult[1].map((individual) => {
+                                return <Table.Cell>{individual}</Table.Cell>
+                            }) : <Table.Cell>{defaultTable[1]}</Table.Cell>}
+                        </Table.Row>
+                    </Table.Body>
+                </Table>
             </div>
-            <p style={{color: "black"}}>{message}</p>
+            <p style={{ color: "black" }}>{message}</p>
         </div>
     )
 
-    
+
 }
 
 export default ChatInput
