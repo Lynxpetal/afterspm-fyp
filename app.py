@@ -294,10 +294,11 @@ def uploadResult():
         print("Error processing request:", str(e))
         return jsonify({"message": "Error processing request"})
     
-@app.route("/Career/Recommend")
+@app.route("/Career/Recommend", methods=['POST'])
 def recommend():
+    data = request.json
     #ReccomendCareer.ReccomendKNN()
-    return jsonify({'message': 'Hello aaaa Flask!'})
+    return jsonify({'message': data})
 
 
 if __name__ == '__main__':

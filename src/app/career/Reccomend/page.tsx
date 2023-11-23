@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, HTMLAttributes, useEffect, useState } from "react";
+import { FC, HTMLAttributes, use, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { testCollection } from "@/app/lib/controller";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
@@ -12,11 +12,15 @@ interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
 const ChatInput: FC<ChatInputProps> = ({ }) => {
     const [message, setMessage] = useState('')
+    const [uid,setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
     const defaultTable = [['No Result Found'], ['No Result Found']]
 
     useEffect(() => {
-        fetch("http://localhost:5000/Career/Recommend")
+        fetch("http://localhost:5000/Career/Recommend", {
+            method: "POST",
+            body: JSON.stringify({data: displayResult})
+          })
             .then(response => response.json())
             .then(data => setMessage(data.message))
             .catch(error => console.error('Error:', error));
@@ -25,6 +29,7 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
     const auth = getAuth()
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            setUID(user.uid)
             const q = query(testCollection, where("UserID", "==", user.uid))
             const querySnapshot = await getDocs(q)
             //check if doc exist
@@ -36,11 +41,10 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
                     var hollandArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().HollandResult + "]")
                     for (let i = 0; i < 6; i++) {
                         for (let j = 0; j < 8; j++) {
-                            hollandResult[i] += hollandArr[i * j]
+                            hollandResult[i] += hollandArr[(i * 8 + j)]
 
                         }
                         hollandResult[i] = hollandResult[i] / 8
-                        console.log(hollandResult)
                     }
                 }
                 //big5 OCEAN result processing for easier display  **ENACO in this case
@@ -48,7 +52,7 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
                     var bigFiveArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().BigFiveResult + "]")
                     for (let i = 0; i < 5; i++) {
                         for (let j = 0; j < 10; j++) {
-                            bigFiveResult[i] += bigFiveArr[i * j]
+                            bigFiveResult[i] += bigFiveArr[i * 10 + j]
                         }
                         bigFiveResult[i] /= 10
                     }
@@ -59,7 +63,15 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
 
     })
 
-
+    function onReccomend() {
+        fetch("http://localhost:5000/Career/Recommend", {
+            method: "POST",
+            body: JSON.stringify({data: displayResult, uid}),
+          })
+            .then(response => response.json())
+            .then(data => setMessage(data.message))
+            .catch(error => console.error('Error:', error));
+    }
 
     return (
         <div className={"flex flex-col min-h-screen "}>
