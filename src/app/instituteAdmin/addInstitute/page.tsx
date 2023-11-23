@@ -217,7 +217,7 @@ export default function InstituteAdmin() {
   useEffect(() => {
     if (!window.initAutocomplete) {
       const newScript = document.createElement('script');
-      newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
+      //newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
       newScript.async = true
       newScript.defer = true
 
