@@ -7,23 +7,16 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { Table } from 'flowbite-react';
 import { map } from "zod";
 
-interface ChatInputProps extends HTMLAttributes<HTMLDivElement> { }
 
-
-const ChatInput: FC<ChatInputProps> = ({ }) => {
-    const [message, setMessage] = useState('')
-    const [uid,setUID] = useState('')
+export default function Reccomend() {
+    const [reccomendations, setReccomendation] = useState([''])
+    const [uid, setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
     const defaultTable = [['No Result Found'], ['No Result Found']]
 
     useEffect(() => {
-        fetch("http://localhost:5000/Career/Recommend", {
-            method: "POST",
-            body: JSON.stringify({data: displayResult})
-          })
-            .then(response => response.json())
-            .then(data => setMessage(data.message))
-            .catch(error => console.error('Error:', error));
+
+
     }, []);
 
     const auth = getAuth()
@@ -66,17 +59,31 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
     function onReccomend() {
         fetch("http://localhost:5000/Career/Recommend", {
             method: "POST",
-            body: JSON.stringify({data: displayResult, uid}),
-          })
-            .then(response => response.json())
-            .then(data => setMessage(data.message))
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                hollands: displayResult[0],
+                bigfive: displayResult[1],
+            })
+        })
+            .then(response => {
+                let output = response.json()
+                console.log(output)
+            })
+            .then(data => {
+                console.log(data)
+
+            })
             .catch(error => console.error('Error:', error));
     }
 
     return (
         <div className={"flex flex-col min-h-screen "}>
             <div className="p-10 m-6 bg-slate-100">
-                <legend className=" text-xl font-bold antialiased pl-20 p-4 m-3 bg-slate-300"> Your Test Results </legend>
+                <legend className=" text-xl font-bold antialiased pl-20 p-4 m-3 bg-slate-300">
+                    Your Test Results
+                </legend>
                 <Table striped hoverable>
                     <Table.Body className="divide-y">
                         <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -144,12 +151,38 @@ const ChatInput: FC<ChatInputProps> = ({ }) => {
                         </Table.Row>
                     </Table.Body>
                 </Table>
+                <hr className=" bg-black h-0.5 my-10" />
+                <legend className=" text-lg font-bold antialiased pl-20 p-4 m-3 bg-slate-300">
+                    Careers you should try looking into
+                </legend>
+                <Table striped hoverable>
+                    <Table.Head>
+                        <Table.HeadCell>Career</Table.HeadCell>
+                        <Table.HeadCell>Compatibility</Table.HeadCell>
+                        <Table.HeadCell>
+                            <span className="sr-only">Know More</span>
+                        </Table.HeadCell>
+                    </Table.Head>
+                    <Table.Body className="divide-y">
+                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                
+                            </Table.Cell>
+                            <Table.Cell>
+                                Realistic
+                            </Table.Cell>
+                            <Table.Cell>
+                                Investigative
+                            </Table.Cell>
+                        </Table.Row>
+
+                    </Table.Body>
+                </Table>
             </div>
-            <p style={{ color: "black" }}>{message}</p>
+            <p style={{ color: "black" }}>{reccomendations}</p>
         </div>
     )
 
 
 }
 
-export default ChatInput

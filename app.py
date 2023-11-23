@@ -297,6 +297,7 @@ def uploadResult():
 @app.route("/Career/Recommend", methods=['POST'])
 def recommend():
     data = request.json
+    str(data)
     #ReccomendCareer.ReccomendKNN()
     return jsonify({'message': data})
 
