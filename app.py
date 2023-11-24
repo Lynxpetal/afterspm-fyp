@@ -8,10 +8,13 @@ import pytesseract
 from PIL import Image
 import firebase_admin
 from firebase_admin import db, credentials, firestore
-import openai
+from openai import OpenAI
 
 #chatgpt init
-openai.my_api_key = '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'
+client = OpenAI(
+    # defaults to os.environ.get("OPENAI_API_KEY")
+    api_key="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"
+)
 messages = [ {
     "role": "system", 
     "content": "You are an intelligent assistant of a career reccomending system. You have two main jobs which is to reccomend five or more different or similar career based on the type of test and result of that test, and from multiple lists of careers sort it into a single list with only five careers sorted by their occurance(or similar jobs) in the lists. "
@@ -74,19 +77,19 @@ def chatGPTAPI(message):
         messages.append( 
             {"role": "user", "content": message}, 
         ) 
-        chat = openai.ChatCompletion.create( 
+        chat = client.chat.completions.create( 
             model="gpt-3.5-turbo", messages=messages 
         ) 
-    reply = chat.choices[0].message.content 
-    print(f"ChatGPT: {reply}") 
-    messages.append({"role": "assistant", "content": reply}) 
-    return reply    
+    print(f"ChatGPT: {chat}") 
+    messages.append({"role": "assistant", "content": chat}) 
+    return str(chat)    
     
 class ReccomendCareer:
     def ReccomendKNN(centroids, inputTestResult):
         distance = []
         for centroid in centroids:
-            distance.append([euclidean(centroid[0], inputTestResult), centroid[1]])  
+            distance.append([euclidean(centroid[0], inputTestResult), centroid[1]]) 
+        
         reccomendations = sorted(distance, key=lambda x: x[0])
         print(reccomendations[0][1])
         return reccomendations[0][1]
@@ -96,7 +99,7 @@ class ReccomendCareer:
         return caughtCareer
     
     def ReccomendChatGPT(result, testType):
-        inputPrompt = "Following is the test result for " + testType + ". " + result + "\n Reccomend five careers based on it, only provide the careers in an array without code and explanation."
+        inputPrompt = "Following is the test result for " + testType + ".\n " + result + "\n Reccomend five careers based on it, without code and explanation provide the careers in an array ."
         return chatGPTAPI(inputPrompt) 
     
     def reduceReccomendation(reccomendations):
@@ -297,9 +300,15 @@ def uploadResult():
 @app.route("/Career/Recommend", methods=['POST'])
 def recommend():
     data = request.json
-    str(data)
+    hollandFormat = ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional']
+    hollandKNNReccomends = ReccomendCareer.ReccomendKNN(hollandCentroids, data["hollands"])
+    bigfiveKNNReccomends = ReccomendCareer.ReccomendKNN(bigfiveCetroids, data["bigfive"])
+    gptHolland = "["
+    for i in range(6):
+        gptHolland += " " + hollandFormat[i] + ":" + str(data["hollands"][i])
+    hollandGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
     #ReccomendCareer.ReccomendKNN()
-    return jsonify({'message': data})
+    return jsonify({'message': hollandGPTReccomends})
 
 
 if __name__ == '__main__':

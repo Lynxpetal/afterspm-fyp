@@ -4,8 +4,9 @@ import { FC, HTMLAttributes, use, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { testCollection } from "@/app/lib/controller";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { Table } from 'flowbite-react';
+import { Button, Table } from 'flowbite-react';
 import { map } from "zod";
+import { HiOutlineArrowRight } from "react-icons/hi";
 
 
 export default function Reccomend() {
@@ -163,21 +164,31 @@ export default function Reccomend() {
                             <span className="sr-only">Know More</span>
                         </Table.HeadCell>
                     </Table.Head>
-                    <Table.Body className="divide-y">
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                            <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                
-                            </Table.Cell>
-                            <Table.Cell>
-                                Realistic
-                            </Table.Cell>
-                            <Table.Cell>
-                                Investigative
-                            </Table.Cell>
-                        </Table.Row>
+                    {reccomendations[0] != "" ?
+                        <Table.Body className="divide-y">
+                            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                    some dadada
+                                </Table.Cell>
+                                <Table.Cell>
+                                    Realistic
+                                </Table.Cell>
+                                <Table.Cell>
+                                    Investigative
+                                </Table.Cell>
+                            </Table.Row>
 
-                    </Table.Body>
+                        </Table.Body>
+                        :
+                        <></>}
                 </Table>
+                {reccomendations[0] == '' ? <div className="text-center bg-white hover:bg-gray-100">No reccomendations made yet press the button below to get reccomendations</div> : <></>}
+                <div className="bg-white row-span-full  flex items-center justify-center">
+                    <Button className="my-9" onClick={onReccomend} pill>
+                        Get Reccomendation
+                        <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                </div>
             </div>
             <p style={{ color: "black" }}>{reccomendations}</p>
         </div>
