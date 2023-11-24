@@ -20,6 +20,12 @@ export default function UploadResult() {
         console.log(uid)
         console.log(userId)
 
+        var url = `http://localhost:5000/finalFilter?uid=${uid}`
+        fetch(url)
+          .then(response => response.json())
+          .then(data => console.log(data))
+          .catch(error => console.error('Error:', error))
+
         const q = query(resultCollection, where('ResultBelongTo', '==', uid))
         const querySnapshot = await getDocs(q)
 
@@ -35,5 +41,8 @@ export default function UploadResult() {
       }
     })
   }, [userId])
+
+
+
 
 }

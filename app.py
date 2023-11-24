@@ -57,7 +57,7 @@ hollandCentroids = [
 ]
 
 #authenticate to firebase
-cred = credentials.Certificate("credentials1.json")
+cred = credentials.Certificate("credentials2.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -108,7 +108,66 @@ class ReccomendCareer:
             inputPrompt += str(reccomend) + "\n"
         inputPrompt += "Reduce the arrays above into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. Please only provide the array without code and explanation"
         return chatGPTAPI(inputPrompt)
-        
+
+@app.route("/finalFilter", methods=['GET'])
+def finalFilter():
+    uid = request.args.get('uid')
+    print(uid)
+    # #Institute
+    # instituteData = db.collection('Institute').get()
+    # institute_list = []
+
+    # for institute in instituteData:
+    #     institute_dict = {}
+    #     institute_dict['InstituteName'] = institute.get('InstituteName')
+    #     institute_dict['InstituteLocation'] = institute.get('InstituteLocation')
+    #     institute_list.append(institute_dict)
+    
+    # #Programme
+    # programmeData = db.collection('Programme').get()
+    # programme_list = []
+
+    # for programme in programmeData:
+    #     programme_dict = {}
+    #     programme_dict['ProgrammeName'] = programme.get('ProgrammeName')
+    #     programme_dict['InstituteName'] = programme.get('InstituteName')
+    #     programme_dict['ProgrammeCategory'] = programme.get('ProgrammeCategory')
+    #     programme_dict['ProgrammePrice'] = programme.get('ProgrammePrice')
+    #     programme_dict['ProgrammeStudyLevel'] = programme.get('ProgrammeStudyLevel')
+    #     programme_dict['ProgrammeMinimumEntryRequirement'] = programme.get('ProgrammeMinimumEntryRequirement')
+    #     programme_list.append(programme_dict)
+
+    #Result
+    resultData = db.collection('Result').get()
+    result_list = []
+
+    for resultUser in resultData:
+        result_dict = {}
+        userId = resultUser.get("ResultBelongTo")
+        if userId == uid:
+            result_dict['ResultBelongTo'] = resultUser.get('ResultBelongTo')
+            result_dict['ResultData'] = resultUser.get('ResultData')
+            result_list.append(result_dict)
+    
+    #Distance
+    distanceData = db.collection('DistanceMatrixResults').get()
+    distance_list = []
+
+    for distance in distanceData:
+        distance_dict = {}
+        user = distance.get("user")
+        if user == uid:
+            distance_dict['InstituteName'] = distance.get('instituteName')
+            distance_dict['Distance'] = distance.get('distance')
+            distance_list.append(distance_dict)
+
+
+    # print(institute_list)
+    # print(programme_list)
+    print(result_list)
+    print(distance_list)
+    return ""
+    
         
 
 @app.route("/")
