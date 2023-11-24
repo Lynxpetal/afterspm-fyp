@@ -3,7 +3,7 @@
 import { FileInput, Label, Button, Alert, Timeline } from 'flowbite-react'
 import React, { useState, useEffect } from 'react'
 import { db, storage } from '../FirebaseConfig/firebaseConfig'
-import { addDoc, collection, getDocs } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, getDocs, query, where } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { HiInformationCircle } from 'react-icons/hi'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
@@ -562,6 +562,8 @@ export default function uploadResult() {
 
         const resultImageName = resultImage.name
 
+        await deleteImageResultDataToFirestore(userId)
+
         await addImageResultDataToFirestore(
           userId,
           resultImageName,
@@ -610,6 +612,16 @@ export default function uploadResult() {
     } catch (error) {
       console.error("Error adding document", error)
     }
+  }
+
+  async function deleteImageResultDataToFirestore(userId: string | null): Promise<void>{
+    const q = query(collection(db, 'Result'), where('ResultBelongTo', '==', userId))
+    const querySnapshot = await getDocs(q)
+    const deletePromises = querySnapshot.docs.map(async (doc) => {
+      await deleteDoc(doc.ref)
+    })
+
+    await Promise.all(deletePromises)
   }
 
   async function addManualInputImage() {
