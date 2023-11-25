@@ -99,18 +99,18 @@ class ReccomendCareer:
         caughtCareer = re.finditer(r'\[.*?\]', resultGPT)
         return caughtCareer
     
-    def ReccomendChatGPT(result, testType):
+    async def ReccomendChatGPT(result, testType):
         inputPrompt = "Return me an array of five careers suitable for the test result for " + testType + ".\n " + result + "\n Reply without any code and explanation but the array."
-        return chatGPTAPI(inputPrompt) 
+        return await chatGPTAPI(inputPrompt) 
     
-    def reduceReccomendation(reccomendations):
+    async def reduceReccomendation(reccomendations):
         inputPrompt = ""
         for reccomend in reccomendations:
             if(reccomend == [""]):
                 inputPrompt += str(reccomend) + "\n"
                 
         inputPrompt += "Reduce the arrays above into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. Please only provide the array without code and explanation"
-        return chatGPTAPI(inputPrompt)
+        return await chatGPTAPI(inputPrompt)
 
 @app.route("/finalFilter", methods=['GET'])
 def finalFilter():
@@ -359,7 +359,7 @@ def uploadResult():
         return jsonify({"message": "Error processing request"})
     
 @app.route("/Career/Recommend", methods=['POST'])
-def recommend():
+async def recommend():
     data = request.json
     #check
     if(data["hollands"] == data["bigfive"]):
@@ -378,16 +378,16 @@ def recommend():
         gptHolland = "["
         for i in range(6):
             gptHolland += " " + hollandFormat[i] + ":" + str(data["hollands"][i])
-        hollandGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
+        hollandGPTReccomends = await ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
         
     if(data["bigfive"] != [0,0,0,0,0]):
         bigfiveKNNReccomends = ReccomendCareer.ReccomendKNN(bigfiveCetroids, data["bigfive"])
         gptBigFive = "["
         for i in range(5):
             gptBigFive += " " + bigfiveFormat[i] + ":" + str(data["hollands"][i])
-        bigfiveGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
+        bigfiveGPTReccomends = await ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
     
-    output = ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
+    output = await ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
     return jsonify({'message': output})
 
 
