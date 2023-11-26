@@ -3,6 +3,8 @@ import { useSearchParams } from "next/navigation"
 import { Table } from 'flowbite-react'
 
 export default function view() {
+  
+
   const searchParams = useSearchParams()
   const data = searchParams.get('search')
   console.log(data)
