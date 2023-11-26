@@ -209,6 +209,8 @@ export default function FilterInstituteProgramme() {
       }
 
       getData()
+
+      
     }
   }
 
@@ -414,8 +416,6 @@ export default function FilterInstituteProgramme() {
     return undefined
 
   }
-
-
 
   useEffect(() => {
     if (!window.initAutocomplete) {

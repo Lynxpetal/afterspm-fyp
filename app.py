@@ -11,6 +11,8 @@ from PIL import Image
 import firebase_admin
 from firebase_admin import db, credentials, firestore
 from openai import OpenAI
+import asyncio
+
 
 
 #chatgpt init
@@ -115,65 +117,146 @@ class ReccomendCareer:
         print(inputPrompt)
         return chatGPTAPI(inputPrompt)
 
-@app.route("/finalFilter", methods=['GET'])
+@app.route("/finalFilter", methods=['POST'])
 def finalFilter():
-    uid = request.args.get('uid')
-    print(uid)
-    # #Institute
-    # instituteData = db.collection('Institute').get()
-    # institute_list = []
+    if request.method == 'POST':
+        data = request.json     
+        print(data)
+        if len(data['data']) > 5:
+            print("Got location")
+            withLocationlist = filterWithLocation(data)
+            print(withLocationlist)
+            return withLocationlist
+        else:
+            print("Empty location")
+            withoutLocationList = filterWithoutLocation(data)
+            print(withoutLocationList)
+            return withoutLocationList
 
-    # for institute in instituteData:
-    #     institute_dict = {}
-    #     institute_dict['InstituteName'] = institute.get('InstituteName')
-    #     institute_dict['InstituteLocation'] = institute.get('InstituteLocation')
-    #     institute_list.append(institute_dict)
     
-    # #Programme
-    # programmeData = db.collection('Programme').get()
-    # programme_list = []
-
-    # for programme in programmeData:
-    #     programme_dict = {}
-    #     programme_dict['ProgrammeName'] = programme.get('ProgrammeName')
-    #     programme_dict['InstituteName'] = programme.get('InstituteName')
-    #     programme_dict['ProgrammeCategory'] = programme.get('ProgrammeCategory')
-    #     programme_dict['ProgrammePrice'] = programme.get('ProgrammePrice')
-    #     programme_dict['ProgrammeStudyLevel'] = programme.get('ProgrammeStudyLevel')
-    #     programme_dict['ProgrammeMinimumEntryRequirement'] = programme.get('ProgrammeMinimumEntryRequirement')
-    #     programme_list.append(programme_dict)
-
+def resultData(data):
     #Result
     resultData = db.collection('Result').get()
-    result_list = []
-
     for resultUser in resultData:
-        result_dict = {}
         userId = resultUser.get("ResultBelongTo")
-        if userId == uid:
-            result_dict['ResultBelongTo'] = resultUser.get('ResultBelongTo')
-            result_dict['ResultData'] = resultUser.get('ResultData')
-            result_list.append(result_dict)
+        if userId == data['data'][4]:
+            result_dict = resultUser.get('ResultData')
     
-    #Distance
-    distanceData = db.collection('DistanceMatrixResults').get()
-    distance_list = []
+    return result_dict
 
+def distanceData(data):
+    #Distance
+    distanceData = db.collection('FilterDistanceMatrixResults').get()
+    distance_list = []
     for distance in distanceData:
         distance_dict = {}
         user = distance.get("user")
-        if user == uid:
+        if user == data['data'][4]:
             distance_dict['InstituteName'] = distance.get('instituteName')
-            distance_dict['Distance'] = distance.get('distance')
+            distance_dict['DistanceInUnit'] = distance.get('distanceInUnit')
             distance_list.append(distance_dict)
 
+    sorted_distance_list = sorted(distance_list, key=lambda item: int(item['DistanceInUnit']) if isinstance(item['DistanceInUnit'], (int, float)) else float('inf'))
+    return sorted_distance_list
 
-    # print(institute_list)
-    # print(programme_list)
-    print(result_list)
-    print(distance_list)
-    return ""
+def programmeData():
+    #Programme
+    programmeData = db.collection('Programme').get()
+    programme_list = []
+
+    for programme in programmeData:
+        programme_dict = {}
+        programme_dict['ProgrammeName'] = programme.get('ProgrammeName')    #Diploma In Computer Science
+        programme_dict['InstituteName'] = programme.get('InstituteName')   #TARC
+        programme_dict['ProgrammeCategory'] = programme.get('ProgrammeCategory')    #Computer & Multimedia
+        programme_dict['ProgrammePrice'] = programme.get('ProgrammePrice')          #20000
+        programme_dict['ProgrammeStudyLevel'] = programme.get('ProgrammeStudyLevel')    #Diploma
+        programme_dict['ProgrammeDuration'] = programme.get('ProgrammeDuration')
+        programme_dict['ProgrammeMinimumEntryRequirement'] = programme.get('ProgrammeMinimumEntryRequirement')  #{'BM': 'D', 'SEJ': 'E'}
+        programme_list.append(programme_dict)
+
+    return programme_list
+
+def filterWithLocation(data):
+    #result data
+    result_dict = resultData(data)
+
+    #distance data
+    sorted_distance_list = distanceData(data)
+
+    #programme data
+    programme_list = programmeData()
+    sorted_distance_names = [item['InstituteName'] for item in sorted_distance_list]
+    print(sorted_distance_names)
+    sorted_programme_list = sorted(programme_list, key=lambda item: sorted_distance_names.index(item.get('InstituteName')))
+    print(sorted_programme_list)
+
+            
+    user_input = {
+        "maximum_tuition_fees": data['data'][1],    #30000
+        "study_level": data['data'][2],     #Diploma    
+        "course": data['data'][3],          #Computer & Multimedia
+        "result": result_dict,              #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+        "distanceFromInstitute": sorted_distance_list   #{'TARC': '33km', 'UCSI': '55km'}                                    
+    }
+
+    filterList = filter_programmes(user_input, sorted_programme_list)
+    print(filterList)
+    return filterList
+
+def filterWithoutLocation(data):
+    #result data
+    result_dict_without_location = resultData(data)
+
+    #programme data
+    programme_list = programmeData()
+
+    user_input = {
+        "maximum_tuition_fees": data['data'][1],    #30000
+        "study_level": data['data'][2],     #Diploma    
+        "course": data['data'][3],          #Computer & Multimedia
+        "result": result_dict_without_location,              #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}                                    
+    }
+
+    filterList = filter_programmes(user_input, programme_list)
+    print(filterList)
+    return filterList
+
+
+def filter_programmes(user_input, programme_list):
+    recommend_programmes_list = []
+
+    for programme in programme_list:
+        #check if study level matches
+        print(programme['ProgrammeStudyLevel'])
+        if user_input['study_level'] == programme['ProgrammeStudyLevel']:
+            #check if course category matches
+            print(programme['ProgrammeCategory'])
+            if user_input['course'] == programme['ProgrammeCategory']:
+                #check if results meet the minimum entry requirement
+                result = user_input['result'] #[{'ResultData': {'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}}]
+                entryRequirements = programme['ProgrammeMinimumEntryRequirement'] #{'BM': 'D', 'SEJ': 'E'}
+                if requirementsFulfilled(result, entryRequirements):
+                    #Check if the price is within budget
+                    programme_price = programme['ProgrammePrice']
+                    print(programme_price)
+                    if programme_price <= user_input['maximum_tuition_fees']:
+                        recommend_programmes_list.append(programme)
     
+    
+    return recommend_programmes_list
+
+grade_mapping = {'A+': 1, 'A': 2, 'A-': 3, 'B+': 4, 'B': 5, 'C+': 6, 'C': 7, 'D': 8, 'E': 9, 'G': 10, 'TH': 11}
+
+def convert_grade(grade):
+    return grade_mapping.get(grade)
+
+
+def requirementsFulfilled(result, entry_requirements):
+    for subject, grade in entry_requirements.items():
+        if convert_grade(grade) < convert_grade(result[subject]):
+            return False 
+    return True
         
 
 @app.route("/")
@@ -393,6 +476,14 @@ def recommend():
     output = ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
     return jsonify({'message': output})
 
+async def async_get_data():
+    await asyncio.sleep(1)
+    return 'Done!'
+
+@app.route("/get-data")
+async def get_data():
+    data = await async_get_data()
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
