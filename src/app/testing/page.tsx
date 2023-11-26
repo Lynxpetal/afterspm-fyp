@@ -8,6 +8,7 @@ export default function UploadResult() {
   const [userId, setUserId] = useState<string | null>(null)
   const firestore = getFirestore(app)
   const resultCollection = collection(firestore, 'Result')
+  const [message, setMessage] = useState("")
 
 
 
@@ -20,11 +21,11 @@ export default function UploadResult() {
         console.log(uid)
         console.log(userId)
 
-        var url = `http://localhost:5000/finalFilter?uid=${uid}`
-        fetch(url)
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(error => console.error('Error:', error))
+        fetch("http://localhost:5000/get-data", {
+        })
+          .then((response) => response.json())
+          .then((data) => setMessage(data))
+
 
         const q = query(resultCollection, where('ResultBelongTo', '==', uid))
         const querySnapshot = await getDocs(q)
@@ -42,6 +43,11 @@ export default function UploadResult() {
     })
   }, [userId])
 
+  return (
+    <div style={{color: "black"}}>
+      {message}
+    </div>
+  )
 
 
 

@@ -1,5 +1,5 @@
 'use client'
-import { Label, Pagination, TextInput, Dropdown, Button } from 'flowbite-react'
+import { Label, TextInput, Dropdown, Button, Timeline } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Slider from '@mui/material/Slider'
@@ -9,6 +9,9 @@ import { DocumentData, QuerySnapshot, addDoc, collection, deleteDoc, getDocs, on
 import { db } from '../FirebaseConfig/firebaseConfig'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { stringSimilarity } from "string-similarity-js"
+import { FaFilter } from 'react-icons/fa'
+import { GrDocumentUpload } from 'react-icons/gr'
+import { MdOutlineRecommend } from 'react-icons/md'
 
 
 declare global {
@@ -210,8 +213,33 @@ export default function FilterInstituteProgramme() {
 
       getData()
 
-      
+      const displayResult = [
+        value[0],
+        value[1],
+        studyLevel,
+        programmeCategory,
+        userId,
+      ]
+
+      postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
+        .then(data => {
+          console.log(data)
+        })
+
+
     }
+  }
+
+  async function postData(url = "", data = {}, method = "POST") {
+    const response = await fetch(url, {
+      method: method,
+      mode: "cors",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    return response.json()
   }
 
 
@@ -508,157 +536,129 @@ export default function FilterInstituteProgramme() {
   }, [userId])
 
   return (
-    <div className={"flex min-h-screen "}>
-      <div className="flex-1 flex flex-col p-10 m-6 bg-slate-100" style={{ flex: '35%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: "20px" }}>
-          <h1 style={{ color: "black", fontSize: "20px" }}>Filter</h1>
-        </div>
-
-        <div>
-          <Label htmlFor="name" value="Price Range" style={{ fontSize: "16px", marginBottom: "5px" }} />
-          <div>
-            <Box sx={{ width: 300 }}>
-              <Slider
-                min={0}
-                max={50000}
-                value={value}
-                onChange={handleChange}
-                valueLabelDisplay="auto"
-              />
-
-              <div style={{ display: 'flex', marginBottom: "20px" }}>
-
-                <div style={{ marginRight: "10px" }}>
-                  <Label htmlFor="minimumPrice" value="Minimum Price" />
-                  <TextInput
-                    type="number"
-                    className="form-control"
-                    id="name"
-                    value={value[0]}
-                    onChange={(e) => handleInputChange(0, e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="maximumPrice" value="Maximum Price" />
-                  <TextInput
-                    type="number"
-                    className="form-control"
-                    id="name"
-                    value={value[1]}
-                    onChange={(e) => handleInputChange(1, e.target.value)}
-                  />
-                </div>
-              </div>
-            </Box>
-          </div>
-        </div>
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block">
-            <Label htmlFor="name" value="Course Category" style={{ fontSize: "16px", marginBottom: "5px" }} />
-            <Dropdown
-              label={programmeCategory}
-              style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
-              placement="bottom"
-            >
-              {courseCategory.map((name) => (
-                <Dropdown.Item key={name} onClick={() => setProgrammeCategory(name)}>{name}</Dropdown.Item>
-              ))}
-            </Dropdown>
-          </div>
-        </div>
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block">
-            <Label htmlFor="name" value="Study Level " style={{ fontSize: "16px", marginBottom: "5px" }} />
-            <Dropdown
-              label={studyLevel}
-              dismissOnClick={true}
-              style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
-              placement="bottom">
-              <Dropdown.Item onClick={() => setStudyLevel('Foundation')}>Foundation</Dropdown.Item>
-              <Dropdown.Item onClick={() => setStudyLevel('Diploma')}>Diploma</Dropdown.Item>
-            </Dropdown>
-          </div>
-        </div>
-
-
-        <div style={{ paddingBottom: '20px' }}>
-          <div className="mb-2 block" style={{ color: "black" }}>
-            <Label htmlFor="name" value="Home Location " style={{ fontSize: "16px", marginBottom: "5px" }} />
-            <TextInput
-              type="text"
-              id="location"
-              icon={ImLocation2}
-              required
-              autoComplete="off"
-              onChange={(e) => setLocation(e.target.value)}
-            />
-          </div>
-        </div>
-
-
-        <div>
-          <Button onClick={executeFilter}>Filter</Button>
-        </div>
-
-
+    <div style={{ margin: "20px" }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Timeline horizontal>
+        <Timeline.Item>
+          <Timeline.Point icon={GrDocumentUpload}/>
+          <Timeline.Content>
+            <Timeline.Title>Step 1</Timeline.Title>
+            <Timeline.Body>
+              Upload SPM Result
+            </Timeline.Body>
+          </Timeline.Content>
+        </Timeline.Item>
+        <Timeline.Item style={{ margin: '0 auto' }}>
+          <Timeline.Point icon={FaFilter} />
+          <Timeline.Content>
+            <Timeline.Title>Step 2</Timeline.Title>
+            <Timeline.Body>
+              Filter Institute and Programme
+            </Timeline.Body>
+          </Timeline.Content>
+        </Timeline.Item>
+        <Timeline.Item style={{ marginLeft: 'auto' }}>
+          <Timeline.Point icon={MdOutlineRecommend} />
+          <Timeline.Content>
+            <Timeline.Title>Step 3</Timeline.Title>
+            <Timeline.Body>
+              View Recommended Programmes
+            </Timeline.Body>
+          </Timeline.Content>
+        </Timeline.Item>
+      </Timeline>
       </div>
-      <div className="flex-1 p-10 m-6 bg-slate-100" style={{ flex: '65%' }}>
-        {getProgramsForCurrentPage().length > 0 ? (
-          getProgramsForCurrentPage().map((program) => (
-            <div style={{ marginLeft: "30px", marginBottom: "30px", height: "170px", backgroundColor: "white", width: "600px" }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', flex: '35%', flexDirection: 'column' }}>
-                  <img src={getImage(program.instituteName)} height="auto" width="auto" style={{ marginRight: "10px", marginLeft: "10px" }} />
-                </div>
 
-                <div style={{ display: 'flex', flex: '65%', flexDirection: 'column', marginRight: '10px' }}>
-                  <h5 style={{ color: "black", fontSize: "16px", fontFamily: "sans-serif", fontWeight: "bold" }}>
-                    {program.instituteName}
-                  </h5>
-                  <h1 style={{ fontSize: "14px", color: "rgba(0, 0, 0, 0.6)" }}>
-                    {getInstituteState(program.instituteName)}
-                  </h1>
-                  <p style={{ fontSize: "16px", marginBottom: "10px", color: "rgba(0, 0, 0, 0.8)" }}>
-                    {program.programmeName}
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', flex: '35%', flexDirection: 'column' }}>
-                      <h1 style={{ fontSize: "14px", color: "rgba(0, 0, 0, 0.6)" }}>
-                        Duration
-                      </h1>
-                      <h1 style={{ color: "black", fontSize: "14px" }}>
-                        {program.programmeDuration}
-                      </h1>
-                    </div>
+      <div className="card" style={{ margin: '30px', width: "100%" }}>
+        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '40%' }}>
+          <div>
+            <Label htmlFor="name" value="Price Range" style={{ fontSize: "16px", marginBottom: "5px" }} />
+            <div>
+              <Box sx={{ width: 400 }}>
+                <Slider
+                  min={0}
+                  max={50000}
+                  value={value}
+                  onChange={handleChange}
+                  valueLabelDisplay="auto"
+                />
 
-                    <div style={{ display: 'flex', flex: '65%', flexDirection: 'column' }}>
-                      <h1 style={{ fontSize: "14px", color: "rgba(0, 0, 0, 0.6)" }}>
-                        Estimated Tuition Fees
-                      </h1>
+                <div style={{ display: 'flex', marginBottom: "20px" }}>
+                  <div style={{ marginRight: "60px" }}>
+                    <Label htmlFor="minimumPrice" value="Minimum Price" />
+                    <TextInput
+                      type="number"
+                      className="form-control"
+                      id="name"
+                      value={value[0]}
+                      onChange={(e) => handleInputChange(0, e.target.value)}
+                    />
+                  </div>
 
-                      <h1 style={{ color: "black", fontSize: "14px" }}>
-                        RM{program.programmePrice}
-                      </h1>
-                    </div>
+                  <div>
+                    <Label htmlFor="maximumPrice" value="Maximum Price" />
+                    <TextInput
+                      type="number"
+                      className="form-control"
+                      id="name"
+                      value={value[1]}
+                      onChange={(e) => handleInputChange(1, e.target.value)}
+                    />
                   </div>
                 </div>
-              </div>
+              </Box>
             </div>
-          ))
-        ) : (
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <h1 style={{ color: "black", fontSize: "14px" }}>No matched institute programme</h1>
           </div>
-        )}
 
-        <div className="flex overflow-x-auto sm:justify-left" style={{ color: "black", marginTop: "10px" }}>
-          <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
-        </div>
-        <div className="flex overflow-x-auto sm:justify-left">
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} showIcons />
+          <div style={{ paddingBottom: '20px' }}>
+            <div className="mb-2 block">
+              <Label htmlFor="name" value="Course Category" style={{ fontSize: "16px", marginBottom: "5px" }} />
+              <Dropdown
+                label={programmeCategory}
+                style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+                placement="bottom"
+              >
+                {courseCategory.map((name) => (
+                  <Dropdown.Item key={name} onClick={() => setProgrammeCategory(name)}>{name}</Dropdown.Item>
+                ))}
+              </Dropdown>
+            </div>
+          </div>
+
+          <div style={{ paddingBottom: '20px' }}>
+            <div className="mb-2 block">
+              <Label htmlFor="name" value="Study Level " style={{ fontSize: "16px", marginBottom: "5px" }} />
+              <Dropdown
+                label={studyLevel}
+                dismissOnClick={true}
+                style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+                placement="bottom">
+                <Dropdown.Item onClick={() => setStudyLevel('Foundation')}>Foundation</Dropdown.Item>
+                <Dropdown.Item onClick={() => setStudyLevel('Diploma')}>Diploma</Dropdown.Item>
+              </Dropdown>
+            </div>
+          </div>
+
+
+          <div style={{ paddingBottom: '20px' }}>
+            <div className="mb-2 block" style={{ color: "black" }}>
+              <Label htmlFor="name" value="Home Location " style={{ fontSize: "16px", marginBottom: "5px" }} />
+              <TextInput
+                type="text"
+                id="location"
+                icon={ImLocation2}
+                required
+                autoComplete="off"
+                onChange={(e) => setLocation(e.target.value)}
+              />
+            </div>
+          </div>
+
+
+          <div>
+            <Button onClick={executeFilter}>Next</Button>
+          </div>
+
         </div>
       </div>
     </div>

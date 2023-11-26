@@ -9,7 +9,6 @@ import { HiInformationCircle } from 'react-icons/hi'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from "uuid"
 import Swal from 'sweetalert2'
-import { HiArrowNarrowRight, HiCalendar } from 'react-icons/hi'
 import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
@@ -614,7 +613,7 @@ export default function uploadResult() {
     }
   }
 
-  async function deleteImageResultDataToFirestore(userId: string | null): Promise<void>{
+  async function deleteImageResultDataToFirestore(userId: string | null): Promise<void> {
     const q = query(collection(db, 'Result'), where('ResultBelongTo', '==', userId))
     const querySnapshot = await getDocs(q)
     const deletePromises = querySnapshot.docs.map(async (doc) => {
@@ -816,36 +815,36 @@ export default function uploadResult() {
     <div style={{ margin: "20px" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Timeline horizontal>
-        <Timeline.Item>
-          <Timeline.Point icon={FaFilter}/>
-          <Timeline.Content>
-            <Timeline.Title>Step 1</Timeline.Title>
-            <Timeline.Body>
-              Filter Institute and Programme
-            </Timeline.Body>
-          </Timeline.Content>
-        </Timeline.Item>
-        <Timeline.Item style={{ margin: '0 auto' }}>
-          <Timeline.Point icon={GrDocumentUpload} />
-          <Timeline.Content>
-            <Timeline.Title>Step 2</Timeline.Title>
-            <Timeline.Body>
-              Upload SPM Result
-            </Timeline.Body>
-          </Timeline.Content>
-        </Timeline.Item>
-        <Timeline.Item style={{ marginLeft: 'auto' }}>
-          <Timeline.Point icon={MdOutlineRecommend} />
-          <Timeline.Content>
-            <Timeline.Title>Step 3</Timeline.Title>
-            <Timeline.Body>
-              View Recommended Programmes
-            </Timeline.Body>
-          </Timeline.Content>
-        </Timeline.Item>
-      </Timeline>
+          <Timeline.Item>
+            <Timeline.Point icon={GrDocumentUpload} />
+            <Timeline.Content>
+              <Timeline.Title>Step 1</Timeline.Title>
+              <Timeline.Body>
+                Upload SPM Result
+              </Timeline.Body>
+            </Timeline.Content>
+          </Timeline.Item>
+          <Timeline.Item style={{ margin: '0 auto' }}>
+            <Timeline.Point icon={FaFilter} />
+            <Timeline.Content>
+              <Timeline.Title>Step 2</Timeline.Title>
+              <Timeline.Body>
+                Filter Institute and Programme
+              </Timeline.Body>
+            </Timeline.Content>
+          </Timeline.Item>
+          <Timeline.Item style={{ marginLeft: 'auto' }}>
+            <Timeline.Point icon={MdOutlineRecommend} />
+            <Timeline.Content>
+              <Timeline.Title>Step 3</Timeline.Title>
+              <Timeline.Body>
+                View Recommended Programmes
+              </Timeline.Body>
+            </Timeline.Content>
+          </Timeline.Item>
+        </Timeline>
       </div>
-      
+
       <div style={{ margin: "20px" }}>
         <div>
           {duplicateSubject && (
@@ -868,52 +867,56 @@ export default function uploadResult() {
             </Alert>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button pill onClick={enableUploadResultContainer}>
-            Upload Result
-          </Button>
-          <Button pill onClick={showManualInput}>
-            Input Manually
-          </Button>
-        </div>
-        {uploadFileContainer && (
-          <div id="fileUpload" className="max-w-md">
-            <div className="mb-2 block">
-              <Label htmlFor="file" value="Upload file" />
+        <div className="card" style={{ margin: '30px', width: "100%" }}>
+          <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '85%' }}>
+            <div className="flex flex-wrap gap-2">
+              <Button pill onClick={enableUploadResultContainer}>
+                Upload Result
+              </Button>
+              <Button pill onClick={showManualInput}>
+                Input Manually
+              </Button>
             </div>
-            <FileInput
-              id="file"
-              onChange={(e) => { handleResultImageUpload(e) }}
-            />
-            {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-          </div>
-        )}
-        <br />
-        <div>
-          <div style={{ display: 'flex' }}>
-            <table id="table table-borderless" style={{ color: "gray" }}>
-              <thead id="gradeTableThead">
-              </thead>
-              <tbody id="gradeTableBody">
-              </tbody>
-            </table>
-          </div>
-          <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
-            {addRowStatus && (
-              <Button pill onClick={handleAddRowContainer}>
-                Add Row
-              </Button>
+            {uploadFileContainer && (
+              <div id="fileUpload" className="max-w-md">
+                <div className="mb-2 block">
+                  <Label htmlFor="file" value="Upload file" />
+                </div>
+                <FileInput
+                  id="file"
+                  onChange={(e) => { handleResultImageUpload(e) }}
+                />
+                {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+              </div>
             )}
-            {deleteRowStatus && (
-              <Button pill onClick={handleDeleteRowContainer}>
-                Delete Row
-              </Button>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
-            <Button pill onClick={proceedToNext}>
-              Next
-            </Button>
+            <br />
+            <div>
+              <div style={{ display: 'flex' }}>
+                <table id="table table-borderless" style={{ color: "gray" }}>
+                  <thead id="gradeTableThead">
+                  </thead>
+                  <tbody id="gradeTableBody">
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
+                {addRowStatus && (
+                  <Button pill onClick={handleAddRowContainer}>
+                    Add Row
+                  </Button>
+                )}
+                {deleteRowStatus && (
+                  <Button pill onClick={handleDeleteRowContainer}>
+                    Delete Row
+                  </Button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
+                <Button pill onClick={proceedToNext}>
+                  Next
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
