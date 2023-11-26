@@ -1,4 +1,5 @@
 import asyncio
+import time
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -10,6 +11,7 @@ from PIL import Image
 import firebase_admin
 from firebase_admin import db, credentials, firestore
 from openai import OpenAI
+
 
 #chatgpt init
 client = OpenAI(
@@ -73,17 +75,16 @@ app.config['UPLOAD_IMAGE_FOLDER'] = imageUploadPath
 def euclidean(v1, v2):
     return sum((p-q)**2 for p, q in zip(v1, v2)) ** .5
     
-async def chatGPTAPI(message):
+def chatGPTAPI(message):
     if message: 
         messages.append( 
             {"role": "user", "content": message}, 
         ) 
-        chat = await client.chat.completions.create( 
-            model="gpt-3.5-turbo", messages=messages 
+        chat = client.chat.completions.create( 
+            model="gpt-3.5-turbo", messages=messages, 
         ) 
-    print(f"ChatGPT: {chat}") 
-    messages.append({"role": "assistant", "content": chat}) 
-    return str(chat)    
+    print(f"ChatGPT: {chat.choices[0].message.content}") 
+    return str(chat.choices[0].message.content)    
     
 class ReccomendCareer:
     def ReccomendKNN(centroids, inputTestResult):
@@ -99,18 +100,20 @@ class ReccomendCareer:
         caughtCareer = re.finditer(r'\[.*?\]', resultGPT)
         return caughtCareer
     
-    async def ReccomendChatGPT(result, testType):
+    def ReccomendChatGPT(result, testType):
         inputPrompt = "Return me an array of five careers suitable for the test result for " + testType + ".\n " + result + "\n Reply without any code and explanation but the array."
-        return await chatGPTAPI(inputPrompt) 
+        return chatGPTAPI(inputPrompt) 
     
-    async def reduceReccomendation(reccomendations):
+    def reduceReccomendation(reccomendations):
         inputPrompt = ""
         for reccomend in reccomendations:
-            if(reccomend == [""]):
+            print(reccomend)
+            if(reccomend != [""] or reccomend != ['']):
                 inputPrompt += str(reccomend) + "\n"
                 
         inputPrompt += "Reduce the arrays above into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. Please only provide the array without code and explanation"
-        return await chatGPTAPI(inputPrompt)
+        print(inputPrompt)
+        return chatGPTAPI(inputPrompt)
 
 @app.route("/finalFilter", methods=['GET'])
 def finalFilter():
@@ -359,7 +362,7 @@ def uploadResult():
         return jsonify({"message": "Error processing request"})
     
 @app.route("/Career/Recommend", methods=['POST'])
-async def recommend():
+def recommend():
     data = request.json
     #check
     if(data["hollands"] == data["bigfive"]):
@@ -378,16 +381,16 @@ async def recommend():
         gptHolland = "["
         for i in range(6):
             gptHolland += " " + hollandFormat[i] + ":" + str(data["hollands"][i])
-        hollandGPTReccomends = await ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
+        hollandGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
         
     if(data["bigfive"] != [0,0,0,0,0]):
         bigfiveKNNReccomends = ReccomendCareer.ReccomendKNN(bigfiveCetroids, data["bigfive"])
         gptBigFive = "["
         for i in range(5):
             gptBigFive += " " + bigfiveFormat[i] + ":" + str(data["hollands"][i])
-        bigfiveGPTReccomends = await ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
+        bigfiveGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
     
-    output = await ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
+    output = ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
     return jsonify({'message': output})
 
 
