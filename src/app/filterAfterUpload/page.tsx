@@ -1,10 +1,10 @@
 'use client'
-import { Label, TextInput, Dropdown, Button, Timeline } from 'flowbite-react'
+import { Label, TextInput, Dropdown, Button, Timeline, Kbd } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Slider from '@mui/material/Slider'
 import { ImLocation2 } from 'react-icons/im'
-import { distanceMatrixResultCollection, instituteCollection, programmeCollection } from '../lib/controller'
+import { instituteCollection } from '../lib/controller'
 import { DocumentData, QuerySnapshot, addDoc, collection, deleteDoc, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore'
 import { db } from '../FirebaseConfig/firebaseConfig'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
@@ -12,6 +12,8 @@ import { stringSimilarity } from "string-similarity-js"
 import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
+import Link from 'next/link'
+import { AiOutlineEye } from 'react-icons/ai'
 
 
 declare global {
@@ -20,24 +22,6 @@ declare global {
     initComputeDistance: () => void
   }
 }
-
-type programme = {
-  instituteName: string
-  programmeCategory: string
-  programmeName: string
-  programmePrice: number
-  programmeStudyLevel: string
-  programmeDuration: number
-}
-
-type distance = {
-  distance: string
-  duration: string
-  origin: string
-  destination: string
-  instituteName: string
-}
-
 
 export default function FilterInstituteProgramme() {
   const [value, setValue] = React.useState<number[]>([6000, 30000])
@@ -51,20 +35,8 @@ export default function FilterInstituteProgramme() {
   const [instituteList, setInstituteList] = useState<Record<string, string>>({})
   const [instituteLocationList, setInstituteLocationList] = useState<string[]>([])
   const [userId, setUserId] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalData, setTotalData] = useState(0)
-  const [programmeFilter, setProgrammeFilter] = useState<programme[]>([])
-  const [instituteImageUrlList, setInstituteImageUrlList] = useState<Record<string, string>>({})
+  const [data, setData] = useState<Record<string, string>>({})
 
-  const cardsPerPage = 3
-  const onPageChange = (page: number) => setCurrentPage(page)
-
-  const getProgramsForCurrentPage = () => {
-    const startIndex = (currentPage - 1) * cardsPerPage
-    const endIndex = startIndex + cardsPerPage
-    return programmeFilter.slice(startIndex, endIndex)
-  }
 
   //setValue([6000, 30000]) - set an array containing 2 number
   const handleChange = (event: Event, newValue: number | number[]) => {
@@ -99,120 +71,30 @@ export default function FilterInstituteProgramme() {
     return finalInstituteLocation ? instituteList[finalInstituteLocation] : undefined
   }
 
-  const executeFilter = async () => {
+  const viewFilteredProgrammes = async () => {
     if (location != "") {
       await initComputeDistance()
-      console.log("DW")
-      try {
-        const distanceFilter = query(distanceMatrixResultCollection,
-          orderBy('distanceInUnit'),
-          where('user', '==', userId))
-        const distanceSnapshot = await getDocs(distanceFilter)
-        console.log(distanceSnapshot.docs.map(doc => doc.data()))
+      console.log("Got location")
+      const displayResult = [
+        value[0],
+        value[1],
+        studyLevel,
+        programmeCategory,
+        userId,
+        location
+      ]
 
-        const sortedInstitutes = distanceSnapshot.docs.map((doc) => {
-          const data = doc.data()
-          return {
-            distance: data.distance,
-            duration: data.duration,
-            origin: data.origin,
-            destination: data.destination,
-            instituteName: data.instituteName
-          }
+
+      postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
+        .then(data => {
+          console.log(data)
+          setData(data)
         })
 
-        console.log(value[0])
-        console.log(value[1])
-        console.log(studyLevel)
-        console.log(programmeCategory)
 
-        const allProgrammeDataPromises = sortedInstitutes.map((institute) => {
-          return new Promise((resolve, reject) => {
-            const queryFilter = query(programmeCollection,
-              where('ProgrammePrice', '>=', value[0]),
-              where('ProgrammePrice', '<=', value[1]),
-              where('ProgrammeStudyLevel', '==', studyLevel),
-              where('ProgrammeCategory', '==', programmeCategory),
-              where('InstituteName', '==', institute.instituteName)
-            )
-
-            onSnapshot(queryFilter, (snapshot: QuerySnapshot<DocumentData>) => {
-              const programmeData: programme[] = [];
-              snapshot.forEach((doc) => {
-                const data = doc.data();
-                const programme: programme = {
-                  instituteName: data.InstituteName,
-                  programmeCategory: data.ProgrammeCategory,
-                  programmeName: data.ProgrammeName,
-                  programmePrice: data.ProgrammePrice,
-                  programmeStudyLevel: data.ProgrammeStudyLevel,
-                  programmeDuration: data.ProgrammeDuration,
-                }
-
-                programmeData.push(programme)
-              })
-
-              //mean programmeData is ready
-              resolve(programmeData)
-            })
-          })
-        })
-
-        const allProgrammeData = await Promise.all(allProgrammeDataPromises);
-        const mergeAllArray = [].concat(...allProgrammeData)
-        console.log(mergeAllArray)
-        setProgrammeFilter(mergeAllArray)
-        setTotalData(mergeAllArray.length)
-        setTotalPages(Math.ceil(mergeAllArray.length / cardsPerPage))
-
-
-      } catch (error) {
-        console.error("Error fetching initial data:", error)
-      }
 
     } else {
-      console.log("DW2")
-      console.log(value[0])
-      console.log(value[1])
-      console.log(studyLevel)
-      console.log(programmeCategory)
-
-      const queryWithoutLocationFilter = query(programmeCollection,
-        where('ProgrammePrice', '>=', value[0]),
-        where('ProgrammePrice', '<=', value[1]),
-        where('ProgrammeStudyLevel', '==', studyLevel),
-        where('ProgrammeCategory', '==', programmeCategory)
-      )
-
-      const getData = async () => {
-        const snapshotA = await getDocs(queryWithoutLocationFilter)
-
-        const programmeWithoutLocationData: programme[] = []
-        snapshotA.forEach((doc) => {
-          const data = doc.data()
-          if (data) {
-            const programmeA: programme = {
-              instituteName: data.InstituteName,
-              programmeCategory: data.ProgrammeCategory,
-              programmeName: data.ProgrammeName,
-              programmePrice: data.ProgrammePrice,
-              programmeStudyLevel: data.ProgrammeStudyLevel,
-              programmeDuration: data.ProgrammeDuration
-            }
-
-            programmeWithoutLocationData.push(programmeA)
-          }
-        })
-
-        console.log(programmeWithoutLocationData)
-        console.log("Safe")
-        setProgrammeFilter(programmeWithoutLocationData)
-        setTotalData(programmeWithoutLocationData.length)
-        setTotalPages(Math.ceil(programmeWithoutLocationData.length / cardsPerPage))
-      }
-
-      getData()
-
+      console.log("Empty location")
       const displayResult = [
         value[0],
         value[1],
@@ -221,13 +103,15 @@ export default function FilterInstituteProgramme() {
         userId,
       ]
 
+
       postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
         .then(data => {
           console.log(data)
+          setData(data)
         })
-
-
     }
+
+
   }
 
   async function postData(url = "", data = {}, method = "POST") {
@@ -285,7 +169,7 @@ export default function FilterInstituteProgramme() {
       await deleteDistanceMatrixResults(userId)
       // Store results in Firebase
       await Promise.all(results.map(async (data) => {
-        const docRef = await addDoc(collection(db, 'DistanceMatrixResults'), data);
+        const docRef = await addDoc(collection(db, 'FilterDistanceMatrixResults'), data);
         console.log('Document written with ID: ', docRef.id)
       }))
     })
@@ -295,7 +179,7 @@ export default function FilterInstituteProgramme() {
 
   //delete document
   async function deleteDistanceMatrixResults(userId: string | null): Promise<void> {
-    const q = query(collection(db, 'DistanceMatrixResults'), where('user', '==', userId))
+    const q = query(collection(db, 'FilterDistanceMatrixResults'), where('user', '==', userId))
     const querySnapshot = await getDocs(q)
     const deletePromises = querySnapshot.docs.map(async (doc) => {
       await deleteDoc(doc.ref)
@@ -351,104 +235,27 @@ export default function FilterInstituteProgramme() {
 
     onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const instituteDataDictionary: Record<string, string> = {}
-      const instituteImageDictionary: Record<string, string> = {}
 
       snapshot.docs.forEach(doc => {
         const instituteData = doc.data()
         const instituteName = instituteData.InstituteName
         const instituteLocation = instituteData.InstituteLocation
-        const instituteImage = instituteData.InstituteImageUrl
 
         instituteDataDictionary[instituteLocation] = instituteName
-        instituteImageDictionary[instituteName] = instituteImage
       })
 
       console.log(instituteDataDictionary)
       setInstituteList(instituteDataDictionary)
-      setInstituteImageUrlList(instituteImageDictionary)
 
       //store location
       setInstituteLocationList(Object.keys(instituteDataDictionary))
     });
   }
 
-  function getState(location: string): string | undefined {
-    if (location.toLowerCase().includes("selangor")) {
-      return "Selangor"
-    }
-    else if (location.toLowerCase().includes("johor")) {
-      return "Johor"
-    }
-    else if (location.toLowerCase().includes("kelantan")) {
-      return "Kelantan"
-    }
-    else if (location.toLowerCase().includes("melaka")) {
-      return "Melaka"
-    }
-    else if (location.toLowerCase().includes("negeri sembilan")) {
-      return "Negeri Sembilan"
-    }
-    else if (location.toLowerCase().includes("pahang")) {
-      return "pahang"
-    }
-    else if (location.toLowerCase().includes("penang")) {
-      return "penang"
-    }
-    else if (location.toLowerCase().includes("perak")) {
-      return "Perak"
-    }
-    else if (location.toLowerCase().includes("perlis")) {
-      return "Perlis"
-    }
-    else if (location.toLowerCase().includes("sabah")) {
-      return "Sabah"
-    }
-    else if (location.toLowerCase().includes("sarawak")) {
-      return "Sarawak"
-    }
-    else if (location.toLowerCase().includes("terengganu")) {
-      return "Terengganu"
-    }
-    else if (location.toLowerCase().includes("labuan")) {
-      return "Labuan"
-    }
-    else if (location.toLowerCase().includes("putrajaya")) {
-      return "Putrajaya"
-    }
-    else {
-      return "Kuala Lumpur"
-    }
-
-  }
-
-  function getInstituteState(name: string): string | undefined {
-    for (const [location, instituteName] of Object.entries(instituteList)) {
-      if (instituteName == name) {
-        return getState(location)
-      }
-    }
-
-    //if no match found
-    return undefined
-
-  }
-
-  function getImage(name: string): string | undefined {
-    for (const [instituteName, imageUrl] of Object.entries(instituteImageUrlList)) {
-      if (instituteName == name) {
-        return imageUrl
-      }
-    }
-
-    //if no match found
-    return undefined
-
-  }
-
   useEffect(() => {
     if (!window.initAutocomplete) {
       const newScript = document.createElement('script');
-      //newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
+      newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyB1is7HLgac9h6mbPmOpCpJcuHCfT_pmjo&callback=initAutocomplete&libraries=places&v=weekly"
       newScript.async = true
       newScript.defer = true
 
@@ -476,47 +283,6 @@ export default function FilterInstituteProgramme() {
     fetchAllInstituteData()
   }, [])
 
-  useEffect(() => {
-    const initialQuery = query(programmeCollection,
-      where('ProgrammePrice', '>=', value[0]),
-      where('ProgrammePrice', '<=', value[1]),
-      where('ProgrammeStudyLevel', '==', studyLevel),
-      where('ProgrammeCategory', '==', programmeCategory)
-    )
-
-    const getData = async () => {
-      const snapshotB = await getDocs(initialQuery)
-
-      const programmeInitialWithoutLocationData: programme[] = []
-      snapshotB.forEach((doc) => {
-        const data = doc.data()
-        if (data) {
-          const programmeA: programme = {
-            instituteName: data.InstituteName,
-            programmeCategory: data.ProgrammeCategory,
-            programmeName: data.ProgrammeName,
-            programmePrice: data.ProgrammePrice,
-            programmeStudyLevel: data.ProgrammeStudyLevel,
-            programmeDuration: data.ProgrammeDuration
-          }
-
-          programmeInitialWithoutLocationData.push(programmeA)
-        }
-      })
-
-      console.log(programmeInitialWithoutLocationData)
-      console.log("First initial")
-      setProgrammeFilter(programmeInitialWithoutLocationData)
-      setTotalData(programmeInitialWithoutLocationData.length)
-      setTotalPages(Math.ceil(programmeInitialWithoutLocationData.length / cardsPerPage))
-    }
-
-    getData()
-  }, [])
-
-  // useEffect(() => {
-  //   initComputeDistance()
-  // }, [location])
 
   useEffect(() => {
     const auth = getAuth()
@@ -539,34 +305,34 @@ export default function FilterInstituteProgramme() {
     <div style={{ margin: "20px" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Timeline horizontal>
-        <Timeline.Item>
-          <Timeline.Point icon={GrDocumentUpload}/>
-          <Timeline.Content>
-            <Timeline.Title>Step 1</Timeline.Title>
-            <Timeline.Body>
-              Upload SPM Result
-            </Timeline.Body>
-          </Timeline.Content>
-        </Timeline.Item>
-        <Timeline.Item style={{ margin: '0 auto' }}>
-          <Timeline.Point icon={FaFilter} />
-          <Timeline.Content>
-            <Timeline.Title>Step 2</Timeline.Title>
-            <Timeline.Body>
-              Filter Institute and Programme
-            </Timeline.Body>
-          </Timeline.Content>
-        </Timeline.Item>
-        <Timeline.Item style={{ marginLeft: 'auto' }}>
-          <Timeline.Point icon={MdOutlineRecommend} />
-          <Timeline.Content>
-            <Timeline.Title>Step 3</Timeline.Title>
-            <Timeline.Body>
-              View Recommended Programmes
-            </Timeline.Body>
-          </Timeline.Content>
-        </Timeline.Item>
-      </Timeline>
+          <Timeline.Item>
+            <Timeline.Point icon={GrDocumentUpload} />
+            <Timeline.Content>
+              <Timeline.Title>Step 1</Timeline.Title>
+              <Timeline.Body>
+                Upload SPM Result
+              </Timeline.Body>
+            </Timeline.Content>
+          </Timeline.Item>
+          <Timeline.Item style={{ margin: '0 auto' }}>
+            <Timeline.Point icon={FaFilter} />
+            <Timeline.Content>
+              <Timeline.Title>Step 2</Timeline.Title>
+              <Timeline.Body>
+                Filter Institute and Programme
+              </Timeline.Body>
+            </Timeline.Content>
+          </Timeline.Item>
+          <Timeline.Item style={{ marginLeft: 'auto' }}>
+            <Timeline.Point icon={MdOutlineRecommend} />
+            <Timeline.Content>
+              <Timeline.Title>Step 3</Timeline.Title>
+              <Timeline.Body>
+                View Recommended Programmes
+              </Timeline.Body>
+            </Timeline.Content>
+          </Timeline.Item>
+        </Timeline>
       </div>
 
       <div className="card" style={{ margin: '30px', width: "100%" }}>
@@ -656,7 +422,20 @@ export default function FilterInstituteProgramme() {
 
 
           <div>
-            <Button onClick={executeFilter}>Next</Button>
+            <Button onClick={viewFilteredProgrammes}>Next</Button>
+          </div>
+
+          <div>
+            <Link
+              href={{
+                pathname: '/viewFiltered',
+                query: {
+                  search: JSON.stringify(data)
+                }
+              }}
+            >
+              <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }} />
+            </Link>
           </div>
 
         </div>

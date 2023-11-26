@@ -116,67 +116,105 @@ def finalFilter():
     if request.method == 'POST':
         data = request.json     
         print(data)
+        if len(data['data']) > 5:
+            print("Got location")
+            withLocationlist = filterWithLocation(data)
+            print(withLocationlist)
+            return withLocationlist
+        else:
+            print("Empty location")
+            withoutLocationList = filterWithoutLocation(data)
+            print(withoutLocationList)
+            return withoutLocationList
 
-        #Result
-        resultData = db.collection('Result').get()
+    
+def resultData(data):
+    #Result
+    resultData = db.collection('Result').get()
+    for resultUser in resultData:
+        userId = resultUser.get("ResultBelongTo")
+        if userId == data['data'][4]:
+            result_dict = resultUser.get('ResultData')
+    
+    return result_dict
 
-        for resultUser in resultData:
-            userId = resultUser.get("ResultBelongTo")
-            if userId == data['data'][4]:
-                result_dict = resultUser.get('ResultData')
+def distanceData(data):
+    #Distance
+    distanceData = db.collection('FilterDistanceMatrixResults').get()
+    distance_list = []
+    for distance in distanceData:
+        distance_dict = {}
+        user = distance.get("user")
+        if user == data['data'][4]:
+            distance_dict['InstituteName'] = distance.get('instituteName')
+            distance_dict['DistanceInUnit'] = distance.get('distanceInUnit')
+            distance_list.append(distance_dict)
 
-        
-        #Distance
-        distanceData = db.collection('DistanceMatrixResults').get()
+    sorted_distance_list = sorted(distance_list, key=lambda item: int(item['DistanceInUnit']) if isinstance(item['DistanceInUnit'], (int, float)) else float('inf'))
+    return sorted_distance_list
 
-        distance_list = []
+def programmeData():
+    #Programme
+    programmeData = db.collection('Programme').get()
+    programme_list = []
 
-        for distance in distanceData:
-            distance_dict = {}
-            user = distance.get("user")
-            if user == data['data'][4]:
-                distance_dict['InstituteName'] = distance.get('instituteName')
-                distance_dict['DistanceInUnit'] = distance.get('distanceInUnit')
-                distance_list.append(distance_dict)
+    for programme in programmeData:
+        programme_dict = {}
+        programme_dict['ProgrammeName'] = programme.get('ProgrammeName')    #Diploma In Computer Science
+        programme_dict['InstituteName'] = programme.get('InstituteName')   #TARC
+        programme_dict['ProgrammeCategory'] = programme.get('ProgrammeCategory')    #Computer & Multimedia
+        programme_dict['ProgrammePrice'] = programme.get('ProgrammePrice')          #20000
+        programme_dict['ProgrammeStudyLevel'] = programme.get('ProgrammeStudyLevel')    #Diploma
+        programme_dict['ProgrammeDuration'] = programme.get('ProgrammeDuration')
+        programme_dict['ProgrammeMinimumEntryRequirement'] = programme.get('ProgrammeMinimumEntryRequirement')  #{'BM': 'D', 'SEJ': 'E'}
+        programme_list.append(programme_dict)
 
-        print(distance_list)
-        sorted_distance_list = sorted(distance_list, key=lambda item: int(item['DistanceInUnit']) if isinstance(item['DistanceInUnit'], (int, float)) else float('inf'))
-        print(sorted_distance_list)
+    return programme_list
 
-        #Programme
-        programmeData = db.collection('Programme').get()
-        programme_list = []
+def filterWithLocation(data):
+    #result data
+    result_dict = resultData(data)
 
-        for programme in programmeData:
-            programme_dict = {}
-            programme_dict['ProgrammeName'] = programme.get('ProgrammeName')    #Diploma In Computer Science
-            programme_dict['InstituteName'] = programme.get('InstituteName')   #TARC
-            programme_dict['ProgrammeCategory'] = programme.get('ProgrammeCategory')    #Computer & Multimedia
-            programme_dict['ProgrammePrice'] = programme.get('ProgrammePrice')          #20000
-            programme_dict['ProgrammeStudyLevel'] = programme.get('ProgrammeStudyLevel')    #Diploma
-            programme_dict['ProgrammeDuration'] = programme.get('ProgrammeDuration')
-            programme_dict['ProgrammeMinimumEntryRequirement'] = programme.get('ProgrammeMinimumEntryRequirement')  #{'BM': 'D', 'SEJ': 'E'}
-            programme_list.append(programme_dict)
+    #distance data
+    sorted_distance_list = distanceData(data)
 
-        print("A")
-        print(programme_list) 
-        sorted_distance_names = [item['InstituteName'] for item in sorted_distance_list]
-        print(sorted_distance_names)
-        sorted_programme_list = sorted(programme_list, key=lambda item: sorted_distance_names.index(item.get('InstituteName')))
-        print(sorted_programme_list)
+    #programme data
+    programme_list = programmeData()
+    sorted_distance_names = [item['InstituteName'] for item in sorted_distance_list]
+    print(sorted_distance_names)
+    sorted_programme_list = sorted(programme_list, key=lambda item: sorted_distance_names.index(item.get('InstituteName')))
+    print(sorted_programme_list)
 
             
-        user_input = {
-            "maximum_fees": data['data'][1],    #30000
-            "study_level": data['data'][2],     #Diploma    
-            "course": data['data'][3],          #Computer & Multimedia
-            "result": result_dict,              #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
-            "distanceFromInstitute": sorted_distance_list   #{'TARC': '33km', 'UCSI': '55km'}                                    
-        }
+    user_input = {
+        "maximum_tuition_fees": data['data'][1],    #30000
+        "study_level": data['data'][2],     #Diploma    
+        "course": data['data'][3],          #Computer & Multimedia
+        "result": result_dict,              #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+        "distanceFromInstitute": sorted_distance_list   #{'TARC': '33km', 'UCSI': '55km'}                                    
+    }
 
-        filterList = filter_programmes(user_input, programme_list)
-        print(filterList)
-        return filterList
+    filterList = filter_programmes(user_input, sorted_programme_list)
+    print(filterList)
+    return filterList
+
+def filterWithoutLocation(data):
+    #result data
+    result_dict_without_location = resultData(data)
+
+    #programme data
+    programme_list = programmeData()
+
+    user_input = {
+        "maximum_tuition_fees": data['data'][1],    #30000
+        "study_level": data['data'][2],     #Diploma    
+        "course": data['data'][3],          #Computer & Multimedia
+        "result": result_dict_without_location,              #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}                                    
+    }
+
+    filterList = filter_programmes(user_input, programme_list)
+    print(filterList)
+    return filterList
 
 
 def filter_programmes(user_input, programme_list):
@@ -196,7 +234,7 @@ def filter_programmes(user_input, programme_list):
                     #Check if the price is within budget
                     programme_price = programme['ProgrammePrice']
                     print(programme_price)
-                    if programme_price <= user_input['maximum_fees']:
+                    if programme_price <= user_input['maximum_tuition_fees']:
                         recommend_programmes_list.append(programme)
     
     
