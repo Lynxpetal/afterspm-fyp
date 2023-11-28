@@ -1,12 +1,13 @@
 "use client"
 import { FC, HTMLAttributes, useEffect, useState } from "react";
 import { cn } from "../lib/validators/utils";
-import { Button, Label, Pagination, Progress, Radio, Tooltip } from 'flowbite-react';
+import { Button, Label, Pagination, Progress, Radio, Toast, Tooltip } from 'flowbite-react';
 import { Question } from "../lib/validators/message";
 import { addDoc, collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "../FirebaseConfig/firebaseConfig";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { testCollection } from "../lib/controller";
+import { HiExclamation } from "react-icons/hi";
 
 
 
@@ -20,9 +21,10 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) =>
     const [Answer, setAnswer] = useState<Number[]>(Array(Form.length).fill(0))
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [ProgressState, setProgressState] = useState<number>(0)
+    const [showToast, setToast] = useState<boolean>(false)
     const onPageChange = (page: number) => {
         setCurrentPage(page)
-    };
+    }
     async function submitForms(HollandResult: string, BigFiveResult: string) {
         const auth = getAuth()
         onAuthStateChanged(auth, async (user) => {
@@ -80,6 +82,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) =>
         }
 
         await submitForms(holland, bigfive)
+        setToast(true)
     }
 
     function onSubmit() {
@@ -157,6 +160,13 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) =>
                 'relative',
                 className
             )}>
+            {showToast && (<Toast className="absolute top-1 right-3">
+                <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+                    <HiExclamation className="h-5 w-5" />
+                </div>
+                <div className="ml-3 text-sm font-normal">Form submitted</div>
+                <Toast.Toggle onDismiss={() => setToast(false)}/>
+            </Toast>)}    
             <div className="flex flex-col gap-8">
                 <fieldset className="flex py-10 w-full flex-col gap-4 shadow-md rounded bg-white">
                     <legend className="m-3 p-3 text-2xl font-semibold antialiased bg-slate-50 shadow-md rounded-md">{Title}</legend>

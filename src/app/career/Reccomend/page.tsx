@@ -176,6 +176,9 @@ export default function Reccomend() {
                     {reccomendations[0] != "" ?
                         <Table.Body className="divide-y">
                             {reccomendations.map((career) => {
+                                if (career.charAt(0) == "[") {
+                                    career = career.slice(1, -1)
+                                }
                                 let tabler = career.split(":")
                                 tabler.push("know more")
                                 return <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -191,12 +194,7 @@ export default function Reccomend() {
                                     })}
                                 </Table.Row>
                             })}
-
-
-
-                        </Table.Body>
-                        :
-                        <></>}
+                        </Table.Body> : <></>}
                 </Table>
                 {reccomendations[0] == '' ? <div className="text-center bg-white hover:bg-gray-100">No reccomendations made yet press the button below to get reccomendations</div> : <></>}
                 <div className="bg-white row-span-full  flex items-center justify-center">
@@ -205,12 +203,7 @@ export default function Reccomend() {
                         <HiOutlineArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>
-                <Button className="my-9" onClick={onGet} pill>
-                    Check
-                    <HiOutlineArrowRight className="ml-2 h-5 w-5" />
-                </Button>
             </div>
-            <p style={{ color: "black" }}>{reccomendations}</p>
         </div>
     )
 
