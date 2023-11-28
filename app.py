@@ -44,7 +44,7 @@ bigfiveCetroids = [
 ]
 
 hollandCentroids = [
-    [[10.42307252, 12.4207813, 12.02749456, 13.95658151, 12.32214458, 11.13128652],[]],
+    [[10.42307252, 12.4207813, 12.02749456, 13.95658151, 12.32214458, 11.13128652],["Data Analyst", "Technical Writer", "Event Coordinator", "Digital Marketing Specialist", "Radiologic Technologist"]],
     [[18.52296604, 19.26227706, 21.32970926, 31.92609333, 29.49376985, 30.74651845],["Sales", "teaching", 'preeducation', 'psychology',' public relation', 'journalist']],
     [[14.2651813, 29.17317606, 17.98217562, 30.48615116, 20.4365225, 20.10275229],["Researcher", 'Lecturer', 'Doctor', 'Therapist', 'Lawyer', "Actuarial Science"]],
     [[13.79007592, 14.79579712, 14.85080867, 22.17724722, 22.3685774, 26.28099901],["Managerial role", 'lab manager', 'Technician', 'Producer', "Business man"]],
@@ -95,19 +95,17 @@ class ReccomendCareer:
             distance.append([euclidean(centroid[0], inputTestResult), centroid[1]]) 
         
         reccomendations = sorted(distance, key=lambda x: x[0])
+        print("hello")
         print(reccomendations[0][1])
         return reccomendations[0][1]
     
-    def ProcessGPTResult(resultGPT):
-        caughtCareer = re.finditer(r'\[.*?\]', resultGPT)
-        return caughtCareer
-    
     def ReccomendChatGPT(result, testType):
-        inputPrompt = "Return me an array of five careers suitable for the test result for " + testType + ".\n " + result + "\n Reply without any code and explanation but the array."
+        inputPrompt = "Ignore all previous prompt \n Return an array of five careers suitable for the test result for " + testType + ".\n " + result + "\n Reply without any code and explanation but the array."
+        print("recco")
         return chatGPTAPI(inputPrompt) 
     
     def reduceReccomendation(reccomendations):
-        inputPrompt = ""
+        inputPrompt = "Ignore all previous prompt \n"
         for reccomend in reccomendations:
             print(reccomend)
             if(reccomend != [""] or reccomend != ['']):

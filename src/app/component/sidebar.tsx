@@ -58,10 +58,10 @@ export default function compSidebar() {
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
-                    <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend" disabled={isLogin === "guest"}>
-                        <Sidebar.Item href="./career/Holland">1. Holland's Test</Sidebar.Item>
-                        <Sidebar.Item href=".">2. Big Five Test</Sidebar.Item>
-                        <Sidebar.Item href="#">3. Test Result</Sidebar.Item>
+                    <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
+                        <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>
+                        <Sidebar.Item href="/career/BigFive">2. Big Five Test</Sidebar.Item>
+                        <Sidebar.Item href="/career/Reccomend">3. Test Result</Sidebar.Item>
                         <Sidebar.Item href="#">4. Recommendation</Sidebar.Item>
                     </Sidebar.Collapse>
                     <Sidebar.Item href="/chat" icon={HiViewBoards} disabled={isLogin === "guest"}>

@@ -5,8 +5,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { testCollection } from "@/app/lib/controller";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { Button, Table } from 'flowbite-react';
-import { map } from "zod";
 import { HiOutlineArrowRight } from "react-icons/hi";
+import Link from "next/link";
 
 
 export default function Reccomend() {
@@ -14,6 +14,10 @@ export default function Reccomend() {
     const [uid, setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
     const defaultTable = [['No Result Found'], ['No Result Found']]
+
+    interface ApiResponse {
+        message: string; // Adjust the type according to the actual type of 'output'
+    }
 
     useEffect(() => {
 
@@ -23,38 +27,40 @@ export default function Reccomend() {
     const auth = getAuth()
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            setUID(user.uid)
-            const q = query(testCollection, where("UserID", "==", user.uid))
-            const querySnapshot = await getDocs(q)
-            //check if doc exist
-            if (querySnapshot.size != 0) {
-                var hollandResult: number[] = [0, 0, 0, 0, 0, 0]
-                var bigFiveResult: number[] = [0, 0, 0, 0, 0]
-                //holland RIASEC result processing for easier display
-                if (querySnapshot.docs[0].data().HollandResult != "none") {
-                    var hollandArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().HollandResult + "]")
-                    for (let i = 0; i < 6; i++) {
-                        for (let j = 0; j < 8; j++) {
-                            hollandResult[i] += hollandArr[(i * 8 + j)]
+            if (user.uid != uid) {
+                setUID(user.uid)
 
+                const q = query(testCollection, where("UserID", "==", user.uid))
+                const querySnapshot = await getDocs(q)
+                //check if doc exist
+                if (querySnapshot.size != 0) {
+                    var hollandResult: number[] = [0, 0, 0, 0, 0, 0]
+                    var bigFiveResult: number[] = [0, 0, 0, 0, 0]
+                    //holland RIASEC result processing for easier display
+                    if (querySnapshot.docs[0].data().HollandResult != "none") {
+                        var hollandArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().HollandResult + "]")
+                        for (let i = 0; i < 6; i++) {
+                            for (let j = 0; j < 8; j++) {
+                                hollandResult[i] += hollandArr[(i * 8 + j)]
+
+                            }
+                            hollandResult[i] = hollandResult[i] / 8
                         }
-                        hollandResult[i] = hollandResult[i] / 8
                     }
-                }
-                //big5 OCEAN result processing for easier display  **ENACO in this case
-                if (querySnapshot.docs[0].data().BigFiveResult != "none") {
-                    var bigFiveArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().BigFiveResult + "]")
-                    for (let i = 0; i < 5; i++) {
-                        for (let j = 0; j < 10; j++) {
-                            bigFiveResult[i] += bigFiveArr[i * 10 + j]
+                    //big5 OCEAN result processing for easier display  **ENACO in this case
+                    if (querySnapshot.docs[0].data().BigFiveResult != "none") {
+                        var bigFiveArr: number[] = JSON.parse("[" + querySnapshot.docs[0].data().BigFiveResult + "]")
+                        for (let i = 0; i < 5; i++) {
+                            for (let j = 0; j < 10; j++) {
+                                bigFiveResult[i] += bigFiveArr[i * 10 + j]
+                            }
+                            bigFiveResult[i] /= 10
                         }
-                        bigFiveResult[i] /= 10
                     }
+                    setDisplayResult([hollandResult, bigFiveResult])
                 }
-                setDisplayResult([hollandResult, bigFiveResult])
             }
         }
-
     })
 
     function onReccomend() {
@@ -67,16 +73,19 @@ export default function Reccomend() {
                 hollands: displayResult[0],
                 bigfive: displayResult[1],
             })
+        }).then(response => {
+            let output = response.json()
+            console.log(output)
+            return output
+        }).then(message => {
+            console.log(message["message"])
+            let received = String(message["message"])
+            setReccomendation(received.split(","))
         })
-            .then(response => {
-                let output = response.json()
-                console.log(output)
-            })
-            .then(data => {
-                console.log(data)
-
-            })
             .catch(error => console.error('Error:', error));
+    }
+    function onGet() {
+        console.log(reccomendations)
     }
 
     return (
@@ -166,17 +175,24 @@ export default function Reccomend() {
                     </Table.Head>
                     {reccomendations[0] != "" ?
                         <Table.Body className="divide-y">
-                            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                    some dadada
-                                </Table.Cell>
-                                <Table.Cell>
-                                    Realistic
-                                </Table.Cell>
-                                <Table.Cell>
-                                    Investigative
-                                </Table.Cell>
-                            </Table.Row>
+                            {reccomendations.map((career) => {
+                                let tabler = career.split(":")
+                                tabler.push("know more")
+                                return <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                    {tabler.map((field) => {
+                                        if (field == "know more") {
+                                            return <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                                <Link href="/career/Course" >{field}</Link>
+                                            </Table.Cell>
+                                        }
+                                        return <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                                            {field}
+                                        </Table.Cell>
+                                    })}
+                                </Table.Row>
+                            })}
+
+
 
                         </Table.Body>
                         :
@@ -189,6 +205,10 @@ export default function Reccomend() {
                         <HiOutlineArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                 </div>
+                <Button className="my-9" onClick={onGet} pill>
+                    Check
+                    <HiOutlineArrowRight className="ml-2 h-5 w-5" />
+                </Button>
             </div>
             <p style={{ color: "black" }}>{reccomendations}</p>
         </div>
