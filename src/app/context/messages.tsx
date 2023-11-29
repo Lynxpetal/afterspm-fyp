@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
-import { Message, Question } from "@/app/lib/validators/message";
+import { Message} from "@/app/lib/validators/message";
 import { ReactNode, createContext, useState } from "react";
+import { defaultPrompt, formsPrompt } from "../helpers/constants/chatbot-prompts";
 
 export const MessageContext = createContext<{
     messages: Message[]
@@ -9,26 +10,26 @@ export const MessageContext = createContext<{
     removeMessage: (id: string) => void
     updateMessage: (id: string, updateFn: (prevText: string) => string) => void
     setIsMessageUpdating: (isUpdating: boolean) => void
+    resetMessage: (mode: string) => void
 }>({
     messages: [],
     isMessageUpdating: false,
-    addMessage: () => {},
-    removeMessage: () => {},
-    updateMessage: () => {},
-    setIsMessageUpdating: () => {}
+    addMessage: () => { },
+    removeMessage: () => { },
+    updateMessage: () => { },
+    setIsMessageUpdating: () => { },
+    resetMessage: () => { }
 })
 
-export function MessageProvider({children} : {children: ReactNode}) {
+export function MessageProvider({ children }: { children: ReactNode }) {
     const [isMessageUpdating, setIsMessageUpdating] = useState<boolean>(false)
     const [messages, setMessages] = useState<Message[]>([
         {
             id: nanoid(),
-            text: "Hi, how are you today?" ,
+            text: `Hi there I am an AI chatbot ready to aid you on your search for a career to pursue` ,
             isUserMessage: false,
         },
     ])
-    const [answered , setAnswer] = useState<Question[]>([])
-    const [tobeAnswered, setQuestion] = useState<Question[]>([])
 
     const addMessage = (message: Message) => {
         setMessages((prev) => [...prev, message])
@@ -38,13 +39,40 @@ export function MessageProvider({children} : {children: ReactNode}) {
         setMessages((prev) => prev.filter((message) => message.id !== id))
     }
 
-    const updateMessage = (id: string, updateFn: (prevText: string)=> string) => {
+    const updateMessage = (id: string, updateFn: (prevText: string) => string) => {
         setMessages((prev) => prev.map((message) => {
             if (message.id === id) {
-                return {...message, text: updateFn(message.text)}
+                return { ...message, text: updateFn(message.text) }
             }
             return message
         }))
+    }
+
+    const resetMessage = (mode: string) => {
+        switch (mode) {
+            case "question":
+                setMessages([
+                    {
+                        id: nanoid(),
+                        text: formsPrompt ,
+                        isUserMessage: false,
+                    },
+                ])
+                break;
+            case "normal":
+                setMessages([
+                    {
+                        id: nanoid(),
+                        text: defaultPrompt ,
+                        isUserMessage: false,
+                    },
+                ])
+                break
+            default:
+                console.log("what is going on")
+                break;
+        }
+        
     }
 
     return <MessageContext.Provider value={{
@@ -54,6 +82,7 @@ export function MessageProvider({children} : {children: ReactNode}) {
         removeMessage,
         updateMessage,
         setIsMessageUpdating,
+        resetMessage
     }}>{children}</MessageContext.Provider>
-    
+
 }

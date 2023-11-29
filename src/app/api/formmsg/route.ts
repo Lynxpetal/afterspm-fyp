@@ -1,4 +1,4 @@
-import { defaultPrompt, formsPrompt } from "@/app/helpers/constants/chatbot-prompts"
+import { formsPrompt } from "@/app/helpers/constants/chatbot-prompts"
 import { MessageArraySchema } from "@/app/lib/validators/message"
 import { ChatGPTMessage, OpenAIStreamPayload, OpenAIStream } from "@/app/lib/validators/openai-stream"
 
@@ -11,24 +11,19 @@ export async function POST(req: Request) {
 
     const outboundMessages: ChatGPTMessage[] = parsedMessages.map((message) => {
         return {
-            role: message.isUserMessage ? "user" : "system",
+            role: message.isUserMessage ? "user" : "assistant",
             content: message.text,
         }
     })
 
-    outboundMessages.unshift({
-        role: 'system',
-        content: formsPrompt
-    })
-
     const payload: OpenAIStreamPayload = {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: outboundMessages,
-        temperature: 0.4,
+        temperature: 0.5,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
-        max_tokens: 150,
+        max_tokens: 3000,
         stream: true,
         n: 1
     }
@@ -37,5 +32,3 @@ export async function POST(req: Request) {
 
     return new Response(stream)
 }
-
-
