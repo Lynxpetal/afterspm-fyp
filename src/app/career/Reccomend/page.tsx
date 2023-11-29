@@ -2,35 +2,30 @@
 
 import { FC, HTMLAttributes, use, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { testCollection } from "@/app/lib/controller";
+import { careerCollection, testCollection } from "@/app/lib/controller";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { Button, Table } from 'flowbite-react';
 import { HiOutlineArrowRight } from "react-icons/hi";
 import Link from "next/link";
-
 
 export default function Reccomend() {
     const [reccomendations, setReccomendation] = useState([''])
     const [uid, setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
     const defaultTable = [['No Result Found'], ['No Result Found']]
-
-    interface ApiResponse {
-        message: string; // Adjust the type according to the actual type of 'output'
-    }
-
-    useEffect(() => {
-
-
-    }, []);
+    
 
     const auth = getAuth()
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             if (user.uid != uid) {
                 setUID(user.uid)
-
                 const q = query(testCollection, where("UserID", "==", user.uid))
+                const reccomends = query(careerCollection, where("UserID", "==", user.uid))
+                const reccoSnapshot = await getDocs(reccomends)
+                if (reccoSnapshot.size != 0) {
+                    setReccomendation(reccoSnapshot.docs[0].data().Careers.split(","))
+                }
                 const querySnapshot = await getDocs(q)
                 //check if doc exist
                 if (querySnapshot.size != 0) {
@@ -59,6 +54,7 @@ export default function Reccomend() {
                     }
                     setDisplayResult([hollandResult, bigFiveResult])
                 }
+
             }
         }
     })
@@ -84,9 +80,7 @@ export default function Reccomend() {
         })
             .catch(error => console.error('Error:', error));
     }
-    function onGet() {
-        console.log(reccomendations)
-    }
+    
 
     return (
         <div className={"flex flex-col min-h-screen "}>

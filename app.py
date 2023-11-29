@@ -113,6 +113,7 @@ class ReccomendCareer:
                 
         inputPrompt += "Reduce the arrays above into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. Please only provide the array without code and explanation"
         print(inputPrompt)
+        
         return chatGPTAPI(inputPrompt)
 
 @app.route("/finalFilter", methods=['POST'])
@@ -472,6 +473,7 @@ def recommend():
         bigfiveGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
     
     output = ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
+    
     return jsonify({'message': output})
 
 async def async_get_data():

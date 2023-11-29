@@ -62,7 +62,7 @@ export default function compSidebar() {
                         <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>
                         <Sidebar.Item href="/career/BigFive">2. Big Five Test</Sidebar.Item>
                         <Sidebar.Item href="/career/Reccomend">3. Test Result</Sidebar.Item>
-                        <Sidebar.Item href="#">4. Recommendation</Sidebar.Item>
+                        <Sidebar.Item href="/career/Course">4. Recommendation</Sidebar.Item>
                     </Sidebar.Collapse>
                     <Sidebar.Item href="/chat" icon={HiViewBoards} disabled={isLogin === "guest"}>
                         Chat
