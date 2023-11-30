@@ -33,7 +33,7 @@ function NewChat() {
     const [showToast, setShowToast] = useState<boolean>(false)
     const [isLoading, setLoading] = useState<boolean>(false)
     const [messageList, updateList] = useState<chatMsg[]>([{ role: "system", content: defaultPrompt }, { role: "assistant", content: 'hello how are you?' }])
-
+    console.log(messages)
     function messageListManager(action: string, context: chatMsg) {
         switch (action) {
             case "addNew":
@@ -63,7 +63,6 @@ function NewChat() {
             if (!response.ok) {
                 throw new Error();
             }
-
             return response.body
         },
         onMutate(message) {
@@ -75,12 +74,11 @@ function NewChat() {
             const id = nanoid()
             const responseMessage: Message = {
                 id,
-                isUserMessage: false,
+                isUserMessage: 'assistant',
                 text: '',
             }
 
             addMessage(responseMessage)
-
             setIsMessageUpdating(true)
 
 
@@ -131,6 +129,8 @@ function NewChat() {
                         <div className="flex justify-center gap-4">
                             <Button color="failure" onClick={() => {
                                 setConfirm(false)
+                                resetMessage("question")
+                                setMode(true)
                                 }}>
                                 "Yes, I'm sure"
                             </Button>
@@ -143,19 +143,19 @@ function NewChat() {
             </Modal>
             <Button onClick={() =>(setConfirm(true))} className="absolute top-6 w-56 left-[40%]" color="dark">Switch to Guided mode</Button>
             <div className="flex flex-col pl-6 ml-6 p-4 pt-12 min-h-[96vh] bg-slate-400">
-                {messageList.map((message) => {
-                    if (message.role == "system") {
+                {messages.map((messages) => {
+                    if (messages.isUserMessage == "system") {
                         return <></>
                     }
                     return <div className={cn("flex flex-row", {
-                        " justify-start": message.role == "assistant",
-                        " justify-end": message.role == "user"
+                        " justify-start": messages.isUserMessage == "assistant",
+                        " justify-end": messages.isUserMessage == "user"
                     })}>
                         <div className={cn(" p-3 my-3 rounded-2xl max-w-7xl", {
-                            " bg-blue-600 text-white": message.role == "assistant",
-                            " bg-slate-200": message.role == "user"
+                            " bg-blue-600 text-white": messages.isUserMessage == "assistant",
+                            " bg-slate-200": messages.isUserMessage == "user"
                         })}>
-                            {message.content}
+                            {messages.text}
 
                         </div></div>
                 })}

@@ -3,7 +3,7 @@ import { number, string, z } from 'zod'
 export const MessageSchema = z.object({
   id: z.string(),
   text: z.string(),
-  isUserMessage: z.boolean(),
+  isUserMessage: z.string(),
 })
 
 export const MessageArraySchema = z.array(MessageSchema)

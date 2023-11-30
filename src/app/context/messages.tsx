@@ -27,7 +27,7 @@ export function MessageProvider({ children }: { children: ReactNode }) {
         {
             id: nanoid(),
             text: `Hi there I am an AI chatbot ready to aid you on your search for a career to pursue` ,
-            isUserMessage: false,
+            isUserMessage: "assistant",
         },
     ])
 
