@@ -114,18 +114,81 @@ def finalFilter():
     if request.method == 'POST':
         data = request.json     
         print(data)
+        instituteDataList = completeInstituteData()
+        subjectDataList = completeSubjectData()
+        filterDistanceDataList = filterDistanceMatrixResultsData(data)
+
+        print(instituteDataList)
+        print(filterDistanceDataList)
         if len(data['data']) > 5:
             print("Got location")
-            withLocationlist = filterWithLocation(data)
+            withLocationlist = filterWithLocation(data, instituteDataList, filterDistanceDataList, subjectDataList)
             print(withLocationlist)
             return withLocationlist
         else:
             print("Empty location")
-            withoutLocationList = filterWithoutLocation(data)
+            withoutLocationList = filterWithoutLocation(data, instituteDataList, subjectDataList)
             print(withoutLocationList)
             return withoutLocationList
 
+def completeSubjectData():
+    #Subject
+    subjectData = db.collection('Subject').get()
+    subject_list = []
+
+    for subject in subjectData:
+        subject_dict = {}
+        subject_dict['SubjectAbbreviation'] = subject.get("SubjectAbbreviation")
+        subject_dict['SubjectName'] = subject.get("SubjectName")
+        subject_list.append(subject_dict)
+
+    return subject_list
+
+
+def completeInstituteData():
+    #Institute
+    instituteData = db.collection('Institute').get()
+    institute_list = []
+
+    for institute in instituteData:
+        institute_dict = {}
+        institute_dict['InstituteName'] = institute.get("InstituteName")
+        institute_dict['InstituteImageUrl'] = institute.get("InstituteImageUrl")
+        institute_dict['InstituteLocation'] = institute.get("InstituteLocation")
+        institute_list.append(institute_dict)
+
+    return institute_list
+
+def completeSubjectData():
+    #Subject
+    subjectData = db.collection('Subject').get()
+    subject_list = []
     
+    for subject in subjectData:
+        subject_dict = {}
+        subject_dict['SubjectAbbreviation'] = subject.get('SubjectAbbreviation')
+        subject_dict['SubjectCode'] = subject.get('SubjectCode')
+        subject_dict['SubjectName'] = subject.get('SubjectName')
+        subject_list.append(subject_dict)
+
+    return subject_list
+
+def filterDistanceMatrixResultsData(data):
+    #FilterDistanceMatrixResults
+    distanceData = db.collection('FilterDistanceMatrixResults').get()
+    distance_list = []
+
+    for distance in distanceData:
+        distance_dict = {}
+        user = distance.get('user')
+        if user == data['data'][4]:
+            distance_dict['instituteName'] = distance.get('instituteName')
+            distance_dict['distance'] = distance.get('distance')
+            distance_dict['duration'] = distance.get('duration')
+            distance_list.append(distance_dict)
+
+    return distance_list
+
 def resultData(data):
     #Result
     resultData = db.collection('Result').get()
@@ -169,7 +232,7 @@ def programmeData():
 
     return programme_list
 
-def filterWithLocation(data):
+def filterWithLocation(data, instituteDataList, filterDistanceDataList, subjectDataList):
     #result data
     result_dict = resultData(data)
 
@@ -192,11 +255,11 @@ def filterWithLocation(data):
         "distanceFromInstitute": sorted_distance_list   #{'TARC': '33km', 'UCSI': '55km'}                                    
     }
 
-    filterList = filter_programmes(user_input, sorted_programme_list)
+    filterList = filter_programmes(user_input, sorted_programme_list, instituteDataList, filterDistanceDataList, subjectDataList)
     print(filterList)
     return filterList
 
-def filterWithoutLocation(data):
+def filterWithoutLocation(data, instituteDataList, subjectDataList):
     #result data
     result_dict_without_location = resultData(data)
 
@@ -207,35 +270,117 @@ def filterWithoutLocation(data):
         "maximum_tuition_fees": data['data'][1],    #30000
         "study_level": data['data'][2],     #Diploma    
         "course": data['data'][3],          #Computer & Multimedia
-        "result": result_dict_without_location,              #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}                                    
+        "result": result_dict_without_location,  #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}                                    
     }
 
-    filterList = filter_programmes(user_input, programme_list)
+    filterList = filter_programmes_without_location(user_input, programme_list, instituteDataList, subjectDataList)
     print(filterList)
     return filterList
 
-
-def filter_programmes(user_input, programme_list):
-    recommend_programmes_list = []
+def filter_programmes_without_location(user_input, programme_list, instituteDataList, subjectDataList):
+    recommend_programmes_list_without_location = []
 
     for programme in programme_list:
         #check if study level matches
+        programme_dict_final = {}
         print(programme['ProgrammeStudyLevel'])
         if user_input['study_level'] == programme['ProgrammeStudyLevel']:
             #check if course category matches
             print(programme['ProgrammeCategory'])
             if user_input['course'] == programme['ProgrammeCategory']:
                 #check if results meet the minimum entry requirement
-                result = user_input['result'] #[{'ResultData': {'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}}]
+                result = user_input['result'] #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
                 entryRequirements = programme['ProgrammeMinimumEntryRequirement'] #{'BM': 'D', 'SEJ': 'E'}
                 if requirementsFulfilled(result, entryRequirements):
                     #Check if the price is within budget
                     programme_price = programme['ProgrammePrice']
                     print(programme_price)
                     if programme_price <= user_input['maximum_tuition_fees']:
-                        recommend_programmes_list.append(programme)
+                        for institute in instituteDataList:
+                            if programme['InstituteName'] == institute['InstituteName']:
+                                    programme_dict_final['InstituteName'] = institute['InstituteName']
+                                    programme_dict_final['Institute Name'] = institute['InstituteImageUrl']
+                                    programme_dict_final['Programme Name'] = programme['ProgrammeName']
+                                    programme_dict_final['Campus'] = institute['InstituteLocation']
+                                    programme_dict_final['Programme Duration'] = f"{programme['ProgrammeDuration']} years"
+                                    programme_dict_final['Programme Estimated Price'] = f"RM {programme['ProgrammePrice']}"
+                                    programme_dict_final['Programme Study Level'] = programme['ProgrammeStudyLevel']
+                                    programme_dict_final['Minimum Entry Requirement'] = {}
+                                    for subjectMinimum, entryMinimum in entryRequirements.items():
+                                        for subjectData in subjectDataList:
+                                            if subjectData['SubjectAbbreviation'] == subjectMinimum:
+                                                subjectName = subjectData['SubjectName']
+                                                programme_dict_final['Minimum Entry Requirement'][subjectName] = entryMinimum
+
+                                    print(programme_dict_final['Minimum Entry Requirement'])
+                                    programme_dict_final['Result'] = {}
+                                    for subject, entry_grade in entryRequirements.items(): #{'BM': 'D', 'SEJ': 'E'}
+                                        for resultSubjectData in subjectDataList: #{'BM': 'BAHASA MELAYU', 'SEJ': 'SEJARAH'}
+                                            if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+                                                if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
+                                                    completeSubjectName = resultSubjectData['SubjectName']     
+                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]
+
+                                    print(programme_dict_final['Result'])
+                                    recommend_programmes_list_without_location.append(programme_dict_final)
     
+    print(programme_dict_final)
+    print(recommend_programmes_list_without_location)
+    return recommend_programmes_list_without_location
+
+def filter_programmes(user_input, programme_list, instituteDataList, filterDistanceDataList, subjectDataList):
+    recommend_programmes_list = []
+
+    for programme in programme_list:
+        #check if study level matches
+        programme_dict_final = {}
+        print(programme['ProgrammeStudyLevel'])
+        if user_input['study_level'] == programme['ProgrammeStudyLevel']:
+            #check if course category matches
+            print(programme['ProgrammeCategory'])
+            if user_input['course'] == programme['ProgrammeCategory']:
+                #check if results meet the minimum entry requirement
+                result = user_input['result'] #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+                entryRequirements = programme['ProgrammeMinimumEntryRequirement'] #{'BM': 'D', 'SEJ': 'E'}
+                if requirementsFulfilled(result, entryRequirements):
+                    #Check if the price is within budget
+                    programme_price = programme['ProgrammePrice']
+                    print(programme_price)
+                    if programme_price <= user_input['maximum_tuition_fees']:
+                        for institute in instituteDataList:
+                            if programme['InstituteName'] == institute['InstituteName']:
+                                for distance in filterDistanceDataList:
+                                    if programme['InstituteName'] == institute['InstituteName']:
+                                        programme_dict_final['InstituteName'] = institute['InstituteName']
+                                        programme_dict_final['Institute Name'] = institute['InstituteImageUrl']
+                                        programme_dict_final['Programme Name'] = programme['ProgrammeName']
+                                        programme_dict_final['Campus'] = institute['InstituteLocation']
+                                        programme_dict_final['Programme Duration'] = f"{programme['ProgrammeDuration']} years"
+                                        programme_dict_final['Programme Estimated Price'] = f"RM {programme['ProgrammePrice']}"
+                                        programme_dict_final['Programme Study Level'] = programme['ProgrammeStudyLevel']
+                                        programme_dict_final['Driving Duration'] = distance['distance']
+                                        programme_dict_final['duration'] = distance['duration']
+                                        programme_dict_final['Minimum Entry Requirement'] = {}
+                                        for subjectMinimum, entryMinimum in entryRequirements.items():
+                                            for subjectData in subjectDataList:
+                                                if subjectData['SubjectAbbreviation'] == subjectMinimum:
+                                                    subjectName = subjectData['SubjectName']
+                                                    programme_dict_final['Minimum Entry Requirement'][subjectName] = entryMinimum
+
+                                        print(programme_dict_final['Minimum Entry Requirement'])
+                                        programme_dict_final['Result'] = {}
+                                        for subject, entry_grade in entryRequirements.items(): #{'BM': 'D', 'SEJ': 'E'}
+                                            for resultSubjectData in subjectDataList: #{'BM': 'BAHASA MELAYU', 'SEJ': 'SEJARAH'}
+                                                if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+                                                    if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
+                                                        completeSubjectName = resultSubjectData['SubjectName']     
+                                                        programme_dict_final['Result'][completeSubjectName] = result[subject]
+
+                                        print(programme_dict_final['Result'])
+                                        recommend_programmes_list.append(programme_dict_final)
     
+    print(programme_dict_final)
+    print(recommend_programmes_list)
     return recommend_programmes_list
 
 grade_mapping = {'A+': 1, 'A': 2, 'A-': 3, 'B+': 4, 'B': 5, 'C+': 6, 'C': 7, 'D': 8, 'E': 9, 'G': 10, 'TH': 11}

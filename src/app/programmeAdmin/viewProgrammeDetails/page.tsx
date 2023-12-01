@@ -17,7 +17,7 @@ interface SubjectData {
 
 export default function ViewProgrammeDetails() {
   //retrieve the id
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   const programmeId = searchParams.get('search')
   console.log(programmeId)
 
@@ -65,7 +65,7 @@ export default function ViewProgrammeDetails() {
 
       //data is fetched successfully
     } finally {
-      setIsProgrammeFetchDataLoading(false);
+      setIsProgrammeFetchDataLoading(false)
     }
 
   }
@@ -73,7 +73,7 @@ export default function ViewProgrammeDetails() {
   //fetch subject data from database
   const fetchSubjectData = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "Subject"));
+      const querySnapshot = await getDocs(collection(db, "Subject"))
 
       //declare the data type of the data
       const data: SubjectData[] = []
@@ -89,7 +89,7 @@ export default function ViewProgrammeDetails() {
         if (SubjectAbbreviation && SubjectName) {
           subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
         }
-      });
+      })
 
       //put it inside subjectAbbreviation
       setSubjectAbbreviation(subjectAbbreviationDictionary)
@@ -97,9 +97,9 @@ export default function ViewProgrammeDetails() {
 
 
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data:', error)
     }
-  };
+  }
 
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function ViewProgrammeDetails() {
         <MoonLoader loading={!allReady} size={50} color="#8DD3E2" />
         <h1>Loading...</h1>
       </div>
-    );
+    )
   }
   return (
     <div>

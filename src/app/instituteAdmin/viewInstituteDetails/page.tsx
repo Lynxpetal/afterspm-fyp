@@ -14,7 +14,7 @@ import { FaUniversity } from "react-icons/fa"
 
 export default function InstituteDetails() {
   //retrieve the id
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   const instituteId = searchParams.get('search')
   console.log(instituteId)
 
@@ -30,11 +30,11 @@ export default function InstituteDetails() {
 
   const fetchInstituteData = async () => {
     //data is fetching = loading
-    setIsInstituteFetchDataLoading(true);
+    setIsInstituteFetchDataLoading(true)
 
     try {
-      const instituteDocRef = doc(db, "Institute", instituteId);
-      const instituteDocSnap = await getDoc(instituteDocRef);
+      const instituteDocRef = doc(db, "Institute", instituteId)
+      const instituteDocSnap = await getDoc(instituteDocRef)
 
       if (instituteDocSnap.exists()) {
         console.log("Document data: ", instituteDocSnap.data())
@@ -46,25 +46,25 @@ export default function InstituteDetails() {
         setInstituteImageUrl(instituteDocSnap.data().InstituteImageUrl)
 
       } else {
-        console.log("No document");
+        console.log("No document")
       }
     } catch (error) {
-      console.error("Error fetching document: ", error);
+      console.error("Error fetching document: ", error)
 
       //data is fetched successfully
     } finally {
-      setIsInstituteFetchDataLoading(false);
+      setIsInstituteFetchDataLoading(false)
     }
-  };
+  }
 
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchInstituteData();
-      console.log("Institute Image Name:", instituteImageName);
-    };
+      await fetchInstituteData()
+      console.log("Institute Image Name:", instituteImageName)
+    }
   
-    fetchData();
+    fetchData()
   }, [instituteImageName])
 
   if (isInstituteFetchDataLoading)

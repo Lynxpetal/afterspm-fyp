@@ -1,48 +1,48 @@
-'use client';
+'use client'
 import { Button, Label, TextInput } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { HiMail } from 'react-icons/hi'
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from 'firebase/auth';
-import app from '../FirebaseConfig/firebaseConfig';
-import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from 'firebase/auth'
+import app from '../FirebaseConfig/firebaseConfig'
+import { useRouter } from 'next/navigation'
 
 
 type RegisterFormValues = {
-  email: string;
-  password: string;
-  confirmPassword: string;
+  email: string
+  password: string
+  confirmPassword: string
 }
 
 export default function Register() {
-  const authRegister = getAuth(app);
-  const form = useForm<[RegisterFormValues]>();
-  const { register, handleSubmit, formState } = form;
-  const { errors } = formState;
+  const authRegister = getAuth(app)
+  const form = useForm<[RegisterFormValues]>()
+  const { register, handleSubmit, formState } = form
+  const { errors } = formState
   const [email, setRegisterEmail] = useState("")
   const [password, setRegisterPassword] = useState("")
   const [confirmPassword, setRegisterConfirmPassword] = useState("")
-  const router = useRouter();
+  const router = useRouter()
 
   const validatePasswordMatch = (value: string, values: { password: string }) => {
-    return value === values.password || "Passwords do not match";
-  };
+    return value === values.password || "Passwords do not match"
+  }
 
   const isRegisterEmailValid =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   
   //if want have the color
   const getEmailColor = () => {
     if (errors[0]?.email) {
-      return "failure";
+      return "failure"
     } else if (email) {
-      return "success";
+      return "success"
     } else {
-      return "gray";
+      return "gray"
     }
-  };
+  }
 
   useEffect(() => {
-    const isPasswordValid = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const isPasswordValid = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     const isEmailValid =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
     if (isEmailValid.test(email)) {
@@ -55,10 +55,10 @@ export default function Register() {
       form.clearErrors("0.confirmPassword")
     }
 
-  }, [email, password, form]);
+  }, [email, password, form])
 
   const createAccount = (data: [RegisterFormValues]) => {
-    console.log("Ok", data);
+    console.log("Ok", data)
     createUserWithEmailAndPassword(authRegister, email, password)
     .then((userCredential) => {
       const user = userCredential.user
@@ -165,6 +165,6 @@ export default function Register() {
         </a>
       </h2>
     </form>
-  );
+  )
 }
 

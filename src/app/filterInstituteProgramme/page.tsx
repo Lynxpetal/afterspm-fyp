@@ -134,9 +134,9 @@ export default function FilterInstituteProgramme() {
             )
 
             onSnapshot(queryFilter, (snapshot: QuerySnapshot<DocumentData>) => {
-              const programmeData: programme[] = [];
+              const programmeData: programme[] = []
               snapshot.forEach((doc) => {
-                const data = doc.data();
+                const data = doc.data()
                 const programme: programme = {
                   instituteName: data.InstituteName,
                   programmeCategory: data.ProgrammeCategory,
@@ -155,7 +155,7 @@ export default function FilterInstituteProgramme() {
           })
         })
 
-        const allProgrammeData = await Promise.all(allProgrammeDataPromises);
+        const allProgrammeData = await Promise.all(allProgrammeDataPromises)
         const mergeAllArray = [].concat(...allProgrammeData)
         console.log(mergeAllArray)
         setProgrammeFilter(mergeAllArray)
@@ -233,7 +233,7 @@ export default function FilterInstituteProgramme() {
     }
 
     await service.getDistanceMatrix(request).then(async (response) => {
-      const results: string[] = [];
+      const results: string[] = []
 
       response.originAddresses.forEach((origin, originIndex) => {
         response.destinationAddresses.forEach((destination, destinationIndex) => {
@@ -248,7 +248,7 @@ export default function FilterInstituteProgramme() {
             status: element.status,
             user: userId,
             instituteName: getInstituteName(destination)
-          };
+          }
 
           results.push(result)
         })
@@ -257,7 +257,7 @@ export default function FilterInstituteProgramme() {
       await deleteDistanceMatrixResults(userId)
       // Store results in Firebase
       await Promise.all(results.map(async (data) => {
-        const docRef = await addDoc(collection(db, 'DistanceMatrixResults'), data);
+        const docRef = await addDoc(collection(db, 'DistanceMatrixResults'), data)
         console.log('Document written with ID: ', docRef.id)
       }))
     })
@@ -341,7 +341,7 @@ export default function FilterInstituteProgramme() {
 
       //store location
       setInstituteLocationList(Object.keys(instituteDataDictionary))
-    });
+    })
   }
 
   function getState(location: string): string | undefined {
@@ -419,7 +419,7 @@ export default function FilterInstituteProgramme() {
 
   useEffect(() => {
     if (!window.initAutocomplete) {
-      const newScript = document.createElement('script');
+      const newScript = document.createElement('script')
       //newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
       newScript.async = true
       newScript.defer = true

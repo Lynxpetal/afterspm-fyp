@@ -44,7 +44,7 @@ export default function AddProgramme() {
   "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
   const [allReady, setAllReady] = useState(false)
   const [programmeCategory, setProgrammeCategory] = useState(courseCategory[0])
-  const [instituteNames, setInstituteNames] = useState<string[]>([]);
+  const [instituteNames, setInstituteNames] = useState<string[]>([])
   const [instituteName, setInstituteName] = useState('')
   const [price, setPrice] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -79,7 +79,7 @@ export default function AddProgramme() {
     const defaultOption = document.createElement("option")
     defaultOption.selected = true
     defaultOption.disabled = true
-    defaultOption.value = "";
+    defaultOption.value = ""
     defaultOption.text = "Select an option"
     return defaultOption
   }
@@ -265,11 +265,11 @@ export default function AddProgramme() {
       const latestResultData: Record<string, string> = {}
 
       for (let i = 0; i < subjectContainers.length; i++) {
-        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
-        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement
 
-        const subjectValue = subjectSelect.value;
-        const gradeValue = gradeSelect.value;
+        const subjectValue = subjectSelect.value
+        const gradeValue = gradeSelect.value
 
         if (subjectValue != "") {
           latestResultData[subjectValue] = gradeValue
@@ -343,10 +343,10 @@ export default function AddProgramme() {
             icon: "success",
           }).then(() => {
             //Navigate to /programmeAdmin after user presses ok
-            router.push('/programmeAdmin');
-          });
+            router.push('/programmeAdmin')
+          })
         }
-      });
+      })
       
     }
   }
@@ -354,7 +354,7 @@ export default function AddProgramme() {
   //fetch subject data from database
   const fetchSubjectData = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "Subject"));
+      const querySnapshot = await getDocs(collection(db, "Subject"))
 
       //declare the data type of the data
       const data: SubjectData[] = []
@@ -370,7 +370,7 @@ export default function AddProgramme() {
         if (SubjectAbbreviation && SubjectName) {
           subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
         }
-      });
+      })
 
       //put it inside subjectAbbreviation
       setSubjectAbbreviation(subjectAbbreviationDictionary)
@@ -378,9 +378,9 @@ export default function AddProgramme() {
 
 
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data:', error)
     }
-  };
+  }
 
 
   //fetch data from firebase for drop down list
@@ -452,7 +452,7 @@ export default function AddProgramme() {
         <MoonLoader loading={!allReady} size={50} color="#8DD3E2" />
         <h1>Loading...</h1>
       </div>
-    );
+    )
   }
   return (
     <div>
