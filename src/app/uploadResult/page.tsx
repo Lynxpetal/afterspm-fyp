@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { FileInput, Label, Button, Alert, Timeline } from 'flowbite-react'
 import React, { useState, useEffect } from 'react'
@@ -54,7 +54,7 @@ export default function uploadResult() {
     const defaultOption = document.createElement("option")
     defaultOption.selected = true
     defaultOption.disabled = true
-    defaultOption.value = "";
+    defaultOption.value = ""
     defaultOption.text = "Select an option"
     return defaultOption
   }
@@ -294,10 +294,10 @@ export default function uploadResult() {
     //clear table header, subject container, grade container
     enableUploadResultContainer()
 
-    const resultFileInput = e.target.files?.[0];
+    const resultFileInput = e.target.files?.[0]
     if (resultFileInput) {
-      const allowedExtensions = ["jpg", "jpeg", "png"];
-      const fileExtension = resultFileInput.name.split(".").pop()?.toLowerCase();
+      const allowedExtensions = ["jpg", "jpeg", "png"]
+      const fileExtension = resultFileInput.name.split(".").pop()?.toLowerCase()
       console.log(fileExtension)
       if (fileExtension) {
         if (!allowedExtensions.includes(fileExtension)) {
@@ -306,7 +306,7 @@ export default function uploadResult() {
         }
       }
 
-      setResultImage(resultFileInput);
+      setResultImage(resultFileInput)
     } else {
       setErrorMessage("Please upload a file")
       return
@@ -411,7 +411,7 @@ export default function uploadResult() {
 
             if (i < dataKeys.length) {
               //subjectKey = "BM"
-              const subjectKey = dataKeys[i];
+              const subjectKey = dataKeys[i]
               console.log(subjectKey)
               //gradeValue = "A+"
               //data format: {"BM": "A+", ...}
@@ -587,11 +587,11 @@ export default function uploadResult() {
       const latestResultData: Record<string, string> = {}
 
       for (let i = 0; i < subjectContainers.length; i++) {
-        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
-        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement
 
-        const subjectValue = subjectSelect.value;
-        const gradeValue = gradeSelect.value;
+        const subjectValue = subjectSelect.value
+        const gradeValue = gradeSelect.value
 
         if (subjectValue != "") {
           latestResultData[subjectValue] = gradeValue
@@ -631,11 +631,11 @@ export default function uploadResult() {
       const latestResultData: Record<string, string> = {}
 
       for (let i = 0; i < subjectContainers.length; i++) {
-        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
-        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement
 
-        const subjectValue = subjectSelect.value;
-        const gradeValue = gradeSelect.value;
+        const subjectValue = subjectSelect.value
+        const gradeValue = gradeSelect.value
 
         if (subjectValue != "") {
           latestResultData[subjectValue] = gradeValue
@@ -719,9 +719,9 @@ export default function uploadResult() {
             title: "Great",
             text: "Matching data provided with all programmes in database...",
             icon: "success"
-          });
+          })
         }
-      });
+      })
 
     }
 
@@ -742,9 +742,9 @@ export default function uploadResult() {
             title: "Great",
             text: "Matching data provided with all programmes in database...",
             icon: "success"
-          });
+          })
         }
-      });
+      })
 
     }
 
@@ -782,7 +782,7 @@ export default function uploadResult() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const querySnapshot = await getDocs(collection(db, "Subject"));
+        const querySnapshot = await getDocs(collection(db, "Subject"))
 
         //declare the data type of the data
         const data: SubjectData[] = []
@@ -798,18 +798,18 @@ export default function uploadResult() {
           if (SubjectAbbreviation && SubjectName) {
             subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
           }
-        });
+        })
 
         //put it inside subjectAbbreviation
         setSubjectAbbreviation(subjectAbbreviationDictionary)
 
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error)
       }
     }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   return (
     <div style={{ margin: "20px" }}>
@@ -921,5 +921,5 @@ export default function uploadResult() {
         </div>
       </div>
     </div>
-  );
+  )
 }

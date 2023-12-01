@@ -1,29 +1,29 @@
-'use client';
-import { Button, Label, TextInput, Alert } from 'flowbite-react';
-import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import app from '../FirebaseConfig/firebaseConfig';
+'use client'
+import { Button, Label, TextInput, Alert } from 'flowbite-react'
+import { useForm } from 'react-hook-form'
+import { useState, useEffect } from 'react'
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import app from '../FirebaseConfig/firebaseConfig'
 import { auth } from '../FirebaseConfig/firebaseConfig'
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 import { useAuthState } from "react-firebase-hooks/auth"
 import { HiMail } from 'react-icons/hi'
-import { HiInformationCircle } from 'react-icons/hi';
+import { HiInformationCircle } from 'react-icons/hi'
 
 
 type LoginFormValues = {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export default function Login() {
-  const form = useForm<[LoginFormValues]>();
+  const form = useForm<[LoginFormValues]>()
   const [email, setLoginEmail] = useState("")
   const [password, setLoginPassword] = useState("")
   const { register, handleSubmit, formState } = form
   const { errors } = formState
-  const [failureVerifyEmailAlert, setFailureVerifyEmailAlert] = useState(false);
-  const router = useRouter();
+  const [failureVerifyEmailAlert, setFailureVerifyEmailAlert] = useState(false)
+  const router = useRouter()
 
   //Option 1 - input (email & password)
   const authLogin = getAuth(app)
@@ -62,10 +62,10 @@ export default function Login() {
           form.setError("0.password", {
             type: "manual",
             message: "Incorrect password. Please try again.",
-          });
+          })
         } else {
           setFailureVerifyEmailAlert(false)
-          alert(errorCode);
+          alert(errorCode)
         }
       })
 
@@ -86,7 +86,7 @@ export default function Login() {
     }
 
 
-  }, [email, password, form]);
+  }, [email, password, form])
 
 
 
@@ -155,6 +155,6 @@ export default function Login() {
         Forgot Password?
       </a>
     </form>
-  );
+  )
 }
 

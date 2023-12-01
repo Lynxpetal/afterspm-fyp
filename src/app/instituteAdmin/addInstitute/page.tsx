@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { Label, TextInput, FileInput, Kbd } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
@@ -24,20 +24,20 @@ declare global {
 }
 
 type addInstituteFormValues = {
-  name: string;
-  location: string;
-  phoneNumber: string;
-  emailAddress: string;
-  imageFile: File;
+  name: string
+  location: string
+  phoneNumber: string
+  emailAddress: string
+  imageFile: File
 }
 
 export default function InstituteAdmin() {
-  const form = useForm<[addInstituteFormValues]>();
+  const form = useForm<[addInstituteFormValues]>()
   const [name, setInstituteName] = useState("")
   const [location, setInstituteLocation] = useState("")
   const [phoneNumber, setInstitutePhoneNumber] = useState("")
   const [emailAddress, setInstituteEmailAddress] = useState("")
-  const [instituteImageFile, setInstituteImageFile] = useState<File | null>(null);
+  const [instituteImageFile, setInstituteImageFile] = useState<File | null>(null)
   const [instituteImageSizeError, setInstituteImageSizeError] = useState("")
   const [instituteImageFormatError, setInstituteImageFormatError] = useState("")
   const { register, handleSubmit, formState } = form
@@ -85,18 +85,18 @@ export default function InstituteAdmin() {
   }
 
   const handleInstituteImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const instituteFile = e.target.files?.[0];
+    const instituteFile = e.target.files?.[0]
 
     if (instituteFile && instituteFile.size > 100000000) {
-      setInstituteImageSizeError("Image size too large");
+      setInstituteImageSizeError("Image size too large")
     } else {
-      setInstituteImageSizeError("");
+      setInstituteImageSizeError("")
     }
 
     if (instituteFile && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
       setInstituteImageFormatError("Invalid image format")
     } else {
-      setInstituteImageFormatError("");
+      setInstituteImageFormatError("")
     }
 
     //Check both conditions and set error messages accordingly
@@ -113,7 +113,7 @@ export default function InstituteAdmin() {
       setInstituteImageFile(instituteFile)
     }
     else {
-      setInstituteImageFile(null);
+      setInstituteImageFile(null)
     }
   }
 
@@ -138,9 +138,9 @@ export default function InstituteAdmin() {
         }).then(() => {
           //Navigate to /instituteAdmin after user presses ok
           router.push('/instituteAdmin')
-        });
+        })
       }
-    });
+    })
 
   }
 
@@ -186,7 +186,7 @@ export default function InstituteAdmin() {
         InstituteImagePath: imagePath,
         InstituteImageUrl: imageUrl,
         InstituteLastUpdateTimestamp: serverTimestamp(),
-      });
+      })
       console.log("Document written with ID: ", instituteDocRef.id)
     } catch (error) {
       console.error("Error adding document", error)
@@ -216,7 +216,7 @@ export default function InstituteAdmin() {
 
   useEffect(() => {
     if (!window.initAutocomplete) {
-      const newScript = document.createElement('script');
+      const newScript = document.createElement('script')
       //newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
       newScript.async = true
       newScript.defer = true
@@ -236,9 +236,9 @@ export default function InstituteAdmin() {
 
     return () => {
       //cleanup code if needed
-    };
+    }
 
-  }, []);
+  }, [])
 
 
 

@@ -12,8 +12,7 @@ import { stringSimilarity } from "string-similarity-js"
 import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
-import Link from 'next/link'
-import { AiOutlineEye } from 'react-icons/ai'
+import { useRouter } from 'next/navigation'
 
 
 declare global {
@@ -36,6 +35,7 @@ export default function FilterInstituteProgramme() {
   const [instituteLocationList, setInstituteLocationList] = useState<string[]>([])
   const [userId, setUserId] = useState<string | null>(null)
   const [data, setData] = useState<Record<string, string>>({})
+  const router = useRouter()
 
 
   //setValue([6000, 30000]) - set an array containing 2 number
@@ -88,6 +88,7 @@ export default function FilterInstituteProgramme() {
       postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
         .then(data => {
           console.log(data)
+          router.push(`/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
         })
 
@@ -107,9 +108,12 @@ export default function FilterInstituteProgramme() {
       postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
         .then(data => {
           console.log(data)
+          router.push(`/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
         })
+        
     }
+
 
 
   }
@@ -422,20 +426,9 @@ export default function FilterInstituteProgramme() {
 
 
           <div>
-            <Button onClick={viewFilteredProgrammes}>Next</Button>
-          </div>
-
-          <div>
-            <Link
-              href={{
-                pathname: '/viewFiltered',
-                query: {
-                  search: JSON.stringify(data)
-                }
-              }}
-            >
-              <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }} />
-            </Link>
+            <Button onClick={viewFilteredProgrammes}>
+              Next
+            </Button>
           </div>
 
         </div>

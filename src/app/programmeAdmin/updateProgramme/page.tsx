@@ -119,7 +119,7 @@ export default function updateProgramme() {
     const defaultOption = document.createElement("option")
     defaultOption.selected = true
     defaultOption.disabled = true
-    defaultOption.value = "";
+    defaultOption.value = ""
     defaultOption.text = "Select an option"
     return defaultOption
   }
@@ -233,7 +233,7 @@ export default function updateProgramme() {
   //fetch subject data from database
   const fetchSubjectData = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "Subject"));
+      const querySnapshot = await getDocs(collection(db, "Subject"))
 
       //declare the data type of the data
       const data: SubjectData[] = []
@@ -249,7 +249,7 @@ export default function updateProgramme() {
         if (SubjectAbbreviation && SubjectName) {
           subjectAbbreviationDictionary[SubjectAbbreviation] = SubjectName
         }
-      });
+      })
 
       //put it inside subjectAbbreviation
       setSubjectAbbreviation(subjectAbbreviationDictionary)
@@ -257,7 +257,7 @@ export default function updateProgramme() {
 
 
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data:', error)
     }
   }
 
@@ -373,10 +373,10 @@ export default function updateProgramme() {
             icon: "success",
           }).then(() => {
             //Navigate to /programmeAdmin after user presses ok
-            router.push('/programmeAdmin');
-          });
+            router.push('/programmeAdmin')
+          })
         }
-      });
+      })
 
     }
 
@@ -391,11 +391,11 @@ export default function updateProgramme() {
       const latestResultData: Record<string, string> = {}
 
       for (let i = 0; i < subjectContainers.length; i++) {
-        const subjectSelect = subjectContainers[i] as HTMLSelectElement;
-        const gradeSelect = gradeContainers[i] as HTMLSelectElement;
+        const subjectSelect = subjectContainers[i] as HTMLSelectElement
+        const gradeSelect = gradeContainers[i] as HTMLSelectElement
 
-        const subjectValue = subjectSelect.value;
-        const gradeValue = gradeSelect.value;
+        const subjectValue = subjectSelect.value
+        const gradeValue = gradeSelect.value
 
         if (subjectValue != "") {
           latestResultData[subjectValue] = gradeValue
@@ -492,7 +492,7 @@ export default function updateProgramme() {
         <MoonLoader loading={!allReady} size={50} color="#8DD3E2" />
         <h1>Loading...</h1>
       </div>
-    );
+    )
   }
   return (
     <div>

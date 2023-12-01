@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { Label, TextInput, FileInput, Kbd } from 'flowbite-react'
 import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -25,25 +25,25 @@ declare global {
 }
 
 type updateInstituteFormValues = {
-  name: string;
-  location: string;
-  phoneNumber: string;
-  emailAddress: string;
-  imageFile: File;
+  name: string
+  location: string
+  phoneNumber: string
+  emailAddress: string
+  imageFile: File
 }
 
 export default function InstituteAdmin() {
   //retrieve the id
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   const instituteId = searchParams.get('search')
   console.log(instituteId)
 
-  const form = useForm<[updateInstituteFormValues]>();
+  const form = useForm<[updateInstituteFormValues]>()
   const [instituteName, setInstituteName] = useState('')
   const [instituteLocation, setInstituteLocation] = useState('')
   const [institutePhoneNumber, setInstitutePhoneNumber] = useState('')
   const [instituteEmailAddress, setInstituteEmailAddress] = useState('')
-  const [instituteImageFile, setInstituteImageFile] = useState<File | null>(null);
+  const [instituteImageFile, setInstituteImageFile] = useState<File | null>(null)
   const [instituteImageSizeError, setInstituteImageSizeError] = useState("")
   const [instituteImageFormatError, setInstituteImageFormatError] = useState("")
   const [instituteImageFilePath, setInstituteImageFilePath] = useState("")
@@ -62,7 +62,7 @@ export default function InstituteAdmin() {
       const updateInstituteDocSnap = await getDoc(updateInstituteDocRef)
 
       if (updateInstituteDocSnap.exists()) {
-        console.log("Document data: ", updateInstituteDocSnap.data());
+        console.log("Document data: ", updateInstituteDocSnap.data())
         setInstituteName(updateInstituteDocSnap.data().InstituteName)
         setInstituteLocation(updateInstituteDocSnap.data().InstituteLocation)
         setInstitutePhoneNumber(updateInstituteDocSnap.data().InstitutePhoneNumber)
@@ -72,14 +72,14 @@ export default function InstituteAdmin() {
         setInstituteImageFilePath(updateInstituteDocSnap.data().InstituteImagePath)
         setInstituteImageFileUrl(updateInstituteDocSnap.data().InstituteImageUrl)
       } else {
-        console.log("No document");
+        console.log("No document")
       }
     } catch (error) {
-      console.error("Error fetching document: ", error);
+      console.error("Error fetching document: ", error)
 
       //data is fetched successfully
     } finally {
-      //setIsInstituteFetchDataLoading(false);
+      //setIsInstituteFetchDataLoading(false)
     }
   }
 
@@ -173,10 +173,10 @@ export default function InstituteAdmin() {
           icon: "success",
         }).then(() => {
           //Navigate to /instituteAdmin after user presses ok
-          router.push('/instituteAdmin');
-        });
+          router.push('/instituteAdmin')
+        })
       }
-    });
+    })
 
   }
 
@@ -260,12 +260,12 @@ export default function InstituteAdmin() {
     fetchUpdateInstituteData()
 
 
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (!window.initAutocomplete) {
       //create a new script element
-      const newScript = document.createElement('script');
+      const newScript = document.createElement('script')
 
       //set the script source with API key
       //newScript.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD1VHOjqeJLkei_MrpViqAsfADYp0Q3QSs&callback=initAutocomplete&libraries=places&v=weekly"
@@ -287,9 +287,9 @@ export default function InstituteAdmin() {
 
     return () => {
       //cleanup code if needed
-    };
+    }
 
-  }, []);
+  }, [])
 
   useEffect(() => {
     const isPhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
@@ -308,7 +308,7 @@ export default function InstituteAdmin() {
       form.clearErrors("0.imageFile")
     }
 
-  }, [instituteName, institutePhoneNumber, instituteEmailAddress, instituteImageFile, form]);
+  }, [instituteName, institutePhoneNumber, instituteEmailAddress, instituteImageFile, form])
 
 
   return (

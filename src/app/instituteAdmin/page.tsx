@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import { Button, Table, Kbd, Pagination } from 'flowbite-react'
 import { useState, useEffect } from 'react'
 import { DocumentData, QuerySnapshot, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
@@ -33,7 +33,7 @@ export default function InstituteAdmin() {
     const endIndex = startIndex + itemsPerPage
     setStartInstituteIndex(startIndex)
     //data is fetching = loading
-    setIsInstituteFetchAllDataLoading(true);
+    setIsInstituteFetchAllDataLoading(true)
 
     //display data by latest update timestamp
     const q = query(instituteCollection, orderBy('InstituteLastUpdateTimestamp', 'desc'))
@@ -48,15 +48,15 @@ export default function InstituteAdmin() {
       const slicedInstituteData = snapshot.docs.slice(startIndex, endIndex).map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      }))
 
-      setInstitute(slicedInstituteData);
-      setIsInstituteFetchAllDataLoading(false);
-    });
+      setInstitute(slicedInstituteData)
+      setIsInstituteFetchAllDataLoading(false)
+    })
 
 
     // Cleanup the listener when the component unmounts
-    return () => unsubscribe();
+    return () => unsubscribe()
   }
 
   const handleDeleteInstituteClick = (id: string | undefined) => {
@@ -77,15 +77,15 @@ export default function InstituteAdmin() {
           title: "Deleted!",
           text: "This institute data has been deleted.",
           icon: "success"
-        });
+        })
       }
-    });
+    })
 
   }
 
   //trigger fetch when currentPage changes
   useEffect(() => {
-    fetchAllInstituteData();
+    fetchAllInstituteData()
   }, [currentPage])
 
   if (isInstituteFetchAllDataLoading)

@@ -1,19 +1,19 @@
-'use client';
-import React from "react";
-import { Button, Label, TextInput } from 'flowbite-react';
-import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
+'use client'
+import React from "react"
+import { Button, Label, TextInput } from 'flowbite-react'
+import { useForm } from 'react-hook-form'
+import { useState, useEffect } from 'react'
 import { HiMail } from 'react-icons/hi'
-import { useRouter } from 'next/navigation';
-import { sendPasswordResetEmail } from "firebase/auth";
-import app, { auth } from '../../FirebaseConfig/firebaseConfig';
+import { useRouter } from 'next/navigation'
+import { sendPasswordResetEmail } from "firebase/auth"
+import app, { auth } from '../../FirebaseConfig/firebaseConfig'
 
 type ForgetPasswordFormValue = {
-  email: string;
+  email: string
 }
 
 export default function ForgetPassword() {
-  const form = useForm<[ForgetPasswordFormValue]>();
+  const form = useForm<[ForgetPasswordFormValue]>()
   const [email, setForgetPasswordEmail] = useState("")
   const { register, handleSubmit, formState } = form
   const { errors } = formState
@@ -28,7 +28,7 @@ export default function ForgetPassword() {
       form.clearErrors("0.email")
     }
 
-  }, [email, form]);
+  }, [email, form])
 
   const forgetPassword = () => {
     sendPasswordResetEmail(auth, email)
