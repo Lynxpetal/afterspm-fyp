@@ -12,24 +12,10 @@ import { split } from "postcss/lib/list";
 
 export default function Reccomend() {
     const [reccomendations, setReccomendation] = useState([''])
-    const [uid, setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
 
 
-    const auth = getAuth()
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            if (user.uid != uid) {
-                setUID(user.uid)
-                const reccomends = query(careerCollection, where("UserID", "==", user.uid))
-                const reccoSnapshot = await getDocs(reccomends)
-                if (reccoSnapshot.size != 0) {
-                    setReccomendation(reccoSnapshot.docs[0].data().Careers.split(","))
-                }
-
-            }
-        }
-    })
+    
 
     function onReccomend() {
         fetch("http://localhost:5000/Career/Recommend", {
@@ -38,7 +24,7 @@ export default function Reccomend() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                reccomendations: displayResult
+                input: displayResult
             })
         }).then(response => {
             let output = response.json()

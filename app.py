@@ -20,10 +20,7 @@ client = OpenAI(
     # defaults to os.environ.get("OPENAI_API_KEY")
     api_key="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"
 )
-messages = [ {
-    "role": "system", 
-    "content": "You are an intelligent assistant of a career reccomending system. You have two main jobs which is to reccomend five or more different or similar career based on the type of test and result of that test, and from multiple lists of careers sort it into a single list with only five careers sorted by their occurance(or similar jobs) in the lists. "
-    } ]
+
 
 #centroids for KNN
 bigfiveCetroids = [
@@ -77,13 +74,10 @@ app.config['UPLOAD_IMAGE_FOLDER'] = imageUploadPath
 def euclidean(v1, v2):
     return sum((p-q)**2 for p, q in zip(v1, v2)) ** .5
     
-def chatGPTAPI(message):
-    if message: 
-        messages.append( 
-            {"role": "user", "content": message}, 
-        ) 
-        chat = client.chat.completions.create( 
-            model="gpt-3.5-turbo", messages=messages, 
+def chatGPTAPI(system,prompt):
+    input = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+    chat = client.chat.completions.create( 
+            model="gpt-3.5-turbo", messages=input, temperature=0.3, frequency_penalty=-0.5, presence_penalty=-0.5 
         ) 
     print(f"ChatGPT: {chat.choices[0].message.content}") 
     return str(chat.choices[0].message.content)    
@@ -100,9 +94,9 @@ class ReccomendCareer:
         return reccomendations[0][1]
     
     def ReccomendChatGPT(result, testType):
-        inputPrompt = "Ignore all previous prompt \n Return an array of five careers suitable for the test result for " + testType + ".\n " + result + "\n Reply without any code and explanation but the array."
-        print("recco")
-        return chatGPTAPI(inputPrompt) 
+        inputSystem = "Based on the input result for the test result for" + testType + "return an array of five careers suitable without any code and explanation but the array."
+        inputPrompt = result
+        return chatGPTAPI(inputSystem, inputPrompt) 
     
     def reduceReccomendation(reccomendations):
         inputPrompt = "Ignore all previous prompt \n"
@@ -110,11 +104,8 @@ class ReccomendCareer:
             print(reccomend)
             if(reccomend != [""] or reccomend != ['']):
                 inputPrompt += str(reccomend) + "\n"
-                
-        inputPrompt += "Reduce the arrays above into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. Please only provide the array without code and explanation"
-        print(inputPrompt)
-        
-        return chatGPTAPI(inputPrompt)
+        inputSystem = "Based on the arrays of career that the user sends you, you are to reduce it into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. You are to only use the careers provided by the user. Reply it in an array without any explanation or code"          
+        return chatGPTAPI(inputSystem, inputPrompt)
 
 
 
@@ -481,7 +472,10 @@ def recommend():
 @app.route("/Career/Course", methods=['POST'])
 def course():
     data = request.json
-    return jsonify({'message': "hello"})
+    inputPrompt = data["input"]
+    inputSystem = "Based on the career received you are to reccomend suitable programmes for the user to study in, if there are already programmes inserted by user you are to reccomend programmes only based on the input"
+    output = chatGPTAPI(inputSystem, inputPrompt)
+    return jsonify({'message': output})
 
 async def async_get_data():
     await asyncio.sleep(1)
