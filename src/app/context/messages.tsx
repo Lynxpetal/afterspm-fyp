@@ -26,8 +26,8 @@ export function MessageProvider({ children }: { children: ReactNode }) {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: nanoid(),
-            text: `Hi there I am an AI chatbot ready to aid you on your search for a career to pursue` ,
-            isUserMessage: "assistant",
+            text: defaultPrompt ,
+            isUserMessage: "system",
         },
     ])
 
@@ -55,7 +55,7 @@ export function MessageProvider({ children }: { children: ReactNode }) {
                     {
                         id: nanoid(),
                         text: formsPrompt ,
-                        isUserMessage: false,
+                        isUserMessage: "system",
                     },
                 ])
                 break;
@@ -64,7 +64,7 @@ export function MessageProvider({ children }: { children: ReactNode }) {
                     {
                         id: nanoid(),
                         text: defaultPrompt ,
-                        isUserMessage: false,
+                        isUserMessage: "system",
                     },
                 ])
                 break

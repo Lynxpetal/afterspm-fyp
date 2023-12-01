@@ -25,6 +25,7 @@ function NewChat() {
         setIsMessageUpdating,
         resetMessage
     } = useContext(MessageContext)
+
     const [currentQuestion, setQuestion] = useState<string>("")
     const [confirm, setConfirm] = useState<boolean>(false)
     const [isQuestionMode, setMode] = useState<boolean>(false)
@@ -33,22 +34,9 @@ function NewChat() {
     const [showToast, setShowToast] = useState<boolean>(false)
     const [isLoading, setLoading] = useState<boolean>(false)
     const [messageList, updateList] = useState<chatMsg[]>([{ role: "system", content: defaultPrompt }, { role: "assistant", content: 'hello how are you?' }])
-    console.log(messages)
-    function messageListManager(action: string, context: chatMsg) {
-        switch (action) {
-            case "addNew":
-                let temp = messageList
-                temp.push(context)
-                updateList(temp)
-                break;
-            case "reset":
-                updateList([])
-                break
-            default:
-                console.log("no such action bro")
-                break;
-        }
-    }
+    
+    
+    
     const { mutate: sendMessage } = useMutation({
         mutationKey: ['sendMessage'],
         mutationFn: async (messages: Message) => {
@@ -90,6 +78,7 @@ function NewChat() {
                 const { value, done: doneReading } = await reader.read()
                 done = doneReading
                 const chunkValue = decoder.decode(value)
+                console.log(chunkValue)
                 updateMessage(id, (prev) => prev + chunkValue)
             }
 
@@ -124,13 +113,13 @@ function NewChat() {
                     <div className="text-center">
                         <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
                         <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                            By pressing this you would switch the chat to guided conversation mode on switch all previous record of your conversation will be reset is that OK?
+                            By pressing this you would switch the chat's mode and all previous record of your conversation will be reset, is that OK?
                         </h3>
                         <div className="flex justify-center gap-4">
                             <Button color="failure" onClick={() => {
                                 setConfirm(false)
-                                resetMessage("question")
-                                setMode(true)
+                                {isQuestionMode ? resetMessage("normal") : resetMessage("question")}
+                                {isQuestionMode ? setMode(false) : setMode(true)}
                                 }}>
                                 "Yes, I'm sure"
                             </Button>
@@ -145,7 +134,7 @@ function NewChat() {
             <div className="flex flex-col pl-6 ml-6 p-4 pt-12 min-h-[96vh] bg-slate-400">
                 {messages.map((messages) => {
                     if (messages.isUserMessage == "system") {
-                        return <></>
+                        return <p>{messages.text}</p>
                     }
                     return <div className={cn("flex flex-row", {
                         " justify-start": messages.isUserMessage == "assistant",
@@ -153,7 +142,7 @@ function NewChat() {
                     })}>
                         <div className={cn(" p-3 my-3 rounded-2xl max-w-7xl", {
                             " bg-blue-600 text-white": messages.isUserMessage == "assistant",
-                            " bg-slate-200": messages.isUserMessage == "user"
+                            " bg-slate-200": messages.isUserMessage == "user" 
                         })}>
                             {messages.text}
 
@@ -168,10 +157,13 @@ function NewChat() {
                     onKeyDownCapture={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault()
+                            if (isQuestionMode) {
+                                
+                            }
                             sendMessage({
                                 id: nanoid(),
                                 text: input,
-                                isUserMessage: true})
+                                isUserMessage: "user"})
                         }
                     }}
                     maxRows={4}
@@ -187,7 +179,7 @@ function NewChat() {
                 onClick={() => sendMessage({
                     id: nanoid(),
                     text: input,
-                    isUserMessage: true})}
+                    isUserMessage: "user"})}
                 className="absolute flex bottom-9 right-9 h-9 rounded-xl p-3 align-middle justify-center w-16 bg-white">
                 {isLoading ? <Spinner size="sm" className="mb-20" /> :<IoMdArrowUp />}
             </button>

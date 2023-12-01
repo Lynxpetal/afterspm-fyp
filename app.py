@@ -116,6 +116,8 @@ class ReccomendCareer:
         
         return chatGPTAPI(inputPrompt)
 
+
+
 @app.route("/finalFilter", methods=['POST'])
 def finalFilter():
     if request.method == 'POST':
@@ -475,6 +477,11 @@ def recommend():
     output = ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
     
     return jsonify({'message': output})
+
+@app.route("/Career/Course", methods=['POST'])
+def course():
+    data = request.json
+    return jsonify({'message': "hello"})
 
 async def async_get_data():
     await asyncio.sleep(1)
