@@ -1,11 +1,11 @@
 'use client'
 import { useSearchParams } from "next/navigation"
-import { Table, Timeline } from 'flowbite-react'
+import { Table, Timeline, Pagination } from 'flowbite-react'
 import { useEffect, useState } from "react"
 import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
-import { rgbToHex } from "@mui/material"
+
 
 interface InstituteType {
   "Institute Name": string
@@ -35,18 +35,24 @@ const desiredOrder = [
   "Result"
 ]
 
-interface SubjectData {
-  id?: string
-  SubjectAbbreviation?: string
-  SubjectCode?: string
-  SubjectName?: string
-}
 
 
 export default function view() {
   const [filterInstitute, setFilterInstitute] = useState<InstituteType[]>([])
   const searchParams = useSearchParams()
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalData, setTotalData] = useState(0)
+
+  const cardsPerPage = 1
+  const onPageChange = (page: number) => setCurrentPage(page)
+
+  const getFinalFilterForCurrentPage = () => {
+    const startIndex = (currentPage - 1) * cardsPerPage
+    const endIndex = startIndex + cardsPerPage
+    return filterInstitute.slice(startIndex, endIndex)
+  }
 
   function getState(location: string): string | undefined {
     if (location.toLowerCase().includes("selangor")) {
@@ -104,7 +110,7 @@ export default function view() {
     if (data) {
       try {
         // Try to parse the string into an array
-        const dataArray = JSON.parse(data);
+        const dataArray = JSON.parse(data)
 
         if (Array.isArray(dataArray)) {
           //rearrange data based on desired order
@@ -114,24 +120,29 @@ export default function view() {
               if (item.hasOwnProperty(property)) {
                 reorderedItem[property] = item[property]
               }
-            });
-            return reorderedItem;
-          });
+            })
+            return reorderedItem
+          })
 
-          setFilterInstitute(rearrangedData);
+          setFilterInstitute(rearrangedData)
           console.log('Data length:', rearrangedData.length)
         } else {
-          console.error('Invalid data format:', dataArray);
+          console.error('Invalid data format:', dataArray)
         }
       } catch (error) {
         console.error('Error parsing data:', error);
       }
     }
-  };
+  }
 
   useEffect(() => {
     displayData()
   }, [])
+
+  useEffect(() => {
+    setTotalData(filterInstitute.length)
+    setTotalPages(Math.ceil(filterInstitute.length / cardsPerPage))
+  }, [filterInstitute, cardsPerPage])
 
 
 
@@ -172,15 +183,15 @@ export default function view() {
           </div>
           <div style={{ overflowX: 'auto' }}>
             <Table striped style={{ fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>
-              <Table.Body className="=divide-y">
-                {filterInstitute && filterInstitute.length ? (
-                  Object.keys(filterInstitute[0]).map((property, index) => (
+            <Table.Body className="=divide-y">
+                {getFinalFilterForCurrentPage().length ? (
+                  Object.keys(getFinalFilterForCurrentPage()[0]).map((property, index) => (
                     property != 'InstituteName' && property != 'duration' && property != 'Result' && (
                       <Table.Row>
                         <Table.Cell style={{ width: '15%', fontSize: "15px",  border: '1px solid #000', backgroundColor: 'rgba(141, 211, 226, 0.7)' }}>
                           {property}
                         </Table.Cell>
-                        {filterInstitute.map((inst, dataIndex) => (
+                        {getFinalFilterForCurrentPage().map((inst, dataIndex) => (
                           <Table.Cell key={dataIndex} style={{ width: '20%', backgroundColor: dataIndex % 2 == 0 ? 'rgba(137, 196, 244, 0.3)' : '#E9FFFB', fontSize: "15px",  border: '1px solid #000000' }}>
                             {property == 'Minimum Entry Requirement' ? (
                               <div>
@@ -228,6 +239,13 @@ export default function view() {
                 )}
               </Table.Body>
             </Table>
+
+            <div className="flex overflow-x-auto sm:justify-left" style={{ color: "black", marginTop: "10px" }}>
+              <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
+            </div>
+            <div className="flex overflow-x-auto sm:justify-left">
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} showIcons />
+            </div>
           </div>
         </div>
       </div>
