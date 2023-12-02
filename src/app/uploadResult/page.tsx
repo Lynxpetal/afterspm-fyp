@@ -12,6 +12,7 @@ import Swal from 'sweetalert2'
 import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
+import { useRouter } from 'next/navigation'
 
 interface SubjectData {
   id?: string
@@ -38,6 +39,7 @@ export default function uploadResult() {
   var missingSubjectStatus = false
   var duplicateSubjectStatus = false
   var emptyGradeStatus = false
+  const router = useRouter()
 
   //select from multiple options 
   function createSelect(className: string, name: string, id: string, arialabel: string) {
@@ -204,10 +206,12 @@ export default function uploadResult() {
   //if user wants to manual input
   function showManualInput() {
     setUploadFileStatus(false)
+    setUploadFileContainer(false)
     setManualInputStatus(true)
     setDuplicateSubject(false)
     setMissingSubject(false)
     setEmptyGrade(false)
+
 
     //clear the table thead then clear subject container and its row
     const subjectContainersUploadFile = document.querySelectorAll(".qualificationSubject")
@@ -643,6 +647,8 @@ export default function uploadResult() {
 
       }
 
+      await deleteImageResultDataToFirestore(userId)
+
       //collection - Result
       const resultDocRef = await addDoc(collection(db, "Result"), {
         ResultBelongTo: userId,
@@ -720,6 +726,7 @@ export default function uploadResult() {
             text: "Matching data provided with all programmes in database...",
             icon: "success"
           })
+          router.push("/uploadResult/filterAfterUpload")
         }
       })
 
@@ -743,10 +750,12 @@ export default function uploadResult() {
             text: "Matching data provided with all programmes in database...",
             icon: "success"
           })
+          router.push("/uploadResult/filterAfterUpload")
         }
       })
 
     }
+
 
   }
 
@@ -877,6 +886,7 @@ export default function uploadResult() {
                 Input Manually
               </Button>
             </div>
+
             {uploadFileContainer && (
               <div id="fileUpload" className="max-w-md">
                 <div className="mb-2 block">
