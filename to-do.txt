@@ -1,6 +1,7 @@
-finish ui for big five test 
-handle submit
-handle db
-makesure db receive data  test data each user save two only if more just replace no need history
-py write knn and gaodim clustering
-figure out chatgpt reccomendation
+logic for chatbot to carry out pysh test
+store test from chatbot to db
+chatbot makesure working
+
+make squares in psych form clickable and labelled 
+sidebar repair and global login pls
+

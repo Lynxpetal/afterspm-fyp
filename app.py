@@ -75,9 +75,11 @@ def euclidean(v1, v2):
     return sum((p-q)**2 for p, q in zip(v1, v2)) ** .5
     
 def chatGPTAPI(system,prompt):
-    input = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+    print("called")
+    messages = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+    print(messages)
     chat = client.chat.completions.create( 
-            model="gpt-3.5-turbo", messages=input, temperature=0.3, frequency_penalty=-0.5, presence_penalty=-0.5 
+            model="gpt-4", messages=messages, temperature=0.3, frequency_penalty=-0.5, presence_penalty=-0.5,  
         ) 
     print(f"ChatGPT: {chat.choices[0].message.content}") 
     return str(chat.choices[0].message.content)    
@@ -87,24 +89,22 @@ class ReccomendCareer:
         distance = []
         for centroid in centroids:
             distance.append([euclidean(centroid[0], inputTestResult), centroid[1]]) 
-        
         reccomendations = sorted(distance, key=lambda x: x[0])
-        print("hello")
         print(reccomendations[0][1])
         return reccomendations[0][1]
     
     def ReccomendChatGPT(result, testType):
-        inputSystem = "Based on the input result for the test result for" + testType + "return an array of five careers suitable without any code and explanation but the array."
+        inputSystem = "Based on the input result for the test result for the " + testType + " then return an array of five careers suitable for the user without any code and explanation but the array."
         inputPrompt = result
         return chatGPTAPI(inputSystem, inputPrompt) 
     
     def reduceReccomendation(reccomendations):
-        inputPrompt = "Ignore all previous prompt \n"
+        inputPrompt = ""
         for reccomend in reccomendations:
             print(reccomend)
             if(reccomend != [""] or reccomend != ['']):
                 inputPrompt += str(reccomend) + "\n"
-        inputSystem = "Based on the arrays of career that the user sends you, you are to reduce it into a single array with five pairs of ['career' : occurance ] and sort it from left to right by most occured. You are to only use the careers provided by the user. Reply it in an array without any explanation or code"          
+        inputSystem = "Based on the arrays of career that the user sends you, you are to reduce it into a single array with five pairs of ['career' : compatibility with user in % ] the compatibility is determined by you and sort the compatibility from left to right. You are to only use the careers provided by the user. Reply it in an array without any explanation or code"          
         return chatGPTAPI(inputSystem, inputPrompt)
 
 
@@ -608,7 +608,7 @@ def recommend():
         gptBigFive = "["
         for i in range(5):
             gptBigFive += " " + bigfiveFormat[i] + ":" + str(data["hollands"][i])
-        bigfiveGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Holland's Test")
+        bigfiveGPTReccomends = ReccomendCareer.ReccomendChatGPT((gptHolland + "]"),  "Big Five Test")
     
     output = ReccomendCareer.reduceReccomendation([hollandKNNReccomends, bigfiveKNNReccomends, hollandGPTReccomends, bigfiveGPTReccomends])
     
@@ -618,8 +618,9 @@ def recommend():
 def course():
     data = request.json
     inputPrompt = data["input"]
-    inputSystem = "Based on the career received you are to reccomend suitable programmes for the user to study in, if there are already programmes inserted by user you are to reccomend programmes only based on the input"
+    inputSystem = "Based on the career received you are to reccomend suitable programmes for the user to study in, if there are already programmes inserted by user you are to reccomend programmes only based on the input. You are also to provide a compatibility score beside the couse you reccomend for the career provided."
     output = chatGPTAPI(inputSystem, inputPrompt)
+    print(output)
     return jsonify({'message': output})
 
 async def async_get_data():
