@@ -319,7 +319,7 @@ def filter_programmes_without_location(user_input, programme_list, instituteData
                                             if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
                                                 if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
                                                     completeSubjectName = resultSubjectData['SubjectName']     
-                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]
+                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]                              
 
                                     print(programme_dict_final['Result'])
                                     recommend_programmes_list_without_location.append(programme_dict_final)
@@ -391,7 +391,7 @@ def convert_grade(grade):
 
 def requirementsFulfilled(result, entry_requirements):
     for subject, grade in entry_requirements.items():
-        if convert_grade(grade) < convert_grade(result[subject]):
+        if subject not in result or convert_grade(grade) < convert_grade(result[subject]):
             return False 
     return True
         
