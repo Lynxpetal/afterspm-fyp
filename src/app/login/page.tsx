@@ -82,7 +82,7 @@ export default function Login() {
     }
     if (password != '') {
       form.clearErrors("0.password")
-      
+
     }
 
 
@@ -91,69 +91,88 @@ export default function Login() {
 
 
   return (
-    <form className="flex max-w-md flex-col gap-4" style={{ margin: '20px' }} onSubmit={handleSubmit(loginAccount)} noValidate>
-      {failureVerifyEmailAlert && (
-        <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setFailureVerifyEmailAlert(false)}>
-          <span className="font-medium">Info alert!</span> Please verify your email address.
-        </Alert>
-      )}
-      <h1 className="loginHeader">Welcome Back</h1>
-      <h1 className="loginDescription">Welcome Back! Plese enter your details</h1>
-      <div>
-        <div className="mb-2 block">
-          <Label htmlFor="email" value="Email address" />
+    <form style={{ margin: '20px' }} onSubmit={handleSubmit(loginAccount)} noValidate>
+      <div className="card" style={{ margin: '30px' }}>
+        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '50%' }}>
+          {failureVerifyEmailAlert && (
+            <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setFailureVerifyEmailAlert(false)}>
+              <span className="font-medium">Info alert!</span> Please verify your email address.
+            </Alert>
+          )}
+          <h1 className="loginHeader">Welcome Back</h1>
+          <h1 className="loginDescription">Welcome Back! Plese enter your details</h1>
+
+          <div style={{ paddingBottom: '20px' }}>
+            <div className="mb-2 block">
+              <Label htmlFor="email" value="Email address" />
+            </div>
+            <TextInput
+              type="email"
+              className="form-control"
+              //color={getEmailColor()}
+              id="email"
+              icon={HiMail}
+              placeholder="abc@gmail.com"
+              {...register("0.email", {
+                required: {
+                  value: true,
+                  message: "Email is required"
+                },
+                pattern: {
+                  value: isLoginEmailValid,
+                  message: "Invalid email format. Follow the format: abc@gmail.com"
+                }
+              })}
+              onChange={(e) => setLoginEmail(e.target.value)}
+            />
+            <p className="loginValidationError">{errors[0]?.email?.message}</p>
+          </div>
+
+          <div style={{ paddingBottom: '20px' }}>
+            <div className="mb-2 block">
+              <Label htmlFor="password" value="Password" />
+            </div>
+            <TextInput
+              type="password"
+              className="form-control"
+              id="password"
+              placeholder="*******"
+              autoComplete='off'
+              {...register('0.password', {
+                required: {
+                  value: true,
+                  message: "Password is required"
+                },
+              })}
+              onChange={(e) => setLoginPassword(e.target.value)}
+            />
+            <p className="loginValidationError">{errors[0]?.password?.message}</p>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
+            <Button type="submit">Login</Button>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
+            <Button onClick={SignInBtnClickHandler}> Login With Google</Button>
+          </div>
+
+          <p className='loginToRegisterHeader'>Don't have an account?
+            <a href="/register" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+              Register
+            </a>
+          </p>
+
+          <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
+            <a href="/login/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{ textAlign: 'center' }}>
+              Forgot Password?
+            </a>
+          </div>
+
+
+
         </div>
-        <TextInput
-          type="email"
-          className="form-control"
-          //color={getEmailColor()}
-          id="email"
-          icon={HiMail}
-          placeholder="abc@gmail.com"
-          {...register("0.email", {
-            required: {
-              value: true,
-              message: "Email is required"
-            },
-            pattern: {
-              value: isLoginEmailValid,
-              message: "Invalid email format. Follow the format: abc@gmail.com"
-            }
-          })}
-          onChange={(e) => setLoginEmail(e.target.value)}
-        />
-        <p className="loginValidationError">{errors[0]?.email?.message}</p>
       </div>
-      <div>
-        <div className="mb-2 block">
-          <Label htmlFor="password" value="Password" />
-        </div>
-        <TextInput
-          type="password"
-          className="form-control"
-          id="password"
-          placeholder="*******"
-          autoComplete='off'
-          {...register('0.password', {
-            required: {
-              value: true,
-              message: "Password is required"
-            },
-          })}
-          onChange={(e) => setLoginPassword(e.target.value)}
-        />
-        <p className="loginValidationError">{errors[0]?.password?.message}</p>
-      </div>
-      <Button type="submit">Login</Button>
-      <Button onClick={SignInBtnClickHandler}> Login With Google</Button>
-      <p className='loginToRegisterHeader'>Don't have an account?
-        <a href="/register" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-          Register
-        </a>
-      </p>
-      <a href="/login/forgetPassword" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500" style={{ textAlign: 'center' }}>
-        Forgot Password?
-      </a>
     </form>
   )
 }

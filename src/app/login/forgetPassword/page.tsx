@@ -19,10 +19,10 @@ export default function ForgetPassword() {
   const { errors } = formState
   const router = useRouter()
 
-  const isForgetPasswordEmailValid =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  const isForgetPasswordEmailValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
   useEffect(() => {
-    const isEmailValid =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+    const isEmailValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
     if (isEmailValid.test(email)) {
       form.clearErrors("0.email")
@@ -43,34 +43,42 @@ export default function ForgetPassword() {
   }
 
   return (
-    <form className="flex max-w-md flex-col gap-4" style={{ margin: '20px' }} onSubmit={handleSubmit(forgetPassword)} noValidate>
-      <h1 className="forgetPasswordHeader">Forgot Password</h1>
-      <div>
-        <div className="mb-2 block">
-          <Label htmlFor="email" value="Email address" />
+    <form style={{ margin: '20px' }} onSubmit={handleSubmit(forgetPassword)} noValidate>
+      <div className="card" style={{ margin: '30px' }}>
+        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '50%' }}>
+          <h1 className="forgetPasswordHeader">Forgot Password</h1>
+          <div style={{ paddingBottom: '20px' }}>
+            <div className="mb-2 block">
+              <Label htmlFor="email" value="Email address" />
+            </div>
+            <TextInput
+              type="email"
+              className="form-control"
+              //color={getEmailColor()}
+              id="email"
+              icon={HiMail}
+              placeholder="abc@gmail.com"
+              {...register("0.email", {
+                required: {
+                  value: true,
+                  message: "Email is required"
+                },
+                pattern: {
+                  value: isForgetPasswordEmailValid,
+                  message: "Invalid email format. Follow the format: abc@gmail.com"
+                }
+              })}
+              onChange={(e) => setForgetPasswordEmail(e.target.value)}
+            />
+            <p className="forgetPasswordValidationError">{errors[0]?.email?.message}</p>
+          </div>
+
+          <div>
+            <Button type="submit">Reset</Button>
+          </div>
+
         </div>
-        <TextInput
-          type="email"
-          className="form-control"
-          //color={getEmailColor()}
-          id="email"
-          icon={HiMail}
-          placeholder="abc@gmail.com"
-          {...register("0.email", {
-            required: {
-              value: true,
-              message: "Email is required"
-            },
-            pattern: {
-              value: isForgetPasswordEmailValid,
-              message: "Invalid email format. Follow the format: abc@gmail.com"
-            }
-          })}
-          onChange={(e) => setForgetPasswordEmail(e.target.value)}
-        />
-        <p className="forgetPasswordValidationError">{errors[0]?.email?.message}</p>
       </div>
-      <Button type="submit">Reset</Button>
-    </form >
+    </form>
   )
 }

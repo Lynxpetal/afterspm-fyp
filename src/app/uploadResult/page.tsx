@@ -813,38 +813,6 @@ export default function uploadResult() {
 
   return (
     <div style={{ margin: "20px" }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Timeline horizontal>
-          <Timeline.Item>
-            <Timeline.Point icon={GrDocumentUpload} />
-            <Timeline.Content>
-              <Timeline.Title>Step 1</Timeline.Title>
-              <Timeline.Body>
-                Upload SPM Result
-              </Timeline.Body>
-            </Timeline.Content>
-          </Timeline.Item>
-          <Timeline.Item style={{ margin: '0 auto' }}>
-            <Timeline.Point icon={FaFilter} />
-            <Timeline.Content>
-              <Timeline.Title>Step 2</Timeline.Title>
-              <Timeline.Body>
-                Filter Institute and Programme
-              </Timeline.Body>
-            </Timeline.Content>
-          </Timeline.Item>
-          <Timeline.Item style={{ marginLeft: 'auto' }}>
-            <Timeline.Point icon={MdOutlineRecommend} />
-            <Timeline.Content>
-              <Timeline.Title>Step 3</Timeline.Title>
-              <Timeline.Body>
-                View Recommended Programmes
-              </Timeline.Body>
-            </Timeline.Content>
-          </Timeline.Item>
-        </Timeline>
-      </div>
-
       <div style={{ margin: "20px" }}>
         <div>
           {duplicateSubject && (
@@ -869,7 +837,39 @@ export default function uploadResult() {
         </div>
         <div className="card" style={{ margin: '30px', width: "100%" }}>
           <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '85%' }}>
-            <div className="flex flex-wrap gap-2">
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Timeline horizontal>
+                <Timeline.Item>
+                  <Timeline.Point icon={GrDocumentUpload}/>
+                  <Timeline.Content>
+                    <Timeline.Title>Step 1</Timeline.Title>
+                    <Timeline.Body style={{ color: 'green', fontWeight: "bold" }}>
+                      Upload SPM Result
+                    </Timeline.Body>
+                  </Timeline.Content>
+                </Timeline.Item>
+                <Timeline.Item style={{ margin: '0 auto' }}>
+                  <Timeline.Point icon={FaFilter} />
+                  <Timeline.Content>
+                    <Timeline.Title>Step 2</Timeline.Title>
+                    <Timeline.Body>
+                      Filter Institute and Programme
+                    </Timeline.Body>
+                  </Timeline.Content>
+                </Timeline.Item>
+                <Timeline.Item style={{ marginLeft: 'auto' }}>
+                  <Timeline.Point icon={MdOutlineRecommend} />
+                  <Timeline.Content>
+                    <Timeline.Title>Step 3</Timeline.Title>
+                    <Timeline.Body>
+                      View Recommended Programmes
+                    </Timeline.Body>
+                  </Timeline.Content>
+                </Timeline.Item>
+              </Timeline>
+            </div>
+
+            <div className="flex flex-wrap gap-2" style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
               <Button pill onClick={enableUploadResultContainer}>
                 Upload Result
               </Button>
@@ -911,7 +911,7 @@ export default function uploadResult() {
                   </Button>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2" style={{ margin: "20px" }}>
+              <div className="flex flex-wrap gap-2" style={{ margin: "20px", display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
                 <Button pill onClick={proceedToNext}>
                   Next
                 </Button>

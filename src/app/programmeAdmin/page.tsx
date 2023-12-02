@@ -101,83 +101,85 @@ export default function ProgrammeAdmin() {
     </div>
   return (
     <div className="card" style={{ margin: '30px' }}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <h2 style={{ color: 'black', display: 'flex', alignItems: 'center' }}>
-          <FaGraduationCap className="mr-2 h-5 w-5" />
-          All Programmes in the database
-        </h2>
-      </div>
-      <div>
-        <Button style={{ backgroundColor: "#B8FFCC", color: "black", marginBottom: "30px", marginTop: "30px" }}>
-          <GrAddCircle className="mr-2 h-5 w-5" />
-          <Link href={{ pathname: '/programmeAdmin/addProgramme' }}>Add Programme</Link>
-        </Button>
-      </div>
-      <div style={{ overflowX: 'auto' }}>
-        <Table striped>
-          <Table.Head>
-            <Table.HeadCell style={{ width: '5%', backgroundColor: '#8DD3E2' }}>ID</Table.HeadCell>
-            <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Programme Name</Table.HeadCell>
-            <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Offered By</Table.HeadCell>
-            <Table.HeadCell style={{ width: '5%', backgroundColor: '#8DD3E2' }}>Duration</Table.HeadCell>
-            <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Study Level</Table.HeadCell>
-            <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Last Update</Table.HeadCell>
-            <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Actions</Table.HeadCell>
-          </Table.Head>
+      <div style={{ backgroundColor: "#EDFDFF", margin: '20px', padding: '30px', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <h2 style={{ color: 'black', display: 'flex', alignItems: 'center' }}>
+            <FaGraduationCap className="mr-2 h-5 w-5" />
+            All Programmes in the database
+          </h2>
+        </div>
+        <div>
+          <Button style={{ backgroundColor: "#B8FFCC", color: "black", marginBottom: "30px", marginTop: "30px" }}>
+            <GrAddCircle className="mr-2 h-5 w-5" />
+            <Link href={{ pathname: '/programmeAdmin/addProgramme' }}>Add Programme</Link>
+          </Button>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <Table striped>
+            <Table.Head>
+              <Table.HeadCell style={{ width: '5%', backgroundColor: '#8DD3E2' }}>ID</Table.HeadCell>
+              <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Programme Name</Table.HeadCell>
+              <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Offered By</Table.HeadCell>
+              <Table.HeadCell style={{ width: '5%', backgroundColor: '#8DD3E2' }}>Duration</Table.HeadCell>
+              <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Study Level</Table.HeadCell>
+              <Table.HeadCell style={{ width: '15%', backgroundColor: '#8DD3E2' }}>Last Update</Table.HeadCell>
+              <Table.HeadCell style={{ width: '20%', backgroundColor: '#8DD3E2' }}>Actions</Table.HeadCell>
+            </Table.Head>
 
-          <Table.Body className="divide-y">
-            {programme && programme.length ? (
-              programme.map((prgm, index) => (
-                <Table.Row
-                  key={prgm.id}
-                  style={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#E9FFFB' }}
-                >
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{startProgrammeIndex + index + 1}</Table.Cell>
-                  <Table.Cell style={{ width: '20%' }}>{prgm.ProgrammeName}</Table.Cell>
-                  <Table.Cell style={{ width: '20%' }}>{prgm.InstituteName}</Table.Cell>
-                  <Table.Cell style={{ width: '5%' }}>{prgm.ProgrammeDuration}</Table.Cell>
-                  <Table.Cell style={{ width: '15%' }}>{prgm.ProgrammeStudyLevel}</Table.Cell>
-                  <Table.Cell style={{ width: '15%' }}>{prgm.ProgrammeLastUpdateTimestamp?.toDate().toString()}</Table.Cell>
-                  <Table.Cell style={{ width: '20%' }}>
-                    <div>
-                      <Link
-                        href={{
-                          pathname: '/programmeAdmin/viewProgrammeDetails',
-                          query: {
-                            search: prgm.id
-                          }
-                        }}
-                      >
-                        <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }} />
-                      </Link>
-                      <Link
-                        href={{
-                          pathname: '/programmeAdmin/updateProgramme',
-                          query: {
-                            search: prgm.id
-                          }
-                        }}
-                      >
-                        <Kbd icon={AiOutlineEdit} style={{ fontSize: '18px' }} />
-                      </Link>
-                      <Kbd icon={AiOutlineDelete} style={{ fontSize: '18px' }} onClick={() => handleDeleteProgrammeClick(prgm.id)} />
-                    </div>
-                  </Table.Cell>
-                </Table.Row>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4}>There are no programme.</td>
-              </tr>
-            )}
-          </Table.Body>
-        </Table>
-      </div>
-      <div className="flex overflow-x-auto sm:justify-left" style={{ color: "black", marginTop: "10px" }}>
-        <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
-      </div>
-      <div className="flex overflow-x-auto sm:justify-left">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} showIcons />
+            <Table.Body className="divide-y">
+              {programme && programme.length ? (
+                programme.map((prgm, index) => (
+                  <Table.Row
+                    key={prgm.id}
+                    style={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : 'rgba(137, 207, 240, 0.3)' }}
+                  >
+                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white" style={{ width: '5%' }}>{startProgrammeIndex + index + 1}</Table.Cell>
+                    <Table.Cell style={{ width: '20%' }}>{prgm.ProgrammeName}</Table.Cell>
+                    <Table.Cell style={{ width: '20%' }}>{prgm.InstituteName}</Table.Cell>
+                    <Table.Cell style={{ width: '5%' }}>{prgm.ProgrammeDuration}</Table.Cell>
+                    <Table.Cell style={{ width: '15%' }}>{prgm.ProgrammeStudyLevel}</Table.Cell>
+                    <Table.Cell style={{ width: '15%' }}>{prgm.ProgrammeLastUpdateTimestamp?.toDate().toString()}</Table.Cell>
+                    <Table.Cell style={{ width: '20%' }}>
+                      <div>
+                        <Link
+                          href={{
+                            pathname: '/programmeAdmin/viewProgrammeDetails',
+                            query: {
+                              search: prgm.id
+                            }
+                          }}
+                        >
+                          <Kbd icon={AiOutlineEye} style={{ fontSize: '18px' }} />
+                        </Link>
+                        <Link
+                          href={{
+                            pathname: '/programmeAdmin/updateProgramme',
+                            query: {
+                              search: prgm.id
+                            }
+                          }}
+                        >
+                          <Kbd icon={AiOutlineEdit} style={{ fontSize: '18px' }} />
+                        </Link>
+                        <Kbd icon={AiOutlineDelete} style={{ fontSize: '18px' }} onClick={() => handleDeleteProgrammeClick(prgm.id)} />
+                      </div>
+                    </Table.Cell>
+                  </Table.Row>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4}>There are no programme.</td>
+                </tr>
+              )}
+            </Table.Body>
+          </Table>
+        </div>
+        <div className="flex overflow-x-auto sm:justify-left" style={{ color: "black", marginTop: "10px" }}>
+          <h1>Showing {currentPage} to {totalPages} of {totalData} Entries </h1>
+        </div>
+        <div className="flex overflow-x-auto sm:justify-left">
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} showIcons />
+        </div>
       </div>
     </div>
 
