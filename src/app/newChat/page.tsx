@@ -10,6 +10,7 @@ import { nanoid } from "nanoid";
 import { IoMdArrowUp } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
 import { Message } from "../lib/validators/message";
+import data from "@/json/forchatbot.json";
 
 interface chatMsg {
     role: string
@@ -26,7 +27,7 @@ function NewChat() {
         resetMessage
     } = useContext(MessageContext)
 
-    const [currentQuestion, setQuestion] = useState<string>("")
+    const [currentQuestion, setQuestion] = useState<number>(-1)
     const [confirm, setConfirm] = useState<boolean>(false)
     const [isQuestionMode, setMode] = useState<boolean>(false)
     const [answers, setAnswer] = useState<string>("")
@@ -34,9 +35,25 @@ function NewChat() {
     const [showToast, setShowToast] = useState<boolean>(false)
     const [isLoading, setLoading] = useState<boolean>(false)
     const [messageList, updateList] = useState<chatMsg[]>([{ role: "system", content: defaultPrompt }, { role: "assistant", content: 'hello how are you?' }])
-    
-    
-    
+    const questionList = data["list"]
+    function switchMode() {
+        if (isQuestionMode) {
+            setMode(false)
+            resetMessage("normal")
+        }
+        else {
+            setMode(true)
+            setQuestion(1)
+            resetMessage("question")
+            let question = questionList[0]
+            sendMessage({
+                id: nanoid(),
+                text: formsPrompt + "\nThe question is " + question,
+                isUserMessage: "system"
+            })
+        }
+    }
+
     const { mutate: sendMessage } = useMutation({
         mutationKey: ['sendMessage'],
         mutationFn: async (messages: Message) => {
@@ -69,10 +86,30 @@ function NewChat() {
             addMessage(responseMessage)
             setIsMessageUpdating(true)
 
-
             const reader = stream.getReader()
             const decoder = new TextDecoder()
             let done = false
+            if (isQuestionMode) {
+                console.log("QUESTIONMODE")
+                let holdMessage:string = " "
+                while (!done) {
+                    const { value, done: doneReading } = await reader.read()
+                    done = doneReading
+                    const chunkValue = decoder.decode(value)
+                    holdMessage += chunkValue
+                }
+                let answer = holdMessage.match(/\[.+?\]/g)
+                if (answer != null) {
+                    console.log("found answer")
+                    console.log(answer)
+                    setAnswer(answers + answer + ",")
+                }
+                updateMessage(id, (prev) => prev + holdMessage)
+            }
+
+            
+            
+
 
             while (!done) {
                 const { value, done: doneReading } = await reader.read()
@@ -118,9 +155,8 @@ function NewChat() {
                         <div className="flex justify-center gap-4">
                             <Button color="failure" onClick={() => {
                                 setConfirm(false)
-                                {isQuestionMode ? resetMessage("normal") : resetMessage("question")}
-                                {isQuestionMode ? setMode(false) : setMode(true)}
-                                }}>
+                                switchMode()
+                            }}>
                                 "Yes, I'm sure"
                             </Button>
                             <Button color="gray" onClick={() => (setConfirm(false))}>
@@ -130,7 +166,7 @@ function NewChat() {
                     </div>
                 </Modal.Body>
             </Modal>
-            <Button onClick={() =>(setConfirm(true))} className="absolute top-6 w-56 left-[40%]" color="dark">Switch to Guided mode</Button>
+            <Button onClick={() => (setConfirm(true))} className="absolute top-6 w-56 left-[40%]" color="dark">Switch to other mode</Button>
             <div className="flex flex-col pl-6 ml-6 p-4 pt-12 min-h-[96vh] bg-slate-400">
                 {messages.map((messages) => {
                     if (messages.isUserMessage == "system") {
@@ -142,7 +178,7 @@ function NewChat() {
                     })}>
                         <div className={cn(" p-3 my-3 rounded-2xl max-w-7xl", {
                             " bg-blue-600 text-white": messages.isUserMessage == "assistant",
-                            " bg-slate-200": messages.isUserMessage == "user" 
+                            " bg-slate-200": messages.isUserMessage == "user"
                         })}>
                             {messages.text}
 
@@ -158,12 +194,13 @@ function NewChat() {
                         if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault()
                             if (isQuestionMode) {
-                                
+
                             }
                             sendMessage({
                                 id: nanoid(),
                                 text: input,
-                                isUserMessage: "user"})
+                                isUserMessage: "user"
+                            })
                         }
                     }}
                     maxRows={4}
@@ -179,9 +216,10 @@ function NewChat() {
                 onClick={() => sendMessage({
                     id: nanoid(),
                     text: input,
-                    isUserMessage: "user"})}
+                    isUserMessage: "user"
+                })}
                 className="absolute flex bottom-9 right-9 h-9 rounded-xl p-3 align-middle justify-center w-16 bg-white">
-                {isLoading ? <Spinner size="sm" className="mb-20" /> :<IoMdArrowUp />}
+                {isLoading ? <Spinner size="sm" className="mb-20" /> : <IoMdArrowUp />}
             </button>
         </div>
 

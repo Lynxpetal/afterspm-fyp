@@ -197,7 +197,7 @@
     "category": "CSN"
 },
 {
-    "label":  "I make a mess of things.",
+    "label":  "I hate to make a mess of things.",
     "options": [1, 2, 3, 4, 5],
     "answer": 3,
     "category": "CSN"
@@ -209,7 +209,7 @@
     "category": "CSN"
 },
 {
-    "label":  "I often forget to put things back in their proper place.",
+    "label":  "I seldom forget to put things back in their proper place.",
     "options": [1, 2, 3, 4, 5],
     "answer": 3,
     "category": "CSN"
@@ -221,7 +221,7 @@
     "category": "CSN"
 },
 {
-    "label":  "I shirk my duties.",
+    "label":  "I never shirk my duties.",
     "options": [1, 2, 3, 4, 5],
     "answer": 3,
     "category": "CSN"

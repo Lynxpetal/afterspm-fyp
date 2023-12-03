@@ -51,13 +51,7 @@ export function MessageProvider({ children }: { children: ReactNode }) {
     const resetMessage = (mode: string) => {
         switch (mode) {
             case "question":
-                setMessages([
-                    {
-                        id: nanoid(),
-                        text: formsPrompt ,
-                        isUserMessage: "system",
-                    },
-                ])
+                setMessages([])
                 break;
             case "normal":
                 setMessages([
