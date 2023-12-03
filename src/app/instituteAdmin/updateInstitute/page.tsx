@@ -295,7 +295,7 @@ export default function InstituteAdmin() {
     const isPhoneNumberValid = /^(0[0-9]-\d{7,8}|011-\d{8}|01[02-9]-\d{7})$/
     const isEmailAddressValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
-    if (instituteName.length >= 20) {
+    if (instituteName != "" && instituteName.length >= 20) {
       form.clearErrors("0.name")
     }
     if (isPhoneNumberValid.test(institutePhoneNumber)) {
