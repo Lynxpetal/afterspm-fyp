@@ -349,35 +349,36 @@ def filter_programmes(user_input, programme_list, instituteDataList, filterDista
                     if programme_price <= user_input['maximum_tuition_fees']:
                         for institute in instituteDataList:
                             if programme['InstituteName'] == institute['InstituteName']:
-                                for distance in filterDistanceDataList:
-                                    if programme['InstituteName'] == institute['InstituteName']:
-                                        programme_dict_final['InstituteName'] = institute['InstituteName']
-                                        programme_dict_final['Institute Name'] = institute['InstituteImageUrl']
-                                        programme_dict_final['Programme Name'] = programme['ProgrammeName']
-                                        programme_dict_final['Campus'] = institute['InstituteLocation']
-                                        programme_dict_final['Programme Duration'] = f"{programme['ProgrammeDuration']} years"
-                                        programme_dict_final['Programme Estimated Price'] = f"RM {programme['ProgrammePrice']}"
-                                        programme_dict_final['Programme Study Level'] = programme['ProgrammeStudyLevel']
-                                        programme_dict_final['Driving Duration'] = distance['distance']
-                                        programme_dict_final['duration'] = distance['duration']
-                                        programme_dict_final['Minimum Entry Requirement'] = {}
-                                        for subjectMinimum, entryMinimum in entryRequirements.items():
-                                            for subjectData in subjectDataList:
-                                                if subjectData['SubjectAbbreviation'] == subjectMinimum:
-                                                    subjectName = subjectData['SubjectName']
-                                                    programme_dict_final['Minimum Entry Requirement'][subjectName] = entryMinimum
+                                if programme['InstituteName'] == institute['InstituteName']:
+                                    programme_dict_final['InstituteName'] = institute['InstituteName']
+                                    programme_dict_final['Institute Name'] = institute['InstituteImageUrl']
+                                    programme_dict_final['Programme Name'] = programme['ProgrammeName']
+                                    programme_dict_final['Campus'] = institute['InstituteLocation']
+                                    programme_dict_final['Programme Duration'] = f"{programme['ProgrammeDuration']} years"
+                                    programme_dict_final['Programme Estimated Price'] = f"RM {programme['ProgrammePrice']}"
+                                    programme_dict_final['Programme Study Level'] = programme['ProgrammeStudyLevel']
+                                    for distance in filterDistanceDataList:
+                                        if distance['instituteName'] == institute['InstituteName']:
+                                            programme_dict_final['Driving Duration'] = distance['distance']
+                                            programme_dict_final['duration'] = distance['duration']
+                                    programme_dict_final['Minimum Entry Requirement'] = {}
+                                    for subjectMinimum, entryMinimum in entryRequirements.items():
+                                        for subjectData in subjectDataList:
+                                            if subjectData['SubjectAbbreviation'] == subjectMinimum:
+                                                subjectName = subjectData['SubjectName']
+                                                programme_dict_final['Minimum Entry Requirement'][subjectName] = entryMinimum
 
-                                        print(programme_dict_final['Minimum Entry Requirement'])
-                                        programme_dict_final['Result'] = {}
-                                        for subject, entry_grade in entryRequirements.items(): #{'BM': 'D', 'SEJ': 'E'}
-                                            for resultSubjectData in subjectDataList: #{'BM': 'BAHASA MELAYU', 'SEJ': 'SEJARAH'}
-                                                if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
-                                                    if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
-                                                        completeSubjectName = resultSubjectData['SubjectName']     
-                                                        programme_dict_final['Result'][completeSubjectName] = result[subject]
+                                    print(programme_dict_final['Minimum Entry Requirement'])
+                                    programme_dict_final['Result'] = {}
+                                    for subject, entry_grade in entryRequirements.items(): #{'BM': 'D', 'SEJ': 'E'}
+                                        for resultSubjectData in subjectDataList: #{'BM': 'BAHASA MELAYU', 'SEJ': 'SEJARAH'}
+                                            if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+                                                if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
+                                                    completeSubjectName = resultSubjectData['SubjectName']     
+                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]
 
-                                        print(programme_dict_final['Result'])
-                                        recommend_programmes_list.append(programme_dict_final)
+                                    print(programme_dict_final['Result'])
+                                    recommend_programmes_list.append(programme_dict_final)
     
     print(programme_dict_final)
     print(recommend_programmes_list)

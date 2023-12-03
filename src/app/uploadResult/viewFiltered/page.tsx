@@ -45,7 +45,7 @@ export default function view() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalData, setTotalData] = useState(0)
 
-  const cardsPerPage = 1
+  const cardsPerPage = 4
   const onPageChange = (page: number) => setCurrentPage(page)
 
   const getFinalFilterForCurrentPage = () => {

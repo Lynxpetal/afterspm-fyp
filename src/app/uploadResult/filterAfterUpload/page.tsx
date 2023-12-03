@@ -88,6 +88,7 @@ export default function FilterInstituteProgramme() {
       postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
         .then(data => {
           console.log(data)
+          console.log(data.length)
           router.push(`/uploadResult/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
         })
