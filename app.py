@@ -417,7 +417,9 @@ def correctText(text):
 
     #get its key value: CEMERLANG TERTINGGI, CEMERLANG TINGGI, ...
     grade_keys_without_values = list(gradeDictionary().keys())
+    grade_keys_with_values = list(gradeDictionary().values())
     grade_formatted_string = "|".join(grade_keys_without_values)
+    grade_values_formatted_string = "|".join(grade_keys_with_values)
 
     #Output: CEMERLANG TERTINGGI|CEMERLANG TINGGI|CEMERLANG|....|TIDAK HADIR
     print(grade_formatted_string)
@@ -428,9 +430,17 @@ def correctText(text):
         if subject in corrected_input or any(key in corrected_input and value == subject for key, value in subjectDictionary().items()):
             #Find the grade for the subject
             grade = re.search(grade_formatted_string, corrected_input).group()
-            #Print the grade for the subject
-            #{"BM": "A+"}
-            subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeDictionary()[grade]
+            if grade:
+                #Print the grade for the subject
+                #{"BM": "A+"}
+                subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeDictionary()[grade]
+            else:
+                #sometimes the ocr detects value instead
+                gradeValue = re.search(grade_values_formatted_string, correct_input).group()
+                if gradeValue:
+                    subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeValue
+                else:
+                    print(f"No grade found for {subject}")
 
     print(subject_grade_dict)
     return subject_grade_dict
@@ -553,7 +563,6 @@ def subjectAbbreviationDictionary():
 
     return subjectAbbreviation_dict
 
-    return 0
 
 @app.route("/uploadResult", methods=['POST'])
 def uploadResult():
