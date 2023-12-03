@@ -438,9 +438,7 @@ export default function AddProgramme() {
 
 
   useEffect(() => {
-    const isNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
-
-    if (isNameValid.test(name) && name.length >= 20) {
+    if (name != "" && name.length >= 20) {
       form.clearErrors("0.name")
     }
 
@@ -490,10 +488,6 @@ export default function AddProgramme() {
                       value: 20,
                       message: "At least 20 characters long"
                     },
-                    pattern: {
-                      value: isProgrammeNameValid,
-                      message: "Invalid programme name"
-                    }
                   })}
                   onChange={(e) => setProgrammeName(e.target.value)}
                 />

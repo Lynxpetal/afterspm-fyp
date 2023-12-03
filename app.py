@@ -319,7 +319,7 @@ def filter_programmes_without_location(user_input, programme_list, instituteData
                                             if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
                                                 if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
                                                     completeSubjectName = resultSubjectData['SubjectName']     
-                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]
+                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]                              
 
                                     print(programme_dict_final['Result'])
                                     recommend_programmes_list_without_location.append(programme_dict_final)
@@ -349,35 +349,36 @@ def filter_programmes(user_input, programme_list, instituteDataList, filterDista
                     if programme_price <= user_input['maximum_tuition_fees']:
                         for institute in instituteDataList:
                             if programme['InstituteName'] == institute['InstituteName']:
-                                for distance in filterDistanceDataList:
-                                    if programme['InstituteName'] == institute['InstituteName']:
-                                        programme_dict_final['InstituteName'] = institute['InstituteName']
-                                        programme_dict_final['Institute Name'] = institute['InstituteImageUrl']
-                                        programme_dict_final['Programme Name'] = programme['ProgrammeName']
-                                        programme_dict_final['Campus'] = institute['InstituteLocation']
-                                        programme_dict_final['Programme Duration'] = f"{programme['ProgrammeDuration']} years"
-                                        programme_dict_final['Programme Estimated Price'] = f"RM {programme['ProgrammePrice']}"
-                                        programme_dict_final['Programme Study Level'] = programme['ProgrammeStudyLevel']
-                                        programme_dict_final['Driving Duration'] = distance['distance']
-                                        programme_dict_final['duration'] = distance['duration']
-                                        programme_dict_final['Minimum Entry Requirement'] = {}
-                                        for subjectMinimum, entryMinimum in entryRequirements.items():
-                                            for subjectData in subjectDataList:
-                                                if subjectData['SubjectAbbreviation'] == subjectMinimum:
-                                                    subjectName = subjectData['SubjectName']
-                                                    programme_dict_final['Minimum Entry Requirement'][subjectName] = entryMinimum
+                                if programme['InstituteName'] == institute['InstituteName']:
+                                    programme_dict_final['InstituteName'] = institute['InstituteName']
+                                    programme_dict_final['Institute Name'] = institute['InstituteImageUrl']
+                                    programme_dict_final['Programme Name'] = programme['ProgrammeName']
+                                    programme_dict_final['Campus'] = institute['InstituteLocation']
+                                    programme_dict_final['Programme Duration'] = f"{programme['ProgrammeDuration']} years"
+                                    programme_dict_final['Programme Estimated Price'] = f"RM {programme['ProgrammePrice']}"
+                                    programme_dict_final['Programme Study Level'] = programme['ProgrammeStudyLevel']
+                                    for distance in filterDistanceDataList:
+                                        if distance['instituteName'] == institute['InstituteName']:
+                                            programme_dict_final['Driving Duration'] = distance['distance']
+                                            programme_dict_final['duration'] = distance['duration']
+                                    programme_dict_final['Minimum Entry Requirement'] = {}
+                                    for subjectMinimum, entryMinimum in entryRequirements.items():
+                                        for subjectData in subjectDataList:
+                                            if subjectData['SubjectAbbreviation'] == subjectMinimum:
+                                                subjectName = subjectData['SubjectName']
+                                                programme_dict_final['Minimum Entry Requirement'][subjectName] = entryMinimum
 
-                                        print(programme_dict_final['Minimum Entry Requirement'])
-                                        programme_dict_final['Result'] = {}
-                                        for subject, entry_grade in entryRequirements.items(): #{'BM': 'D', 'SEJ': 'E'}
-                                            for resultSubjectData in subjectDataList: #{'BM': 'BAHASA MELAYU', 'SEJ': 'SEJARAH'}
-                                                if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
-                                                    if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
-                                                        completeSubjectName = resultSubjectData['SubjectName']     
-                                                        programme_dict_final['Result'][completeSubjectName] = result[subject]
+                                    print(programme_dict_final['Minimum Entry Requirement'])
+                                    programme_dict_final['Result'] = {}
+                                    for subject, entry_grade in entryRequirements.items(): #{'BM': 'D', 'SEJ': 'E'}
+                                        for resultSubjectData in subjectDataList: #{'BM': 'BAHASA MELAYU', 'SEJ': 'SEJARAH'}
+                                            if subject in result: #{'MM': 'A+', 'FZ': 'A+', 'PP': 'A+', 'BI': 'A+', 'PM': 'A', 'BC': 'A+', 'BM': 'A+', 'BIO': 'A+', 'AM': 'A+', 'KM': 'A+', 'SEJ': 'A+'}
+                                                if resultSubjectData['SubjectAbbreviation'] == subject: #if 'BM' == 'BM'
+                                                    completeSubjectName = resultSubjectData['SubjectName']     
+                                                    programme_dict_final['Result'][completeSubjectName] = result[subject]
 
-                                        print(programme_dict_final['Result'])
-                                        recommend_programmes_list.append(programme_dict_final)
+                                    print(programme_dict_final['Result'])
+                                    recommend_programmes_list.append(programme_dict_final)
     
     print(programme_dict_final)
     print(recommend_programmes_list)
@@ -391,7 +392,7 @@ def convert_grade(grade):
 
 def requirementsFulfilled(result, entry_requirements):
     for subject, grade in entry_requirements.items():
-        if convert_grade(grade) < convert_grade(result[subject]):
+        if subject not in result or convert_grade(grade) < convert_grade(result[subject]):
             return False 
     return True
         
@@ -416,7 +417,9 @@ def correctText(text):
 
     #get its key value: CEMERLANG TERTINGGI, CEMERLANG TINGGI, ...
     grade_keys_without_values = list(gradeDictionary().keys())
+    grade_keys_with_values = list(gradeDictionary().values())
     grade_formatted_string = "|".join(grade_keys_without_values)
+    grade_values_formatted_string = "|".join(grade_keys_with_values)
 
     #Output: CEMERLANG TERTINGGI|CEMERLANG TINGGI|CEMERLANG|....|TIDAK HADIR
     print(grade_formatted_string)
@@ -427,9 +430,17 @@ def correctText(text):
         if subject in corrected_input or any(key in corrected_input and value == subject for key, value in subjectDictionary().items()):
             #Find the grade for the subject
             grade = re.search(grade_formatted_string, corrected_input).group()
-            #Print the grade for the subject
-            #{"BM": "A+"}
-            subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeDictionary()[grade]
+            if grade:
+                #Print the grade for the subject
+                #{"BM": "A+"}
+                subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeDictionary()[grade]
+            else:
+                #sometimes the ocr detects value instead
+                gradeValue = re.search(grade_values_formatted_string, correct_input).group()
+                if gradeValue:
+                    subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeValue
+                else:
+                    print(f"No grade found for {subject}")
 
     print(subject_grade_dict)
     return subject_grade_dict
@@ -552,7 +563,6 @@ def subjectAbbreviationDictionary():
 
     return subjectAbbreviation_dict
 
-    return 0
 
 @app.route("/uploadResult", methods=['POST'])
 def uploadResult():

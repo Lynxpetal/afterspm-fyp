@@ -1,12 +1,12 @@
 'use client'
-import { Label, TextInput, Dropdown, Button, Timeline, Kbd } from 'flowbite-react'
+import { Label, TextInput, Dropdown, Button, Timeline } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Slider from '@mui/material/Slider'
 import { ImLocation2 } from 'react-icons/im'
-import { instituteCollection } from '../lib/controller'
+import { instituteCollection } from '../../lib/controller'
 import { DocumentData, QuerySnapshot, addDoc, collection, deleteDoc, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore'
-import { db } from '../FirebaseConfig/firebaseConfig'
+import { db } from '../../FirebaseConfig/firebaseConfig'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { stringSimilarity } from "string-similarity-js"
 import { FaFilter } from 'react-icons/fa'
@@ -88,7 +88,8 @@ export default function FilterInstituteProgramme() {
       postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
         .then(data => {
           console.log(data)
-          router.push(`/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
+          console.log(data.length)
+          router.push(`/uploadResult/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
         })
 
@@ -108,10 +109,10 @@ export default function FilterInstituteProgramme() {
       postData('http://localhost:5000/finalFilter', { data: displayResult }, 'POST')
         .then(data => {
           console.log(data)
-          router.push(`/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
+          router.push(`/uploadResult/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
         })
-        
+
     }
 
 
@@ -307,44 +308,44 @@ export default function FilterInstituteProgramme() {
 
   return (
     <div style={{ margin: "20px" }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Timeline horizontal>
-          <Timeline.Item>
-            <Timeline.Point icon={GrDocumentUpload} />
-            <Timeline.Content>
-              <Timeline.Title>Step 1</Timeline.Title>
-              <Timeline.Body>
-                Upload SPM Result
-              </Timeline.Body>
-            </Timeline.Content>
-          </Timeline.Item>
-          <Timeline.Item style={{ margin: '0 auto' }}>
-            <Timeline.Point icon={FaFilter} />
-            <Timeline.Content>
-              <Timeline.Title>Step 2</Timeline.Title>
-              <Timeline.Body>
-                Filter Institute and Programme
-              </Timeline.Body>
-            </Timeline.Content>
-          </Timeline.Item>
-          <Timeline.Item style={{ marginLeft: 'auto' }}>
-            <Timeline.Point icon={MdOutlineRecommend} />
-            <Timeline.Content>
-              <Timeline.Title>Step 3</Timeline.Title>
-              <Timeline.Body>
-                View Recommended Programmes
-              </Timeline.Body>
-            </Timeline.Content>
-          </Timeline.Item>
-        </Timeline>
-      </div>
-
       <div className="card" style={{ margin: '30px', width: "100%" }}>
-        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '40%' }}>
-          <div>
-            <Label htmlFor="name" value="Price Range" style={{ fontSize: "16px", marginBottom: "5px" }} />
-            <div>
-              <Box sx={{ width: 400 }}>
+        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '70%' }}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Timeline horizontal>
+              <Timeline.Item>
+                <Timeline.Point icon={GrDocumentUpload} />
+                <Timeline.Content>
+                  <Timeline.Title>Step 1</Timeline.Title>
+                  <Timeline.Body>
+                    Upload SPM Result
+                  </Timeline.Body>
+                </Timeline.Content>
+              </Timeline.Item>
+              <Timeline.Item style={{ margin: '0 auto' }}>
+                <Timeline.Point icon={FaFilter} />
+                <Timeline.Content>
+                  <Timeline.Title>Step 2</Timeline.Title>
+                  <Timeline.Body style={{ color: 'green', fontWeight: "bold" }}>
+                    Filter Institute and Programme
+                  </Timeline.Body>
+                </Timeline.Content>
+              </Timeline.Item>
+              <Timeline.Item style={{ marginLeft: 'auto' }}>
+                <Timeline.Point icon={MdOutlineRecommend} />
+                <Timeline.Content>
+                  <Timeline.Title>Step 3</Timeline.Title>
+                  <Timeline.Body>
+                    View Recommended Programmes
+                  </Timeline.Body>
+                </Timeline.Content>
+              </Timeline.Item>
+            </Timeline>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Label htmlFor="name" value="Price Range" style={{ fontSize: "16px", marginBottom: "5px", paddingBottom: "10px" }} />
+            <div style={{ display: 'flex' }}>
+              <Box sx={{ width: 800 }}>
                 <Slider
                   min={0}
                   max={50000}
@@ -362,6 +363,7 @@ export default function FilterInstituteProgramme() {
                       id="name"
                       value={value[0]}
                       onChange={(e) => handleInputChange(0, e.target.value)}
+                      style={{ width: "360px" }}
                     />
                   </div>
 
@@ -373,6 +375,7 @@ export default function FilterInstituteProgramme() {
                       id="name"
                       value={value[1]}
                       onChange={(e) => handleInputChange(1, e.target.value)}
+                      style={{ width: "360px" }}
                     />
                   </div>
                 </div>
@@ -383,53 +386,55 @@ export default function FilterInstituteProgramme() {
           <div style={{ paddingBottom: '20px' }}>
             <div className="mb-2 block">
               <Label htmlFor="name" value="Course Category" style={{ fontSize: "16px", marginBottom: "5px" }} />
-              <Dropdown
-                label={programmeCategory}
-                style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
-                placement="bottom"
-              >
-                {courseCategory.map((name) => (
-                  <Dropdown.Item key={name} onClick={() => setProgrammeCategory(name)}>{name}</Dropdown.Item>
-                ))}
-              </Dropdown>
             </div>
+            <Dropdown
+              label={programmeCategory}
+              style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+              placement="bottom"
+            >
+              {courseCategory.map((name) => (
+                <Dropdown.Item key={name} onClick={() => setProgrammeCategory(name)}>{name}</Dropdown.Item>
+              ))}
+            </Dropdown>
           </div>
 
           <div style={{ paddingBottom: '20px' }}>
             <div className="mb-2 block">
               <Label htmlFor="name" value="Study Level " style={{ fontSize: "16px", marginBottom: "5px" }} />
-              <Dropdown
-                label={studyLevel}
-                dismissOnClick={true}
-                style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
-                placement="bottom">
-                <Dropdown.Item onClick={() => setStudyLevel('Foundation')}>Foundation</Dropdown.Item>
-                <Dropdown.Item onClick={() => setStudyLevel('Diploma')}>Diploma</Dropdown.Item>
-              </Dropdown>
             </div>
+            <Dropdown
+              label={studyLevel}
+              dismissOnClick={true}
+              style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
+              placement="bottom">
+              <Dropdown.Item onClick={() => setStudyLevel('Foundation')}>Foundation</Dropdown.Item>
+              <Dropdown.Item onClick={() => setStudyLevel('Diploma')}>Diploma</Dropdown.Item>
+            </Dropdown>
           </div>
 
 
           <div style={{ paddingBottom: '20px' }}>
             <div className="mb-2 block" style={{ color: "black" }}>
               <Label htmlFor="name" value="Home Location " style={{ fontSize: "16px", marginBottom: "5px" }} />
-              <TextInput
-                type="text"
-                id="location"
-                icon={ImLocation2}
-                required
-                autoComplete="off"
-                onChange={(e) => setLocation(e.target.value)}
-              />
             </div>
+            <TextInput
+              type="text"
+              id="location"
+              icon={ImLocation2}
+              required
+              autoComplete="off"
+              onChange={(e) => setLocation(e.target.value)}
+            />
           </div>
 
 
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
             <Button onClick={viewFilteredProgrammes}>
               Next
             </Button>
           </div>
+
+
 
         </div>
       </div>

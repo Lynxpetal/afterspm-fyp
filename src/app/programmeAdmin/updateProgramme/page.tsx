@@ -70,8 +70,6 @@ export default function updateProgramme() {
   const compulsorySubject = ["BM", "SEJ"]
   const router = useRouter()
 
-  const isProgrammeNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
-
   //fetch programme data
   const fetchUpdateProgrammeData = async () => {
     try {
@@ -478,9 +476,7 @@ export default function updateProgramme() {
 
 
   useEffect(() => {
-    const isNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
-
-    if (isNameValid.test(programmeName) && programmeName.length >= 20) {
+    if (programmeName != "" && programmeName.length >= 20) {
       form.clearErrors("0.name")
     }
   }, [programmeName])
@@ -530,10 +526,6 @@ export default function updateProgramme() {
                       value: 20,
                       message: "At least 20 characters long"
                     },
-                    pattern: {
-                      value: isProgrammeNameValid,
-                      message: "Invalid programme name"
-                    }
                   })}
                   onChange={(e) => setProgrammeName(e.target.value)}
                 />
