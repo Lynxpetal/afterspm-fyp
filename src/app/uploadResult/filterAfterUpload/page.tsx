@@ -13,6 +13,7 @@ import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
 import { useRouter } from 'next/navigation'
+import MoonLoader from "react-spinners/MoonLoader"
 
 
 declare global {
@@ -36,6 +37,7 @@ export default function FilterInstituteProgramme() {
   const [userId, setUserId] = useState<string | null>(null)
   const [data, setData] = useState<Record<string, string>>({})
   const router = useRouter()
+  const [filterDataReady, setFilterDataReady] = useState(false)
 
 
   //setValue([6000, 30000]) - set an array containing 2 number
@@ -72,6 +74,7 @@ export default function FilterInstituteProgramme() {
   }
 
   const viewFilteredProgrammes = async () => {
+    setFilterDataReady(true)
     if (location != "") {
       await initComputeDistance()
       console.log("Got location")
@@ -91,6 +94,7 @@ export default function FilterInstituteProgramme() {
           console.log(data.length)
           router.push(`/uploadResult/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
+          setFilterDataReady(false)
         })
 
 
@@ -111,6 +115,7 @@ export default function FilterInstituteProgramme() {
           console.log(data)
           router.push(`/uploadResult/viewFiltered?search=${encodeURIComponent(JSON.stringify(data))}`);
           setData(data)
+          setFilterDataReady(false)
         })
 
     }
@@ -306,6 +311,16 @@ export default function FilterInstituteProgramme() {
     })
   }, [userId])
 
+  if (filterDataReady)
+  return <div className="grid">
+    <MoonLoader
+      loading={filterDataReady}
+      size={50}
+      color="#8DD3E2"
+
+    />
+    <h1>Data Filtering...</h1>
+  </div>
   return (
     <div style={{ margin: "20px" }}>
       <div className="card" style={{ margin: '30px', width: "100%" }}>
@@ -335,7 +350,7 @@ export default function FilterInstituteProgramme() {
                 <Timeline.Content>
                   <Timeline.Title>Step 3</Timeline.Title>
                   <Timeline.Body>
-                    View Recommended Programmes
+                    View Filtered Programmes
                   </Timeline.Body>
                 </Timeline.Content>
               </Timeline.Item>

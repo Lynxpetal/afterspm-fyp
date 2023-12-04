@@ -159,6 +159,7 @@ export default function Register() {
                 },
               })}
               onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+              onPaste={(e) => e.preventDefault()}
             />
             <p className="registerValidationError">{errors[0]?.confirmPassword?.message}</p>
           </div>

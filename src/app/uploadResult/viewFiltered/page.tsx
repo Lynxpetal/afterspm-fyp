@@ -36,11 +36,9 @@ const desiredOrder = [
 ]
 
 
-
 export default function view() {
   const [filterInstitute, setFilterInstitute] = useState<InstituteType[]>([])
   const searchParams = useSearchParams()
-
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalData, setTotalData] = useState(0)
@@ -145,7 +143,6 @@ export default function view() {
   }, [filterInstitute, cardsPerPage])
 
 
-
   return (
     <div className="card" style={{ margin: '30px' }}>
       <div className="card" style={{ margin: '30px', width: "100%" }}>
@@ -183,16 +180,16 @@ export default function view() {
           </div>
           <div style={{ overflowX: 'auto' }}>
             <Table striped style={{ fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>
-            <Table.Body className="=divide-y">
+              <Table.Body className="=divide-y">
                 {getFinalFilterForCurrentPage().length ? (
                   Object.keys(getFinalFilterForCurrentPage()[0]).map((property, index) => (
                     property != 'InstituteName' && property != 'duration' && property != 'Result' && (
                       <Table.Row>
-                        <Table.Cell style={{ width: '15%', fontSize: "15px",  border: '1px solid #000', backgroundColor: 'rgba(141, 211, 226, 0.7)' }}>
+                        <Table.Cell style={{ width: '15%', fontSize: "15px", border: '1px solid #000', backgroundColor: 'rgba(141, 211, 226, 0.7)' }}>
                           {property}
                         </Table.Cell>
                         {getFinalFilterForCurrentPage().map((inst, dataIndex) => (
-                          <Table.Cell key={dataIndex} style={{ width: '20%', backgroundColor: dataIndex % 2 == 0 ? 'rgba(137, 196, 244, 0.3)' : '#E9FFFB', fontSize: "15px",  border: '1px solid #000000' }}>
+                          <Table.Cell key={dataIndex} style={{ width: '20%', backgroundColor: dataIndex % 2 == 0 ? 'rgba(137, 196, 244, 0.3)' : '#E9FFFB', fontSize: "15px", border: '1px solid #000000' }}>
                             {property == 'Minimum Entry Requirement' ? (
                               <div>
                                 {Object.keys(inst[property]).map((subject, i) => (
