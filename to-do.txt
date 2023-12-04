@@ -1,7 +1,5 @@
-logic for chatbot to carry out pysh test
-store test from chatbot to db
-chatbot makesure working
 
 make squares in psych form clickable and labelled 
 sidebar repair and global login pls
+design i produce home page
 

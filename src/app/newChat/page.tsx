@@ -11,6 +11,10 @@ import { IoMdArrowUp } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
 import { Message } from "../lib/validators/message";
 import data from "@/json/forchatbot.json";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { testCollection } from "../lib/controller";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../FirebaseConfig/firebaseConfig";
 
 interface chatMsg {
     role: string
@@ -34,8 +38,9 @@ function NewChat() {
     const [input, setInput] = useState<string>('')
     const [showToast, setShowToast] = useState<boolean>(false)
     const [isLoading, setLoading] = useState<boolean>(false)
-    const [messageList, updateList] = useState<chatMsg[]>([{ role: "system", content: defaultPrompt }, { role: "assistant", content: 'hello how are you?' }])
     const questionList = data["list"]
+
+
     function switchMode() {
         if (isQuestionMode) {
             setMode(false)
@@ -43,27 +48,31 @@ function NewChat() {
         }
         else {
             setMode(true)
-            setQuestion(1)
             resetMessage("question")
-            let question = questionList[0]
+            let temp = formsPrompt
+            questionList.forEach(question => {
+                temp += "\n" + question
+            });
+            console.log(temp)
             sendMessage({
                 id: nanoid(),
-                text: formsPrompt + "\nThe question is " + question,
+                text: temp,
                 isUserMessage: "system"
             })
+            setQuestion(1)
         }
     }
 
     const { mutate: sendMessage } = useMutation({
         mutationKey: ['sendMessage'],
-        mutationFn: async (messages: Message) => {
+        mutationFn: async (message: Message) => {
             setLoading(true)
             const response = await fetch("/api/message", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ messages: [messages] }),
+                body: JSON.stringify({ messages: messages }),
             })
             if (!response.ok) {
                 throw new Error();
@@ -75,14 +84,12 @@ function NewChat() {
         },
         onSuccess: async (stream) => {
             if (!stream) throw new Error("No stream found")
-
             const id = nanoid()
             const responseMessage: Message = {
                 id,
                 isUserMessage: 'assistant',
                 text: '',
             }
-
             addMessage(responseMessage)
             setIsMessageUpdating(true)
 
@@ -90,8 +97,7 @@ function NewChat() {
             const decoder = new TextDecoder()
             let done = false
             if (isQuestionMode) {
-                console.log("QUESTIONMODE")
-                let holdMessage:string = " "
+                let holdMessage: string = " "
                 while (!done) {
                     const { value, done: doneReading } = await reader.read()
                     done = doneReading
@@ -101,14 +107,20 @@ function NewChat() {
                 let answer = holdMessage.match(/\[.+?\]/g)
                 if (answer != null) {
                     console.log("found answer")
-                    console.log(answer)
+                    let num = currentQuestion + 1
                     setAnswer(answers + answer + ",")
+                    setQuestion(num)
+                    console.log(answers)
+                    if (num == 16) {
+                        addMessage({
+                            id: nanoid(),
+                            text: "Congratulations you have completed the guided conversation would you like me to reccomend you a career based on your results? ",
+                            isUserMessage: "Assistant"
+                        })
+                    }
                 }
                 updateMessage(id, (prev) => prev + holdMessage)
             }
-
-            
-            
 
 
             while (!done) {
@@ -167,10 +179,10 @@ function NewChat() {
                 </Modal.Body>
             </Modal>
             <Button onClick={() => (setConfirm(true))} className="absolute top-6 w-56 left-[40%]" color="dark">Switch to other mode</Button>
-            <div className="flex flex-col pl-6 ml-6 p-4 pt-12 min-h-[96vh] bg-slate-400">
+            <div className="flex flex-col pl-6 ml-6 p-4 py-12 min-h-[96vh] max-h-[96vh] bg-slate-400 overflow-y-scroll">
                 {messages.map((messages) => {
                     if (messages.isUserMessage == "system") {
-                        return <p>{messages.text}</p>
+                        return <></>
                     }
                     return <div className={cn("flex flex-row", {
                         " justify-start": messages.isUserMessage == "assistant",
@@ -181,7 +193,6 @@ function NewChat() {
                             " bg-slate-200": messages.isUserMessage == "user"
                         })}>
                             {messages.text}
-
                         </div></div>
                 })}
             </div>

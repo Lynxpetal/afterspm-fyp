@@ -61,14 +61,11 @@ export default function compSidebar() {
                     <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
                         <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>
                         <Sidebar.Item href="/career/BigFive">2. Big Five Test</Sidebar.Item>
-                        <Sidebar.Item href="/career/Reccomend">3. Test Result</Sidebar.Item>
-                        <Sidebar.Item href="/career/Course">4. Recommendation</Sidebar.Item>
+                        <Sidebar.Item href="/career/Reccomend">3. Test Result and Reccomend</Sidebar.Item>
+                        <Sidebar.Item href="/career/Course">4. Course Recommendation</Sidebar.Item>
                     </Sidebar.Collapse>
                     <Sidebar.Item href="/newChat" icon={HiViewBoards} disabled={isLogin === "guest"}>
                         Chat
-                    </Sidebar.Item>
-                    <Sidebar.Item href="#" icon={HiInbox} disabled={isLogin === "guest"}>
-                        Course Recommend
                     </Sidebar.Item>
                     <Sidebar.Item href="#" icon={HiUser} disabled={isLogin === "guest"}>
                         Institute Filter
