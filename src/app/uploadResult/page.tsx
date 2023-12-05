@@ -829,7 +829,11 @@ export default function uploadResult() {
   }, [])
 
 
-
+  if (isDataProcessed)
+  return 
+  <div>
+    <h1>Loading...</h1>
+  </div>
   return (
     <div style={{ margin: "20px" }}>
       <div style={{ margin: "20px" }}>

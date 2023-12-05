@@ -1,11 +1,13 @@
 'use client'
-import { Button, Label, TextInput } from 'flowbite-react'
+import { Button, Label, TextInput, Alert } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { HiMail } from 'react-icons/hi'
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from 'firebase/auth'
 import app from '../FirebaseConfig/firebaseConfig'
 import { useRouter } from 'next/navigation'
+import { HiInformationCircle } from 'react-icons/hi'
+import Swal from 'sweetalert2'
 
 
 type RegisterFormValues = {
@@ -23,23 +25,14 @@ export default function Register() {
   const [password, setRegisterPassword] = useState("")
   const [confirmPassword, setRegisterConfirmPassword] = useState("")
   const router = useRouter()
+  const [errorAlert, setErrorAlert] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
   const validatePasswordMatch = (value: string, values: { password: string }) => {
     return value === values.password || "Passwords do not match"
   }
 
   const isRegisterEmailValid = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-
-  //if want have the color
-  const getEmailColor = () => {
-    if (errors[0]?.email) {
-      return "failure"
-    } else if (email) {
-      return "success"
-    } else {
-      return "gray"
-    }
-  }
 
   useEffect(() => {
     const isPasswordValid = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
@@ -58,25 +51,52 @@ export default function Register() {
   }, [email, password, form])
 
   const createAccount = (data: [RegisterFormValues]) => {
-    console.log("Ok", data)
-    createUserWithEmailAndPassword(authRegister, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user
-        sendEmailVerification(user)
-        alert("Registered successfully. Please check your email address for verification")
-        //Will decide where to go
-        router.push("/login")
-      })
-      .catch((error) => {
-        const errorCode = error.errorCode
-        alert(errorCode)
-      })
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Double confirm that information is correctly entered",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setErrorMsg("")
+        setErrorAlert(false)
+        console.log("Ok", data)
+        createUserWithEmailAndPassword(authRegister, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user
+            sendEmailVerification(user)
+            //Will decide where to go
+            Swal.fire({
+              title: "Great!",
+              text: "Login using registered email and password to access system features",
+              icon: "success"
+            })
+            router.push("/login")
+          })
+          .catch((error) => {
+            const errorCode = error.errorCode
+            setErrorAlert(true)
+            setErrorMsg(errorCode)
+          })
+      }
+    })
+
   }
 
   return (
     <form style={{ margin: '20px' }} onSubmit={handleSubmit(createAccount)} noValidate>
       <div className="card" style={{ margin: '30px' }}>
         <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '50%' }}>
+          <div>
+            {errorAlert && (
+              <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setErrorAlert(false)}>
+                <span className="font-medium">Info alert!</span> Error! This email address has been previously registered.
+              </Alert>
+            )}
+          </div>
           <h1 className="registerHeader">Register</h1>
           <h1 className="registerDescription">Create an account and enjoy it</h1>
           <div style={{ paddingBottom: '20px' }}>
@@ -86,7 +106,6 @@ export default function Register() {
             <TextInput
               type="email"
               className="form-control"
-              //color={getEmailColor()}
               id="email"
               icon={HiMail}
               placeholder="abc@gmail.com"
