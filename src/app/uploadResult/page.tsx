@@ -13,6 +13,7 @@ import { FaFilter } from 'react-icons/fa'
 import { GrDocumentUpload } from 'react-icons/gr'
 import { MdOutlineRecommend } from 'react-icons/md'
 import { useRouter } from 'next/navigation'
+import MoonLoader from "react-spinners/MoonLoader"
 
 interface SubjectData {
   id?: string
@@ -39,6 +40,7 @@ export default function uploadResult() {
   var missingSubjectStatus = false
   var duplicateSubjectStatus = false
   var emptyGradeStatus = false
+  const [isDataProcessed, setIsDataProcessed] = useState(false)
   const router = useRouter()
 
   //select from multiple options 
@@ -295,6 +297,7 @@ export default function uploadResult() {
 
   //upload file
   const handleResultImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsDataProcessed(true)
     //clear table header, subject container, grade container
     enableUploadResultContainer()
 
@@ -326,6 +329,8 @@ export default function uploadResult() {
     })
       .then((response) => response.json())
       .then((data) => {
+        setIsDataProcessed(false)
+        console.log(data)
         if (e.target.files?.length == 0) {
           const gradeTableThead = document.getElementById("gradeTableThead")
           if (gradeTableThead) {
@@ -393,6 +398,7 @@ export default function uploadResult() {
           //11 subjects so 6 rows
           for (let i = 0; i < numberOfRowsToDisplay; i++) {
             addTableDetails()
+            console.log("1")
           }
 
           //return element with class = qualificationSubject
@@ -454,6 +460,8 @@ export default function uploadResult() {
 
 
           }
+
+          
 
         }
 
@@ -820,6 +828,12 @@ export default function uploadResult() {
     fetchData()
   }, [])
 
+
+  if (isDataProcessed)
+  return 
+  <div>
+    <h1>Loading...</h1>
+  </div>
   return (
     <div style={{ margin: "20px" }}>
       <div style={{ margin: "20px" }}>

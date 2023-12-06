@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthState } from "react-firebase-hooks/auth"
 import { HiMail } from 'react-icons/hi'
 import { HiInformationCircle } from 'react-icons/hi'
+import Swal from 'sweetalert2'
 
 
 type LoginFormValues = {
@@ -42,32 +43,47 @@ export default function Login() {
   }
 
   const loginAccount = (data: [LoginFormValues]) => {
-    signInWithEmailAndPassword(authLogin, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user
-        if (user.emailVerified) {
-          setFailureVerifyEmailAlert(false)
-          alert("This user has successfully signed in")
-        }
-        else {
-          setFailureVerifyEmailAlert(true)
-          alert("Please verify your email address")
-        }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Double confirm that information is correctly entered",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        signInWithEmailAndPassword(authLogin, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user
+            if (user.emailVerified) {
+              setFailureVerifyEmailAlert(false)
+              Swal.fire({
+                title: "Great!",
+                text: "You have successfully signed in",
+                icon: "success"
+              })
+            }
+            else {
+              setFailureVerifyEmailAlert(true)
+            }
 
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        if (errorCode == "auth/invalid-login-credentials") {
-          setFailureVerifyEmailAlert(false)
-          form.setError("0.password", {
-            type: "manual",
-            message: "Incorrect password. Please try again.",
           })
-        } else {
-          setFailureVerifyEmailAlert(false)
-          alert(errorCode)
-        }
-      })
+          .catch((error) => {
+            const errorCode = error.code
+            if (errorCode == "auth/invalid-login-credentials") {
+              setFailureVerifyEmailAlert(false)
+              form.setError("0.password", {
+                type: "manual",
+                message: "Incorrect password. Please try again.",
+              })
+            } else {
+              setFailureVerifyEmailAlert(false)
+              //alert(errorCode)
+            }
+          })
+      }
+    })
 
 
   }
@@ -96,7 +112,7 @@ export default function Login() {
         <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '50%' }}>
           {failureVerifyEmailAlert && (
             <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setFailureVerifyEmailAlert(false)}>
-              <span className="font-medium">Info alert!</span> Please verify your email address.
+              <span className="font-medium">Info alert!</span> Please verify your email address: <h1>{email}</h1>
             </Alert>
           )}
           <h1 className="loginHeader">Welcome Back</h1>
