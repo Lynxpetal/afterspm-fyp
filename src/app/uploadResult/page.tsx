@@ -411,57 +411,90 @@ export default function uploadResult() {
           const dataKeys = Object.keys(data)
           console.log(dataKeys)
 
-          //One subject has many select
-          //Iterate over each subject and grade container and put value
-          console.log(subjectContainers.length)
-          console.log(gradeContainers.length)
-          for (let i = 0; i < subjectContainers.length; i++) {
-            const subjectSelect = subjectContainers[i] as HTMLSelectElement
-            const gradeSelect = gradeContainers[i] as HTMLSelectElement
+          if (count == 0) {
+            Swal.fire({
+              title: "Sorry, our OCR algorithm unable to extract information from uploaded result",
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "Ok"
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                //show compulsory subject so get how many data first
+                //then find need how many rows to display
+                const countSubject = compulsorySubject.length
+                const numRowsToDisplaySubject = Math.ceil(countSubject / 2)
 
-            if (i < dataKeys.length) {
-              //subjectKey = "BM"
-              const subjectKey = dataKeys[i]
-              console.log(subjectKey)
-              //gradeValue = "A+"
-              //data format: {"BM": "A+", ...}
-              //so data["BM"] = "A+"
-              const gradeValue = data[subjectKey]
-              console.log(gradeValue)
+                console.log(numRowsToDisplaySubject)
+                for (let i = 0; i < numRowsToDisplaySubject; i++) {
+                  addTableDetails()
 
-              //Iterate over subject options and set the selected index when thers's a match
-              for (let j = 0; j < subjectSelect?.options.length; j++) {
-                //subject selected index will be "BM"
-                if (subjectSelect?.options[j].value == subjectKey) {
-                  subjectSelect.selectedIndex = j
-                  break
                 }
+
+                //default: 4 compulory subject
+                fillFieldWithCompulsorySubject()
+
+                //can add and delete row
+                setAddRowStatus(true)
+                setDeleteRowStatus(true)
+
               }
-
-              //Iterate over grade options and set the selected index when there's a match
-              for (let k = 0; k < gradeSelect?.options.length; k++) {
-                //grade selected will be "A+"
-                if (gradeSelect?.options[k].value == gradeValue) {
-                  gradeSelect.selectedIndex = k
-                  break
-                }
-              }
-            } else {
-              //if no data for this row, then reset the selections
-              if (subjectSelect && gradeSelect) {
-                subjectSelect.selectedIndex = 0
-                gradeSelect.selectedIndex = 0
-              }
-
-            }
-
-            setAddRowStatus(true)
-            setDeleteRowStatus(true)
-
+            })
 
           }
+          else {
+            //One subject has many select
+            //Iterate over each subject and grade container and put value
+            console.log(subjectContainers.length)
+            console.log(gradeContainers.length)
+            for (let i = 0; i < subjectContainers.length; i++) {
+              const subjectSelect = subjectContainers[i] as HTMLSelectElement
+              const gradeSelect = gradeContainers[i] as HTMLSelectElement
 
-          
+              if (i < dataKeys.length) {
+                //subjectKey = "BM"
+                const subjectKey = dataKeys[i]
+                console.log(subjectKey)
+                //gradeValue = "A+"
+                //data format: {"BM": "A+", ...}
+                //so data["BM"] = "A+"
+                const gradeValue = data[subjectKey]
+                console.log(gradeValue)
+
+                //Iterate over subject options and set the selected index when thers's a match
+                for (let j = 0; j < subjectSelect?.options.length; j++) {
+                  //subject selected index will be "BM"
+                  if (subjectSelect?.options[j].value == subjectKey) {
+                    subjectSelect.selectedIndex = j
+                    break
+                  }
+                }
+
+                //Iterate over grade options and set the selected index when there's a match
+                for (let k = 0; k < gradeSelect?.options.length; k++) {
+                  //grade selected will be "A+"
+                  if (gradeSelect?.options[k].value == gradeValue) {
+                    gradeSelect.selectedIndex = k
+                    break
+                  }
+                }
+              } else {
+                //if no data for this row, then reset the selections
+                if (subjectSelect && gradeSelect) {
+                  subjectSelect.selectedIndex = 0
+                  gradeSelect.selectedIndex = 0
+                }
+
+              }
+
+              setAddRowStatus(true)
+              setDeleteRowStatus(true)
+
+
+            }
+          }
+
+
+
 
         }
 
@@ -829,11 +862,11 @@ export default function uploadResult() {
   }, [])
 
 
-  if (isDataProcessed)
-  return 
-  <div>
-    <h1>Loading...</h1>
-  </div>
+  // if (isDataProcessed)
+  // return 
+  // <div>
+  //   <h1>Loading...</h1>
+  // </div>
   return (
     <div style={{ margin: "20px" }}>
       <div style={{ margin: "20px" }}>
@@ -863,7 +896,7 @@ export default function uploadResult() {
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Timeline horizontal>
                 <Timeline.Item>
-                  <Timeline.Point icon={GrDocumentUpload}/>
+                  <Timeline.Point icon={GrDocumentUpload} />
                   <Timeline.Content>
                     <Timeline.Title>Step 1</Timeline.Title>
                     <Timeline.Body style={{ color: 'green', fontWeight: "bold" }}>

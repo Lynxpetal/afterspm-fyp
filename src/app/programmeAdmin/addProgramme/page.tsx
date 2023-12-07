@@ -62,7 +62,6 @@ export default function AddProgramme() {
   var emptyGradeStatus = false
   const router = useRouter()
 
-  const isProgrammeNameValid = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
 
   //select from multiple options 
   function createSelect(className: string, name: string, id: string, arialabel: string) {
@@ -605,7 +604,7 @@ export default function AddProgramme() {
               <div>
                 {missingSubject && (
                   <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
-                    <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
+                    <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Sejarah
                   </Alert>
                 )}
               </div>

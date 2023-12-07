@@ -12,6 +12,7 @@ import firebase_admin
 from firebase_admin import db, credentials, firestore
 from openai import OpenAI
 import asyncio
+from difflib import SequenceMatcher
 
 
 
@@ -422,25 +423,45 @@ def correctText(text):
     grade_values_formatted_string = "|".join(grade_keys_with_values)
 
     #Output: CEMERLANG TERTINGGI|CEMERLANG TINGGI|CEMERLANG|....|TIDAK HADIR
+    print(grade_keys_without_values)
     print(grade_formatted_string)
+    print(grade_values_formatted_string)
     print(list(subjectDictionary().keys()))
+
     #Iterate over the list of subjects
     for subject in pureSubjectList():
-        #if OCR capture subject name (eg "BAHASA MELAYU") or subject code (eg "1103")
-        if subject in corrected_input or any(key in corrected_input and value == subject for key, value in subjectDictionary().items()):
-            #Find the grade for the subject
-            grade = re.search(grade_formatted_string, corrected_input).group()
-            if grade:
-                #Print the grade for the subject
-                #{"BM": "A+"}
-                subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeDictionary()[grade]
-            else:
-                #sometimes the ocr detects value instead
-                gradeValue = re.search(grade_values_formatted_string, correct_input).group()
-                if gradeValue:
-                    subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeValue
+        lines = corrected_input.split("\n")
+        for line in lines:
+            # 1249 SEJARAH CEMERLANG   
+            #if SEJARAH in line.upper() or subjectName == SEJARAH
+            if subject in line.upper() or any(key in line and value == subject for key, value in subjectDictionary().items()):
+                print(line)
+                print(subject)
+                
+                # Find the grade for the subject
+                match = re.search(grade_formatted_string, line)
+                print(match)
+                if match:
+                    grade = match.group()
+                    print(grade)
+                    # Print the grade for the subject
+                    # {"BM": "A+"}
+                    subject_abbr = subjectAbbreviationDictionary()[subject]
+                    if subject_abbr not in subject_grade_dict.keys():
+                        subject_grade_dict[subject_abbr] = gradeDictionary()[grade]
                 else:
-                    print(f"No grade found for {subject}")
+                    #if input is 1249 SEJARAH A
+                    matchGrade = re.search(grade_values_formatted_string, line)
+                    print(matchGrade)
+                    if matchGrade:
+                        gradeValue = matchGrade.group()
+                        print(gradeValue)
+                        subject_abbr = subjectAbbreviationDictionary()[subject]
+                        if subject_abbr not in subject_grade_dict.keys():
+                            subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeValue
+                    else:
+                        print(f"No grade found for {subject}")
+
 
     print(subject_grade_dict)
     return subject_grade_dict
@@ -492,6 +513,7 @@ def gradeDictionary():
         grade_value = grade.get('GradeValue')
 
         grade_dict[grade_name] = grade_value
+
 
     grade_custom_order = {'A+': 1, 'A': 2, 'A-': 3, 'B+': 4, 'B': 5, 'C+': 6, 'C': 7, 'D': 8, 'E': 9, 'G': 10, 'TH': 11}
 

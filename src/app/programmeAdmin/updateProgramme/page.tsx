@@ -642,7 +642,7 @@ export default function updateProgramme() {
               <div>
                 {missingSubject && (
                   <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setMissingSubject(false)}>
-                    <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Bahasa Inggeris, Mathematics, Sejarah
+                    <span className="font-medium">Info alert!</span> Required Subject That Must Fill: Bahasa Melayu, Sejarah
                   </Alert>
                 )}
               </div>
