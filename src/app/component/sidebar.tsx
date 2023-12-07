@@ -61,10 +61,12 @@ export default function compSidebar() {
                 AfterSPM
             </Sidebar.Logo>
             <Sidebar.Items>
-                <Sidebar.ItemGroup>
+            <Sidebar.ItemGroup>
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
+                {uid != "guest" ? 
+                <Sidebar.ItemGroup>
                     <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
                         <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>
                         <Sidebar.Item href="/career/BigFive">2. Big Five Test</Sidebar.Item>
@@ -77,6 +79,7 @@ export default function compSidebar() {
                     <Sidebar.Item href="#" icon={HiUser}>
                         Institute Filter
                     </Sidebar.Item>
+                </Sidebar.ItemGroup>: <></>}
                 </Sidebar.ItemGroup>
                 {isAdmin ?
                     //add selection here for more admin option
