@@ -329,6 +329,7 @@ export default function uploadResult() {
     })
       .then((response) => response.json())
       .then((data) => {
+        setIsDataProcessed(false)
         console.log(data)
         if (e.target.files?.length == 0) {
           const gradeTableThead = document.getElementById("gradeTableThead")
@@ -500,7 +501,6 @@ export default function uploadResult() {
 
       })
 
-      setIsDataProcessed(false)
   }
 
   //check duplicate subjects
@@ -955,7 +955,7 @@ export default function uploadResult() {
                 color="#8DD3E2"
         
               />
-              <h1 style={{color:"black"}}>Loading...</h1>
+              <h1 style={{color:"black"}}>Data processing...</h1>
             </div>
             )}
             <br />
