@@ -16,6 +16,8 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { getDocs, query, where } from "firebase/firestore";
 import { secretCollection } from "../lib/controller";
+import { FaFilter } from "react-icons/fa"
+import { MdRecommend } from "react-icons/md"
 
 
 export default function compSidebar() {
@@ -76,8 +78,11 @@ export default function compSidebar() {
                     <Sidebar.Item href="/newChat" icon={HiViewBoards}>
                         Chat
                     </Sidebar.Item>
-                    <Sidebar.Item href="#" icon={HiUser}>
+                    <Sidebar.Item href="/filterInstituteProgramme" icon={FaFilter}>
                         Institute Filter
+                    </Sidebar.Item>
+                    <Sidebar.Item href="/uploadResult" icon={MdRecommend}>
+                        Programme <br /> Recommendation
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>: <></>}
                 </Sidebar.ItemGroup>
@@ -87,7 +92,7 @@ export default function compSidebar() {
                         <Sidebar.Item href="/instituteAdmin" icon={HiUser}>
                             Manage Institute<br />Information
                         </Sidebar.Item>
-                        <Sidebar.Item href="/Prog" icon={HiUser}>
+                        <Sidebar.Item href="/programmeAdmin" icon={HiUser}>
                             Manage Programme<br />Information
                         </Sidebar.Item>
                     </Sidebar.ItemGroup> : <></>
