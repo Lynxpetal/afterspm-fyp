@@ -3,3 +3,5 @@ make squares in psych form clickable and labelled
 sidebar repair and global login pls
 design i produce home page
 
+change know more to other name
+

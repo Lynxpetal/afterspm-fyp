@@ -1,60 +1,67 @@
 "use client"
 
-import { Sidebar } from "flowbite-react";
+import { Button, Modal, Sidebar } from "flowbite-react";
 import {
     HiArrowSmRight, HiChartPie,
+    HiExclamation,
     HiInbox, HiShoppingBag, HiTable,
     HiUser, HiViewBoards
 }
     from "react-icons/hi";
 import Link from "next/link";
-import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged } from "firebase/auth";
+import React, { use, useEffect, useState } from 'react';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../FirebaseConfig/firebaseConfig";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useLoginStore } from "../lib/hooks/loginState";
+import { getDocs, query, where } from "firebase/firestore";
+import { secretCollection } from "../lib/controller";
 
 
 export default function compSidebar() {
     const router = useRouter()
-    const [isLogin, setLogin] = useState(useLoginStore.getState().loginstate) //change to await apiroute to fetch user status
-
-
+    const [uid, setUID] = useState("guest") //change to await apiroute to fetch user status
+    const [isAdmin, setAdmin] = useState<boolean>(false)
+    const [openModal, setOpenModal] = useState<boolean>(false)
     useEffect(() => {
-        setLogin(useLoginStore.getState().loginstate)
-        console.log(useLoginStore.getState().loginstate)
-        //add listener to listen login or logout
-    },[useLoginStore.getState().loginstate]);
+        
+        const auth = getAuth()
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("runned")
+                if (user.uid != uid) {
+                    console.log(user.uid)
+                    setUID(user.uid)
+                    const secret = query(secretCollection, where("UserID", "==", user.uid))
+                    const snapshot = await getDocs(secret)
+                    if (snapshot.size != 0) {
+                        setAdmin(true)
+                    }
+                }
+            }
+            else {
+                setUID("guest")
+            }
+        })
+    })
 
     //logout function
     const logout = async () => {
-        await signOut(auth)
-        useLoginStore.setState({
-            loginstate: "guest",
-            username: ""
-        })
-        alert("Signed out successfully")//change to toast later
-        router.push("/") //push to home page
+        console.log(isAdmin)
+        console.log(uid)
+        await signOut(auth).then(() => {
+            setAdmin(false)
+        }).catch((error) => { console.log("not signed out") })
     }
 
     return (
         <Sidebar aria-label="Sidebar with logo branding example" className="w-full">
+
             <Sidebar.Logo href="#" img="/vercel.svg" imgAlt="Flowbite logo">
                 AfterSPM
             </Sidebar.Logo>
             <Sidebar.Items>
-                {isLogin === "admin" ? <Sidebar.ItemGroup>
-                    <Sidebar.Item href="/" icon={HiChartPie}>
-                        Home
-                    </Sidebar.Item>
-                    <Sidebar.Item href="/instituteAdmin" icon={HiUser}>
-                        Manage Institute<br />Information
-                    </Sidebar.Item>
-                    <Sidebar.Item href="/Prog" icon={HiUser}>
-                        Manage Programme<br />Information
-                    </Sidebar.Item>
-                </Sidebar.ItemGroup> : <Sidebar.ItemGroup>
+                <Sidebar.ItemGroup>
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
@@ -64,20 +71,31 @@ export default function compSidebar() {
                         <Sidebar.Item href="/career/Reccomend">3. Test Result and Reccomend</Sidebar.Item>
                         <Sidebar.Item href="/career/Course">4. Course Recommendation</Sidebar.Item>
                     </Sidebar.Collapse>
-                    <Sidebar.Item href="/newChat" icon={HiViewBoards} disabled={isLogin === "guest"}>
+                    <Sidebar.Item href="/newChat" icon={HiViewBoards}>
                         Chat
                     </Sidebar.Item>
-                    <Sidebar.Item href="#" icon={HiUser} disabled={isLogin === "guest"}>
+                    <Sidebar.Item href="#" icon={HiUser}>
                         Institute Filter
                     </Sidebar.Item>
-                </Sidebar.ItemGroup>}
+                </Sidebar.ItemGroup>
+                {isAdmin ?
+                    //add selection here for more admin option
+                    <Sidebar.ItemGroup>
+                        <Sidebar.Item href="/instituteAdmin" icon={HiUser}>
+                            Manage Institute<br />Information
+                        </Sidebar.Item>
+                        <Sidebar.Item href="/Prog" icon={HiUser}>
+                            Manage Programme<br />Information
+                        </Sidebar.Item>
+                    </Sidebar.ItemGroup> : <></>
+                }
                 <Sidebar.ItemGroup>
-                    {isLogin === "guest" ? <Sidebar.Item href="/login" icon={HiArrowSmRight}>
+                    {uid == "guest" ? <Sidebar.Item href="/login" icon={HiArrowSmRight}>
                         Sign In
                     </Sidebar.Item> : <Sidebar.Item href="#" icon={HiArrowSmRight} onClick={logout}>
                         Sign Out
                     </Sidebar.Item>}
-                    <Sidebar.Item href="/register" icon={HiArrowSmRight} onClick={logout}>
+                    <Sidebar.Item href="/register" icon={HiArrowSmRight}>
                         Register
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
