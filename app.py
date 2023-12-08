@@ -105,7 +105,7 @@ class ReccomendCareer:
             print(reccomend)
             if(reccomend != [""] or reccomend != ['']):
                 inputPrompt += str(reccomend) + "\n"
-        inputSystem = "Based on the arrays of career that the user sends you, you are to reduce it into a single array with five pairs of ['career' : compatibility with user in % ] the compatibility is determined by you and sort the compatibility from left to right. You are to only use the careers provided by the user. Reply it in an array without any explanation or code"          
+        inputSystem = 'Based on the arrays of career that the user sends you, you are to reduce it into a single array with five pairs of ["career", "compatibility with user in %" ] the compatibility is determined by you and sort the compatibility from left to right. You are to only use the careers provided by the user. Reply it in an array without any explanation or code'          
         return chatGPTAPI(inputSystem, inputPrompt)
 
 

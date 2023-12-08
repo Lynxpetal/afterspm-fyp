@@ -127,6 +127,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) =>
                 break;
         }
     }
+
     function pageDisplay() {
         return <fieldset className="flex max-w-lg pl-11 flex-col gap-4">
             <legend className="mb-4 text-lg font-semibold antialiased">{Form[currentPage].label}</legend>
@@ -140,15 +141,20 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) =>
             <Button type="submit" onClick={onSubmit}>Confirm Answer</Button>
         </fieldset>
     }
+
+    function teleport(input:number) {
+        setCurrentPage(input)
+    }
+    
     function progressDisplay() {
         return (
             <div className="flex flex-col gap-3">
                 <Progress progress={ProgressState} />
-                <div className=" flex flex-wrap gap-1 shadow-md rounded-md">{Answer.map(element => {
-                    return <div className={cn(" h-10 w-10 border-solid border-2 border-white rounded-md", {
-                        " bg-slate-600": element == 0,
+                <div className=" flex flex-wrap gap-1 shadow-md rounded-md">{Answer.map((element, index) => {
+                    return <div className={cn(" h-10 w-10 pb-0.5 border-solid border-2 border-white rounded-md text-center text", {
+                        " bg-slate-600 text-white": element == 0,
                         " bg-green-400": element != 0 && element != null,
-                    })} />
+                    })} key={index} onClick={() => teleport(index)}>{index}</div>
                 })
                 }</div></div>)
     }

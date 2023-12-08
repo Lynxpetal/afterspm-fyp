@@ -8,8 +8,13 @@ import { Button, Table } from 'flowbite-react';
 import { HiOutlineArrowRight } from "react-icons/hi";
 import Link from "next/link";
 
+interface JobData {
+    jobTitle: string;
+    percentage: string;
+}
+
 export default function Reccomend() {
-    const [reccomendations, setReccomendation] = useState([''])
+    const [reccomendations, setReccomendation] = useState<JobData[]>()
     const [uid, setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
     const defaultTable = [['No Result Found'], ['No Result Found']]
@@ -71,17 +76,21 @@ export default function Reccomend() {
             })
         }).then(response => {
             let output = response.json()
-            console.log(output)
             return output
         }).then(message => {
-            console.log(message["message"])
             let received = String(message["message"])
-            setReccomendation(received.split(","))
+            console.log(received)
+            const dataArray: JobData[] = JSON.parse(received).map(
+                ([jobTitle, percentage]: [string, string]) => ({
+                  jobTitle,
+                  percentage,
+                })
+              );
+            setReccomendation(dataArray)
         })
             .catch(error => console.error('Error:', error));
     }
     
-
     return (
         <div className={"flex flex-col min-h-screen "}>
             <div className="p-10 m-6 bg-slate-100">
@@ -167,17 +176,16 @@ export default function Reccomend() {
                             <span className="sr-only">Know More</span>
                         </Table.HeadCell>
                     </Table.Head>
-                    {reccomendations[0] != "" ?
+                    {reccomendations ?
                         <Table.Body className="divide-y">
                             {reccomendations.map((career) => {
-                                if (career.charAt(0) == "[") {
-                                    career = career.slice(1, -1)
-                                }
-                                let tabler = career.split(":")
-                                tabler.push("know more")
+                                let tabler = []
+                                tabler.push(career.jobTitle)
+                                tabler.push(career.percentage)
+                                tabler.push("what to study?")
                                 return <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     {tabler.map((field) => {
-                                        if (field == "know more") {
+                                        if (field == "what to study?") {
                                             return <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                                                 <Link href="/career/Course" >{field}</Link>
                                             </Table.Cell>
@@ -190,7 +198,7 @@ export default function Reccomend() {
                             })}
                         </Table.Body> : <></>}
                 </Table>
-                {reccomendations[0] == '' ? <div className="text-center bg-white hover:bg-gray-100">No reccomendations made yet press the button below to get reccomendations</div> : <></>}
+                {reccomendations ?<></> : <div className="text-center bg-white hover:bg-gray-100">No reccomendations made yet press the button below to get reccomendations</div>}
                 <div className="bg-white row-span-full  flex items-center justify-center">
                     <Button className="my-9" onClick={onReccomend} pill>
                         Get Reccomendation
