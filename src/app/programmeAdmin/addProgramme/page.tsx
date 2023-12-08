@@ -5,7 +5,6 @@ import { Label, TextInput, Alert, Kbd, Dropdown, Button } from 'flowbite-react'
 import { instituteCollection } from "@/app/lib/controller"
 import { addDoc, collection, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore"
 import Link from 'next/link'
-import { HiCheck } from 'react-icons/hi'
 import { AiOutlineClose } from 'react-icons/ai'
 import { HiInformationCircle } from 'react-icons/hi'
 import { db } from "@/app/FirebaseConfig/firebaseConfig"
@@ -39,9 +38,9 @@ export default function AddProgramme() {
   const [subjectAbbreviation, setSubjectAbbreviation] = useState<Record<string, string>>({})
   const [name, setProgrammeName] = useState("")
   const courseCategory = ["Accounting & Business", "Arts & Communication", "Aviation & Maritime",
-  "Computer & Multimedia","Education & Languages", "Engineering & Architecture",
-  "Hospitality & Tourism", "Law & Humanities", "Maths, Sciences & Technology",
-  "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
+    "Computer & Multimedia", "Education & Languages", "Engineering & Architecture",
+    "Hospitality & Tourism", "Law & Humanities", "Maths, Sciences & Technology",
+    "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
   const [allReady, setAllReady] = useState(false)
   const [programmeCategory, setProgrammeCategory] = useState(courseCategory[0])
   const [instituteNames, setInstituteNames] = useState<string[]>([])
@@ -346,7 +345,7 @@ export default function AddProgramme() {
           })
         }
       })
-      
+
     }
   }
 
@@ -455,16 +454,13 @@ export default function AddProgramme() {
     <div>
       <form>
         <div className="card" style={{ margin: '30px', width: "100%" }}>
-          <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
+          <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '85%' }}>
             <div style={{ paddingBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Link href={{ pathname: '/programmeAdmin' }}>
                   <Kbd icon={AiOutlineClose} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
                 </Link>
-                <h1 className="programmeHeader">Add New Programme</h1>
-                <div>
-                  <Kbd icon={HiCheck} onClick={handleSubmit(addProgramme)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
-                </div>
+                <h1 className="programmeHeader" style={{ alignSelf: "center", marginLeft: 'auto', marginRight: 'auto' }}>Add New Programme</h1>
               </div>
             </div>
 
@@ -502,7 +498,7 @@ export default function AddProgramme() {
                   label={programmeCategory}
                   style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
                   placement="bottom"
-                  >
+                >
                   {courseCategory.map((name) => (
                     <Dropdown.Item key={name} onClick={() => setProgrammeCategory(name)}>{name}</Dropdown.Item>
                   ))}
@@ -518,7 +514,7 @@ export default function AddProgramme() {
                   label={instituteName}
                   style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
                   placement="bottom"
-                  >
+                >
                   {instituteNames.map((name) => (
                     <Dropdown.Item key={name} onClick={() => setInstituteName(name)}>{name}</Dropdown.Item>
                   ))}
@@ -674,8 +670,9 @@ export default function AddProgramme() {
                 </Button>
               </div>
             </div>
-
-
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Button onClick={handleSubmit(addProgramme)} style={{ fontSize: '24px'}}>Submit</Button>
+            </div>
           </div>
         </div>
       </form>

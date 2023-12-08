@@ -1,5 +1,5 @@
 'use client'
-import { Label, TextInput, FileInput, Kbd } from 'flowbite-react'
+import { Label, TextInput, FileInput, Kbd, Button } from 'flowbite-react'
 import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
@@ -11,7 +11,6 @@ import { v4 } from "uuid"
 import { storage } from '@/app/FirebaseConfig/firebaseConfig'
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore"
 import { db } from '@/app/FirebaseConfig/firebaseConfig'
-import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
 import Swal from 'sweetalert2'
@@ -321,10 +320,7 @@ export default function InstituteAdmin() {
                 <Link href={{ pathname: '/instituteAdmin' }}>
                   <Kbd icon={AiOutlineClose} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
                 </Link>
-                <h1 className="loginHeader">Update Institute Information</h1>
-                <div>
-                  <Kbd icon={HiCheck} onClick={handleSubmit(updateInstitute)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
-                </div>
+                <h1 className="loginHeader" style={{ alignSelf: "center", marginLeft: 'auto', marginRight: 'auto' }}>Update Institute Information</h1>
               </div>
             </div>
 
@@ -421,6 +417,9 @@ export default function InstituteAdmin() {
               <div>
                 <h1 style={{ color: "black" }}>Current File Name: {previousInstituteImageName}</h1>
               </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Button onClick={handleSubmit(updateInstitute)} style={{ fontSize: '24px' }}>Submit</Button>
             </div>
           </div>
         </div>

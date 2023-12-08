@@ -9,7 +9,6 @@ import MoonLoader from "react-spinners/MoonLoader"
 import { AiOutlineClose } from 'react-icons/ai'
 import Link from 'next/link'
 import { Label, TextInput, Kbd, Dropdown, Button, Alert } from 'flowbite-react'
-import { HiCheck } from 'react-icons/hi'
 import { instituteCollection } from "@/app/lib/controller"
 import Swal from 'sweetalert2'
 import { useRouter } from "next/navigation"
@@ -44,9 +43,9 @@ export default function updateProgramme() {
   const form = useForm<[updateProgrammeFormValues]>()
   const [programmeDataFetched, setProgrammeDataFetched] = useState(false)
   const courseCategory = ["Accounting & Business", "Arts & Communication", "Aviation & Maritime",
-  "Computer & Multimedia","Education & Languages", "Engineering & Architecture",
-  "Hospitality & Tourism", "Law & Humanities", "Maths, Sciences & Technology",
-  "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
+    "Computer & Multimedia", "Education & Languages", "Engineering & Architecture",
+    "Hospitality & Tourism", "Law & Humanities", "Maths, Sciences & Technology",
+    "Medicine, Health & Sciences", "Pre-University", "Environmental & Marine"]
   const [programmeCourseCategory, setProgrammeCourseCategory] = useState(courseCategory[0])
   const [programmeName, setProgrammeName] = useState('')
   const [instituteName, setInstituteName] = useState('')
@@ -500,10 +499,7 @@ export default function updateProgramme() {
                 <Link href={{ pathname: '/programmeAdmin' }}>
                   <Kbd icon={AiOutlineClose} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
                 </Link>
-                <h1 className="programmeHeader">Update Programme Information</h1>
-                <div>
-                  <Kbd icon={HiCheck} onClick={handleSubmit(updateProgramme)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
-                </div>
+                <h1 className="programmeHeader" style={{ alignSelf: "center", marginLeft: 'auto', marginRight: 'auto' }}>Update Programme Information</h1>
               </div>
             </div>
 
@@ -541,7 +537,7 @@ export default function updateProgramme() {
                   label={programmeCourseCategory}
                   style={{ backgroundColor: "#FFFFFF", color: "black", width: "100%", border: "1px solid #ced4da", borderRadius: "0.50rem" }}
                   placement="bottom"
-                  >
+                >
                   {courseCategory.map((name) => (
                     <Dropdown.Item key={name} onClick={() => setProgrammeCourseCategory(name)}>{name}</Dropdown.Item>
                   ))}
@@ -744,7 +740,9 @@ export default function updateProgramme() {
                 </Button>
               </div>
             </div>
-
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Button onClick={handleSubmit(updateProgramme)} style={{ fontSize: '24px'}}>Submit</Button>
+            </div>
           </div>
         </div>
       </form >
