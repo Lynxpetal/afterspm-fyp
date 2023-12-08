@@ -24,7 +24,6 @@ export default function Login() {
   const { register, handleSubmit, formState } = form
   const { errors } = formState
   const [failureVerifyEmailAlert, setFailureVerifyEmailAlert] = useState(false)
-  const router = useRouter()
 
   //Option 1 - input (email & password)
   const authLogin = getAuth(app)
@@ -35,10 +34,16 @@ export default function Login() {
 
   const SignInBtnClickHandler = async () => {
     try {
-      const res = await signInWithPopup(auth, googleProvider)
-      alert("Successfully logged in")
+      await signInWithPopup(auth, googleProvider)
+      Swal.fire({
+        title: "Authentication Success",
+        icon: "success"
+      })
     } catch (err) {
-      alert("Authentication Failed")
+      Swal.fire({
+        title: "Authentication Failed",
+        icon: "error"
+      })
     }
   }
 

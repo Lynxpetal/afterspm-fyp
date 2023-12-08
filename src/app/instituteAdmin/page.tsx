@@ -96,7 +96,7 @@ export default function InstituteAdmin() {
         color="#8DD3E2"
 
       />
-      <h1>Loading...</h1>
+      <h1 style={{color:"black"}}>Loading... Fetching institute data from database</h1>
     </div>
   return (
     <div className="card" style={{ margin: '30px' }}>
