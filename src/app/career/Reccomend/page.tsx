@@ -8,6 +8,7 @@ import { Button, Table } from 'flowbite-react';
 import { HiOutlineArrowRight } from "react-icons/hi";
 import Link from "next/link";
 
+
 interface JobData {
     jobTitle: string;
     percentage: string;
@@ -90,6 +91,8 @@ export default function Reccomend() {
         })
             .catch(error => console.error('Error:', error));
     }
+
+    
     
     return (
         <div className={"flex flex-col min-h-screen "}>
@@ -179,7 +182,7 @@ export default function Reccomend() {
                     {reccomendations ?
                         <Table.Body className="divide-y">
                             {reccomendations.map((career) => {
-                                let tabler = []
+                                let tabler:string[] = []
                                 tabler.push(career.jobTitle)
                                 tabler.push(career.percentage)
                                 tabler.push("what to study?")

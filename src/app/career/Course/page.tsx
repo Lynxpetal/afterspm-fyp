@@ -8,15 +8,22 @@ import { Banner, Button, Label, Spinner, Table, TextInput } from 'flowbite-react
 import TextareaAutosizeProps from "react-textarea-autosize";
 import { MdAnnouncement } from "react-icons/md";
 import { HiX } from "react-icons/hi";
+import { useRouter } from "next/router";
+import { string } from "zod";
 
 
 export default function Reccomend() {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null)
     const [reccomendations, setReccomendation] = useState(' ^^^ Try inserting a career above to get some interesting reccomendations for courses you can pursue! ^^^')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
-    const [input, setInput] = useState<string>('')
+    const [input, setInput] = useState<string>("Provide a career you would like to pursue! Doctor, Accountant, etc.")
     const [isLoading, setLoading] = useState<boolean>(false)
-
+    const router = useRouter()
+    const dataString = router.query.data
+    if (typeof dataString === "string") {
+        console.log("working")
+        setInput(JSON.parse(dataString))
+    }
 
 
     async function onReccomend() {
@@ -66,7 +73,7 @@ export default function Reccomend() {
                                     onChange={(e) => setInput(e.target.value)}
                                     autoFocus
                                     disabled={isLoading}
-                                    placeholder="Provide a career you would like to pursue! Doctor, Accountant, etc."
+                                    placeholder={input}
                                     className="peer z-0 disabled:opacity-50 resize-none block border-0 bg-white py-1.5 text-gray-900 focus:ring-0 text-md sm:leading-6 w-7/12 xl:w-10/12 2xl:w-11/12 lg:w-9/12 rounded" />
                                 <Button type="submit" disabled={isLoading} onClick={onReccomend} className=" w-48 m-6  ">Submit</Button>
                             </div>
@@ -76,24 +83,24 @@ export default function Reccomend() {
                 </div>
 
                 {isLoading ? <div className="flex py-20 bg-white w-full justify-center"><Spinner size="xl" /></div> : <div className=" text-left bg-white p-6 font-mono font-normal antialiased min-w-full" style={{ whiteSpace: 'pre-line' }} >{reccomendations}</div>}
-                
+
 
             </div>
             <Banner className="absolute bottom-9 w-[80%] mx-12">
-                    <div className="flex w-full justify-between border-b border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
-                        <div className="mx-auto flex items-center">
-                            <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
-                                <MdAnnouncement className="mr-4 h-4 w-4" />
-                                <span>
-                                    You can insert multiple course inside the input to let the reccomender find the best course for your career. <br/> i.e. Software Developer, Diploma in Computer Science, Diploma in Information Technology, Diploma in Software Engineering. 
-                                </span>
-                            </p>
-                        </div>
-                        <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
-                            <HiX className="h-4 w-4" />
-                        </Banner.CollapseButton>
+                <div className="flex w-full justify-between border-b border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+                    <div className="mx-auto flex items-center">
+                        <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
+                            <MdAnnouncement className="mr-4 h-4 w-4" />
+                            <span>
+                                You can insert multiple course inside the input to let the reccomender find the best course for your career. <br /> i.e. Software Developer, Diploma in Computer Science, Diploma in Information Technology, Diploma in Software Engineering.
+                            </span>
+                        </p>
                     </div>
-                </Banner>
+                    <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
+                        <HiX className="h-4 w-4" />
+                    </Banner.CollapseButton>
+                </div>
+            </Banner>
         </div>
     )
 
