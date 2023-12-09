@@ -108,7 +108,7 @@ export default function InstituteAdmin() {
     if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type == "image/png") {
       setInstituteImageFile(instituteFile)
     }
-    else if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type != "image/jpeg") {
+    else if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type == "image/jpeg") {
       setInstituteImageFile(instituteFile)
     }
     else {
