@@ -93,7 +93,7 @@ export default function InstituteAdmin() {
     }
 
     if (instituteFile && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
-      setInstituteImageFormatError("Invalid image format")
+      setInstituteImageFormatError("Invalid image type")
     } else {
       setInstituteImageFormatError("")
     }
@@ -101,7 +101,7 @@ export default function InstituteAdmin() {
     //Check both conditions and set error messages accordingly
     if (instituteFile && instituteFile.size > 100000000 && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
       setInstituteImageSizeError("Image size too large")
-      setInstituteImageFormatError("Invalid image format")
+      setInstituteImageFormatError("Invalid image type")
     }
 
     //If both conditions pass, set the image file
