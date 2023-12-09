@@ -1,5 +1,5 @@
 'use client'
-import { Label, TextInput, FileInput, Kbd } from 'flowbite-react'
+import { Label, TextInput, FileInput, Kbd, Button } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { ImLocation2 } from 'react-icons/im'
@@ -10,7 +10,6 @@ import { v4 } from "uuid"
 import { storage } from '@/app/FirebaseConfig/firebaseConfig'
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"
 import { db } from '@/app/FirebaseConfig/firebaseConfig'
-import { HiCheck } from 'react-icons/hi'
 import Link from 'next/link'
 import { AiOutlineClose } from 'react-icons/ai'
 import Swal from 'sweetalert2'
@@ -94,7 +93,7 @@ export default function InstituteAdmin() {
     }
 
     if (instituteFile && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
-      setInstituteImageFormatError("Invalid image format")
+      setInstituteImageFormatError("Invalid image type")
     } else {
       setInstituteImageFormatError("")
     }
@@ -102,14 +101,14 @@ export default function InstituteAdmin() {
     //Check both conditions and set error messages accordingly
     if (instituteFile && instituteFile.size > 100000000 && (instituteFile.type != "image/png" && instituteFile.type != "image/jpeg")) {
       setInstituteImageSizeError("Image size too large")
-      setInstituteImageFormatError("Invalid image format")
+      setInstituteImageFormatError("Invalid image type")
     }
 
     //If both conditions pass, set the image file
     if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type == "image/png") {
       setInstituteImageFile(instituteFile)
     }
-    else if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type != "image/jpeg") {
+    else if (instituteFile && instituteFile.size <= 100000000 && instituteFile.type == "image/jpeg") {
       setInstituteImageFile(instituteFile)
     }
     else {
@@ -252,10 +251,7 @@ export default function InstituteAdmin() {
                 <Link href={{ pathname: '/instituteAdmin' }}>
                   <Kbd icon={AiOutlineClose} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
                 </Link>
-                <h1 className="loginHeader">Add New Institute</h1>
-                <div>
-                  <Kbd icon={HiCheck} onClick={handleSubmit(addInstitute)} style={{ fontSize: '24px', backgroundColor: 'transparent', border: 'none' }} />
-                </div>
+                <h1 className="loginHeader" style={{alignSelf:"center", marginLeft: 'auto', marginRight: 'auto'}}>Add New Institute</h1>
               </div>
             </div>
 
@@ -381,6 +377,9 @@ export default function InstituteAdmin() {
                 {instituteImageSizeError && <p className="addInstituteValidationError">{instituteImageSizeError}</p>}
                 {instituteImageFormatError && <p className="addInstituteValidationError">{instituteImageFormatError}</p>}
               </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Button onClick={handleSubmit(addInstitute)} style={{ fontSize: '24px' }}>Submit</Button>
             </div>
           </div>
         </div>
