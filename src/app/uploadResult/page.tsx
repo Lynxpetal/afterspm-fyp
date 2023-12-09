@@ -765,7 +765,7 @@ export default function uploadResult() {
           addManualInputImage()
           Swal.fire({
             title: "Great",
-            text: "Matching data provided with all programmes in database...",
+            text: "Next, you will be redirect to filter institute and programme page",
             icon: "success"
           })
           router.push("/uploadResult/filterAfterUpload")
