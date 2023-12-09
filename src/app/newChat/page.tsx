@@ -1,25 +1,19 @@
 "use client"
-import { Button, Kbd, Modal, Spinner, Toast, ToggleSwitch } from "flowbite-react"
+import { Button, Modal, Spinner, Toast, ToggleSwitch } from "flowbite-react"
 import { useContext, useEffect, useRef, useState } from "react"
 import { HiExclamation, HiOutlineExclamationCircle } from "react-icons/hi"
 import TextareaAutosizeProps from "react-textarea-autosize";
 import { MessageContext } from "../context/messages";
-import { defaultPrompt, formsPrompt } from "../helpers/constants/chatbot-prompts";
+import { formsPrompt } from "../helpers/constants/chatbot-prompts";
 import { cn } from "../lib/validators/utils";
 import { nanoid } from "nanoid";
 import { IoMdArrowUp } from "react-icons/io";
 import { useMutation } from "@tanstack/react-query";
 import { Message } from "../lib/validators/message";
 import data from "@/json/forchatbot.json";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { testCollection } from "../lib/controller";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../FirebaseConfig/firebaseConfig";
 
-interface chatMsg {
-    role: string
-    content: string
-}
+
+
 
 function NewChat() {
     const {
@@ -105,13 +99,14 @@ function NewChat() {
                     holdMessage += chunkValue
                 }
                 let answer = holdMessage.match(/\[.+?\]/g)
+                holdMessage.replace(/\[.+?\]/g, "");
                 if (answer != null) {
                     console.log("found answer")
                     let num = currentQuestion + 1
                     setAnswer(answers + answer + ",")
                     setQuestion(num)
                     console.log(answers)
-                    if (num == 16) {
+                    if (num == 5) {
                         addMessage({
                             id: nanoid(),
                             text: "Congratulations you have completed the guided conversation would you like me to reccomend you a career based on your results? ",

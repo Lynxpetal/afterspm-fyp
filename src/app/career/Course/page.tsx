@@ -10,21 +10,18 @@ import { MdAnnouncement } from "react-icons/md";
 import { HiX } from "react-icons/hi";
 import { useRouter } from "next/router";
 import { string } from "zod";
+import useStringStore from "@/app/helpers/store/store";
 
 
 export default function Reccomend() {
     const textareaRef = useRef<null | HTMLTextAreaElement>(null)
     const [reccomendations, setReccomendation] = useState(' ^^^ Try inserting a career above to get some interesting reccomendations for courses you can pursue! ^^^')
-    const [displayResult, setDisplayResult] = useState([[0], [0]])
-    const [input, setInput] = useState<string>("Provide a career you would like to pursue! Doctor, Accountant, etc.")
+    const [input, setInput] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)
-    const router = useRouter()
-    const dataString = router.query.data
-    if (typeof dataString === "string") {
-        console.log("working")
-        setInput(JSON.parse(dataString))
-    }
-
+    const { value, resetValue } = useStringStore()
+    useEffect(() => {
+        setInput(value)
+    }, []);
 
     async function onReccomend() {
         setLoading(true)
@@ -48,6 +45,7 @@ export default function Reccomend() {
         })
             .catch(error => console.error('Error:', error));
         setLoading(false)
+        resetValue()
     }
 
 
@@ -73,7 +71,7 @@ export default function Reccomend() {
                                     onChange={(e) => setInput(e.target.value)}
                                     autoFocus
                                     disabled={isLoading}
-                                    placeholder={input}
+                                    placeholder={"Provide a career you would like to pursue! Doctor, Accountant, etc."}
                                     className="peer z-0 disabled:opacity-50 resize-none block border-0 bg-white py-1.5 text-gray-900 focus:ring-0 text-md sm:leading-6 w-7/12 xl:w-10/12 2xl:w-11/12 lg:w-9/12 rounded" />
                                 <Button type="submit" disabled={isLoading} onClick={onReccomend} className=" w-48 m-6  ">Submit</Button>
                             </div>

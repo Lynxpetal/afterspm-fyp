@@ -7,6 +7,7 @@ import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { Button, Table } from 'flowbite-react';
 import { HiOutlineArrowRight } from "react-icons/hi";
 import Link from "next/link";
+import useStringStore from "@/app/helpers/store/store";
 
 
 interface JobData {
@@ -19,7 +20,7 @@ export default function Reccomend() {
     const [uid, setUID] = useState('')
     const [displayResult, setDisplayResult] = useState([[0], [0]])
     const defaultTable = [['No Result Found'], ['No Result Found']]
-    
+    const { setValue } = useStringStore()
 
     const auth = getAuth()
     onAuthStateChanged(auth, async (user) => {
@@ -92,7 +93,9 @@ export default function Reccomend() {
             .catch(error => console.error('Error:', error));
     }
 
-    
+    function passVar(input:string) {
+        setValue(input)
+    }
     
     return (
         <div className={"flex flex-col min-h-screen "}>
@@ -190,7 +193,7 @@ export default function Reccomend() {
                                     {tabler.map((field) => {
                                         if (field == "what to study?") {
                                             return <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                                                <Link href="/career/Course" >{field}</Link>
+                                                <Link href="/career/Course" onClick={() => passVar(tabler[0])}>{field}</Link>
                                             </Table.Cell>
                                         }
                                         return <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
