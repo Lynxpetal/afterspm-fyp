@@ -1,6 +1,6 @@
 "use client"
-import { Button, Modal, Spinner, Toast, ToggleSwitch } from "flowbite-react"
-import { useContext, useEffect, useRef, useState } from "react"
+import { Button, Modal, Spinner, Toast } from "flowbite-react"
+import { useContext, useRef, useState } from "react"
 import { HiExclamation, HiOutlineExclamationCircle } from "react-icons/hi"
 import TextareaAutosizeProps from "react-textarea-autosize";
 import { MessageContext } from "../context/messages";
@@ -99,18 +99,17 @@ function NewChat() {
                     holdMessage += chunkValue
                 }
                 let answer = holdMessage.match(/\[.+?\]/g)
-                holdMessage.replace(/\[.+?\]/g, "");
                 if (answer != null) {
                     console.log("found answer")
                     let num = currentQuestion + 1
                     setAnswer(answers + answer + ",")
                     setQuestion(num)
                     console.log(answers)
-                    if (num == 5) {
+                    if (num == 6) {
                         addMessage({
                             id: nanoid(),
                             text: "Congratulations you have completed the guided conversation would you like me to reccomend you a career based on your results? ",
-                            isUserMessage: "Assistant"
+                            isUserMessage: "assistant"
                         })
                     }
                 }
@@ -179,15 +178,16 @@ function NewChat() {
                     if (messages.isUserMessage == "system") {
                         return <></>
                     }
+                    let something = messages.text.replace(/\[.+?\]/g, "");
                     return <div className={cn("flex flex-row", {
                         " justify-start": messages.isUserMessage == "assistant",
                         " justify-end": messages.isUserMessage == "user"
                     })}>
-                        <div className={cn(" p-3 my-3 rounded-2xl max-w-7xl", {
+                        <div style={{ whiteSpace: 'pre-line' }} className={cn(" p-3 my-3 rounded-2xl max-w-7xl", {
                             " bg-blue-600 text-white": messages.isUserMessage == "assistant",
                             " bg-slate-200": messages.isUserMessage == "user"
                         })}>
-                            {messages.text}
+                            {something}
                         </div></div>
                 })}
             </div>
