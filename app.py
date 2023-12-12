@@ -25,20 +25,20 @@ client = OpenAI(
 
 #centroids for KNN
 bigfiveCetroids = [
-    [[31.45659936, 26.47391025, 31.6864952,  31.92530977, 29.72198911],["labels"]],
-    [[30.29006996, 34.79278687, 33.18295628, 28.69416131, 34.96391661],["labels"]],
-    [[34.7595419, 30.22745977, 33.66319754, 33.60911407, 35.06978162],["labels"]],
-    [[33.32970225, 39.90077732, 35.90322494, 35.64485328, 35.55789559],["labels"]],
-    [[28.51662168, 22.96126856, 27.32168241, 31.35465587, 34.71322537],["labels"]],
-    [[29.12017345, 40.16675193, 31.40268947, 29.72250238, 30.12336476],["labels"]],
-    [[29.480309, 21.48158781, 29.37800454, 27.02223556, 28.94276692],["labels"]],
-    [[27.78744939, 37.99665372, 31.11517806, 34.67669173, 35.77871189],["labels"]],
-    [[31.99925448, 20.64114889, 33.08253713, 32.01228149, 34.59274882],["labels"]],
-    [[28.24580945, 31.87381927, 27.54900355, 31.23809264, 33.65141505],["labels"]],
-    [[29.11948232, 31.31482402, 29.9616922 , 27.45915347, 28.01868937],["labels"]],
-    [[28.46209224, 28.68905406, 32.83163677, 34.33308199, 35.55122888],["labels"]],
-    [[8.7495133,  7.43932511,  8.11291369,  7.6385464,  6.9422453],["labels"]],
-    [[30.23849462, 26.69777778, 32.09958781, 27.28792115, 34.33243728],["labels"]]
+    [[31.45659936, 26.47391025, 31.6864952,  31.92530977, 29.72198911],["HR, accounting, athelete, actuary, security guards, soldier"]],
+    [[30.29006996, 34.79278687, 33.18295628, 28.69416131, 34.96391661],["Artist, Musician, Actor, Writer, Politician"]],
+    [[34.7595419, 30.22745977, 33.66319754, 33.60911407, 35.06978162],["reporter, manager, content creator, comedian, lawyer"]],
+    [[33.32970225, 39.90077732, 35.90322494, 35.64485328, 35.55789559],["entreprenuer, therapist, researcher, Creative Professional, Social Worker"]],
+    [[28.51662168, 22.96126856, 27.32168241, 31.35465587, 34.71322537],["therapist, analyst, educator, translator, editor"]],
+    [[29.12017345, 40.16675193, 31.40268947, 29.72250238, 30.12336476],["consultant, environmental scientist, museum curator, archeologist, conceptual photographer"]],
+    [[29.480309, 21.48158781, 29.37800454, 27.02223556, 28.94276692],["career counselor, life coach, travel agent, mediator, web developer"]],
+    [[27.78744939, 37.99665372, 31.11517806, 34.67669173, 35.77871189],["Motivational speaker, nurse, entreprenuer, advertising professional, venture capitalist"]],
+    [[31.99925448, 20.64114889, 33.08253713, 32.01228149, 34.59274882],["lecturer, host/podcast creator, polymath, project manager, diplomat"]],
+    [[28.24580945, 31.87381927, 27.54900355, 31.23809264, 33.65141505],["Data analyst, Forensic Investigator, UI/UX designer, filmmaker, game developer"]],
+    [[29.11948232, 31.31482402, 29.9616922 , 27.45915347, 28.01868937],["craftsperson, yoga instructor, Travel guide, sign language tutor, psychologist"]],
+    [[28.46209224, 28.68905406, 32.83163677, 34.33308199, 35.55122888],["human resource specialist, consultant, freelance artisan, barista, teacher"]],
+    [[8.7495133,  7.43932511,  8.11291369,  7.6385464,  6.9422453],["activist, data entry specialist, park ranger, programmer, night auditor"]],
+    [[30.23849462, 26.69777778, 32.09958781, 27.28792115, 34.33243728],["Interpreter, Historian , socialmedia manager, healthcare provider, foreign language teacher"]]
 ]
 
 hollandCentroids = [
@@ -47,16 +47,16 @@ hollandCentroids = [
     [[14.2651813, 29.17317606, 17.98217562, 30.48615116, 20.4365225, 20.10275229],["Researcher", 'Lecturer', 'Doctor', 'Therapist', 'Lawyer', "Actuarial Science"]],
     [[13.79007592, 14.79579712, 14.85080867, 22.17724722, 22.3685774, 26.28099901],["Managerial role", 'lab manager', 'Technician', 'Producer', "Business man"]],
     [[22.7535881, 22.92538475, 26.72332699, 26.17888639, 24.65485042, 23.08187792],["Entrepreneur", 'Architect', 'Engineer', "Fashion Designer"]],
-    [[19.22268782, 31.9810436, 28.17928764, 20.86770428, 16.96508032, 16.9569989 ],["labels"]],
-    [[10.4445105, 16.39803805, 14.72146254, 29.69312327, 15.85741181, 12.71472453],["labels"]],
-    [[28.17966501, 31.85645119, 30.86731222, 33.78866789, 30.52617116, 30.89505365],["labels"]],
-    [[23.92899753, 19.53295504, 16.12716427, 17.6420777, 17.30961734, 19.19103739],["labels"]],
-    [[12.84258361, 17.79722933, 29.09697344, 30.98385247, 25.53269214, 16.62322421],["labels"]],
-    [[11.34180698, 16.86827336, 27.44426103, 20.8379003, 15.79509189, 11.78529768],["labels"]],
-    [[25.93002605, 30.81944116, 19.37662799, 23.43523561, 21.05671324, 27.44932512],["labels"]],
-    [[12.4166246, 29.80052162, 29.84090527, 30.30043749, 16.5415615, 11.91553088],["labels"]],
-    [[18.81220849, 32.09426397, 31.97487931, 32.38221095, 25.13697733, 20.05506914],["labels"]],
-    [[11.64928335, 29.64542448, 15.13770673, 19.61808159, 12.56901874, 12.68489526],["labels"]],
+    [[19.22268782, 31.9810436, 28.17928764, 20.86770428, 16.96508032, 16.9569989 ],["Archeological conservator, technical writer, science illustrator, environment engineer, biomedical engineer"]],
+    [[10.4445105, 16.39803805, 14.72146254, 29.69312327, 15.85741181, 12.71472453],["Dental Hygienist, Forensic Scientist, Graphic designer, public relation specialist, art teacher"]],
+    [[28.17966501, 31.85645119, 30.86731222, 33.78866789, 30.52617116, 30.89505365],["UX designer, business consultant, architect, creative direstor, social entreprenuer"]], 
+    [[23.92899753, 19.53295504, 16.12716427, 17.6420777, 17.30961734, 19.19103739],["engineering technician, electrician, machinist, wildlife biologist, quality assurance inspector"]],
+    [[12.84258361, 17.79722933, 29.09697344, 30.98385247, 25.53269214, 16.62322421],["graphic designer, event planner, marketing manager, music therapist, interioir designer"]],
+    [[11.34180698, 16.86827336, 27.44426103, 20.8379003, 15.79509189, 11.78529768],["web developer, interface reseacher, fashion designer, data visualization specialist, product photographer"]],
+    [[25.93002605, 30.81944116, 19.37662799, 23.43523561, 21.05671324, 27.44932512],["graphic designer, product designer, fashion stylist, food stylist, patissier"]],
+    [[12.4166246, 29.80052162, 29.84090527, 30.30043749, 16.5415615, 11.91553088],["forensic artist, archaeologist, educational technologist, librarian, museum curator"]],
+    [[18.81220849, 32.09426397, 31.97487931, 32.38221095, 25.13697733, 20.05506914],["architectural historian, environmental educator, travel blogger, forensic artist, chef"]],
+    [[11.64928335, 29.64542448, 15.13770673, 19.61808159, 12.56901874, 12.68489526],["research scientist, data analyst, programmer, private investigator, translator"]],
 ]
 
 #authenticate to firebase
