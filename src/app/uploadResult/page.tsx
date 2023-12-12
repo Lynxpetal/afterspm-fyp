@@ -938,7 +938,7 @@ export default function uploadResult() {
             {uploadFileContainer && (
               <div id="fileUpload" className="max-w-md">
                 <div className="mb-2 block">
-                  <Label htmlFor="file" value="Upload file" />
+                  <Label htmlFor="file" value="Upload file (SPM Result Slip)" />
                 </div>
                 <FileInput
                   id="file"
