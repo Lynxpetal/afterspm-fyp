@@ -75,7 +75,7 @@ export default function compSidebar() {
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
-                    {uid != "guest" && !isAdmin ?
+                    {uid != "guest" ?
                         <Sidebar.ItemGroup>
                             <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
                                 <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>

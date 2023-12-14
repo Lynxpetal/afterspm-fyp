@@ -123,8 +123,8 @@ export default function Register() {
               onChange={(e) => setRegisterEmail(e.target.value)}
               helperText={
                 <>
-                  <h1 style={{fontSize:"10px"}}>Follow the format: abc@gmail.com</h1>
-                  <h1 style={{fontSize: "10px"}}>
+                  <h1 style={{fontSize:"13px"}}>Follow the format: abc@gmail.com</h1>
+                  <h1 style={{fontSize: "13px"}}>
                   We'll never share your details. Read our
                   <a href="/register/privacyPolicy" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
                     Privacy Policy
@@ -160,7 +160,7 @@ export default function Register() {
               onChange={(e) => setRegisterPassword(e.target.value)}
               helperText={
                 <>
-                  <h1 style={{fontSize:"10px"}}>Password must meet the criteria: at least 8 characters long including at least  one uppercase letter, one lowercase letter, one digit, and one special character</h1>
+                  <h1 style={{fontSize:"13px"}}>Password must meet the criteria: at least 8 characters long including at least  one uppercase letter, one lowercase letter, one digit, and one special character</h1>
                 </>
               }
             />
