@@ -2,7 +2,7 @@
 import { Button, Label, TextInput, Alert } from 'flowbite-react'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth'
 import app from '../FirebaseConfig/firebaseConfig'
 import { auth } from '../FirebaseConfig/firebaseConfig'
 import { useRouter } from 'next/navigation'
@@ -10,6 +10,8 @@ import { useAuthState } from "react-firebase-hooks/auth"
 import { HiMail } from 'react-icons/hi'
 import { HiInformationCircle } from 'react-icons/hi'
 import Swal from 'sweetalert2'
+import { getDocs, query, where } from 'firebase/firestore'
+import { secretCollection } from '../lib/controller'
 
 
 type LoginFormValues = {
@@ -24,6 +26,9 @@ export default function Login() {
   const { register, handleSubmit, formState } = form
   const { errors } = formState
   const [failureVerifyEmailAlert, setFailureVerifyEmailAlert] = useState(false)
+  const router = useRouter()
+  const [isAdmin, setAdmin] = useState<boolean>(false)
+  const [uid, setUID] = useState("guest")
 
   //Option 1 - input (email & password)
   const authLogin = getAuth(app)
@@ -39,12 +44,35 @@ export default function Login() {
         title: "Authentication Success",
         icon: "success"
       })
+      redirectToWhere()
+
     } catch (err) {
       Swal.fire({
         title: "Authentication Failed",
         icon: "error"
       })
     }
+  }
+
+  function redirectToWhere() {
+    const auth = getAuth()
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("runned")
+        if (user.uid != uid) {
+          console.log(user.uid)
+          setUID(user.uid)
+          const secret = query(secretCollection, where("UserID", "==", user.uid))
+          const snapshot = await getDocs(secret)
+          if (snapshot.size != 0) {
+            router.push("/instituteAdmin")
+          }
+          else {
+            router.push("/filterInstituteProgramme")
+          }
+        }
+      }
+    })
   }
 
   const loginAccount = (data: [LoginFormValues]) => {
@@ -68,6 +96,7 @@ export default function Login() {
                 text: "You have successfully signed in",
                 icon: "success"
               })
+              redirectToWhere()
             }
             else {
               setFailureVerifyEmailAlert(true)
@@ -122,6 +151,7 @@ export default function Login() {
           )}
           <h1 className="loginHeader">Welcome Back</h1>
           <h1 className="loginDescription">Welcome Back! Plese enter your details</h1>
+          <br />
 
           <div style={{ paddingBottom: '20px' }}>
             <div className="mb-2 block">

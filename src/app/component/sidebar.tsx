@@ -1,11 +1,11 @@
 "use client"
 
-import { Button, Modal, Sidebar } from "flowbite-react";
+import { Button, Modal, Sidebar, Alert } from "flowbite-react";
 import {
     HiArrowSmRight, HiChartPie,
     HiExclamation,
     HiInbox, HiShoppingBag, HiTable,
-    HiUser, HiViewBoards
+    HiUser, HiViewBoards, HiInformationCircle
 }
     from "react-icons/hi";
 import Link from "next/link";
@@ -25,8 +25,9 @@ export default function compSidebar() {
     const [uid, setUID] = useState("guest") //change to await apiroute to fetch user status
     const [isAdmin, setAdmin] = useState<boolean>(false)
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const [logoutCondition, setLogoutCondition] = useState<boolean>(false)
     useEffect(() => {
-        
+
         const auth = getAuth()
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -53,38 +54,45 @@ export default function compSidebar() {
         console.log(uid)
         await signOut(auth).then(() => {
             setAdmin(false)
+            setLogoutCondition(true)
+            router.push("/login")
+            
         }).catch((error) => { console.log("not signed out") })
+
     }
+
+    useEffect(() => {
+        setLogoutCondition(false)
+    }, [])
 
     return (
         <Sidebar aria-label="Sidebar with logo branding example" className="w-full">
-
             <Sidebar.Logo href="#" img="/vercel.svg" imgAlt="Flowbite logo">
                 AfterSPM
             </Sidebar.Logo>
             <Sidebar.Items>
-            <Sidebar.ItemGroup>
+                <Sidebar.ItemGroup>
                     <Sidebar.Item href="/" icon={HiChartPie}>
                         Home
                     </Sidebar.Item>
-                {uid != "guest" ? 
-                <Sidebar.ItemGroup>
-                    <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
-                        <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>
-                        <Sidebar.Item href="/career/BigFive">2. Big Five Test</Sidebar.Item>
-                        <Sidebar.Item href="/career/Reccomend">3. Test Result and Reccomend</Sidebar.Item>
-                        <Sidebar.Item href="/career/Course">4. Course Recommendation</Sidebar.Item>
-                    </Sidebar.Collapse>
-                    <Sidebar.Item href="/newChat" icon={HiViewBoards}>
-                        Chat
-                    </Sidebar.Item>
-                    <Sidebar.Item href="/filterInstituteProgramme" icon={FaFilter}>
-                        Institute Filter
-                    </Sidebar.Item>
-                    <Sidebar.Item href="/uploadResult" icon={MdRecommend}>
-                        Programme <br /> Recommendation
-                    </Sidebar.Item>
-                </Sidebar.ItemGroup>: <></>}
+                    {uid != "guest" && !isAdmin ?
+                        <Sidebar.ItemGroup>
+                            <Sidebar.Collapse icon={HiShoppingBag} label="Career Reccomend">
+                                <Sidebar.Item href="/career/Holland">1. Holland's Test</Sidebar.Item>
+                                <Sidebar.Item href="/career/BigFive">2. Big Five Test</Sidebar.Item>
+                                <Sidebar.Item href="/career/Reccomend">3. Test Result and Reccomend</Sidebar.Item>
+                                <Sidebar.Item href="/career/Course">4. Course Recommendation</Sidebar.Item>
+                            </Sidebar.Collapse>
+                            <Sidebar.Item href="/newChat" icon={HiViewBoards}>
+                                Chat
+                            </Sidebar.Item>
+                            <Sidebar.Item href="/filterInstituteProgramme" icon={FaFilter}>
+                                Institute Filter
+                            </Sidebar.Item>
+                            <Sidebar.Item href="/uploadResult" icon={MdRecommend}>
+                                Programme <br /> Recommendation
+                            </Sidebar.Item>
+                        </Sidebar.ItemGroup> : <></>}
                 </Sidebar.ItemGroup>
                 {isAdmin ?
                     //add selection here for more admin option
@@ -108,6 +116,13 @@ export default function compSidebar() {
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
             </Sidebar.Items>
+            <div style={{position: "absolute", "bottom": 0, "left": 0}}>
+                {logoutCondition && (
+                    <Alert color="success" icon={HiInformationCircle} onDismiss={() => setLogoutCondition(false)}>
+                        Logout Successfully
+                    </Alert>
+                )}
+            </div>
         </Sidebar>
     )
 }

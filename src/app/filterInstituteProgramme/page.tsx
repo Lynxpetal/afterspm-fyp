@@ -615,7 +615,7 @@ export default function FilterInstituteProgramme() {
                 </div>
 
                 <div style={{ display: 'flex', flex: '65%', flexDirection: 'column', marginRight: '10px' }}>
-                  <h5 style={{ color: "black", fontSize: "16px", fontFamily: "sans-serif", fontWeight: "bold" }}>
+                  <h5 style={{ color: "black", fontSize: "16px", fontWeight: "bold" }}>
                     {program.instituteName}
                   </h5>
                   <h1 style={{ fontSize: "14px", color: "rgba(0, 0, 0, 0.6)" }}>

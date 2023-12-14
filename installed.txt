@@ -56,6 +56,9 @@ react google maps api
 string similarity
 - npm i string-similarity-js
 
+image
+- npm install --save-dev file-loader
+
 //for Flask
 1. Click the title of the project with the search icon
 2. Click 'Show and run commands'

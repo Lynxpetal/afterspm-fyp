@@ -1,16 +1,17 @@
-import Image from 'next/link'
+import Image from 'next/image'
 import Link from 'next/link'
 import { HiOutlineArrowRight } from 'react-icons/hi'
-import Banner from "../../public/Banner.jpg";
+import Banner from "../../public/29493.jpg"
 
 export default function Home() {
   return (
-    <main className="flex flex-col min-h-screen ">\
+    <main className="flex flex-col min-h-screen ">
+      <Image src={Banner} alt="Image" style={{width: "100%"}}/>
       <div className="p-10 m-6 bg-slate-100 flex flex-col items-center justify-center">
         <legend className=" text-3xl font-bold antialiased pl-20 p-4 m-3 w-full bg-slate-300">
           AfterSPM
         </legend>
-        <div className=' bg-slate-50 w-full p-3 m-3'>
+        <div className=' bg-slate-50 w-full p-3 m-3' style={{color: "black"}}>
           <p className=' font-semibold text-lg'>Find your dream career & the perfect path, powered by AI.</p>
           <div className=' font-medium text-md'>
             Feeling lost in a sea of career options? Worry not, future-focused student! Our AI-powered platform is your ultimate compass, guiding you towards a fulfilling career and the courses that pave the way.

@@ -99,6 +99,7 @@ export default function Register() {
           </div>
           <h1 className="registerHeader">Register</h1>
           <h1 className="registerDescription">Create an account and enjoy it</h1>
+          <br />
           <div style={{ paddingBottom: '20px' }}>
             <div className="mb-2 block">
               <Label htmlFor="email" value="Email address" />
