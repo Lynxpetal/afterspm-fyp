@@ -179,7 +179,7 @@ export default function view() {
             </Timeline>
           </div>
           <div style={{ overflowX: 'auto' }}>
-            <Table striped style={{ fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}>
+            <Table striped style={{ fontWeight: "bold" }}>
               <Table.Body className="=divide-y">
                 {getFinalFilterForCurrentPage().length ? (
                   Object.keys(getFinalFilterForCurrentPage()[0]).map((property, index) => (
