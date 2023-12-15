@@ -13,6 +13,7 @@ from firebase_admin import db, credentials, firestore
 from openai import OpenAI
 import asyncio
 from difflib import SequenceMatcher
+import cv2
 
 
 
@@ -405,9 +406,19 @@ def hello_world():
 def readImage(filename):
     myconfig = r"--psm 4 --oem 3"
     uploadImage = Image.open(f'{imageUploadPath}/{filename}')
+    convert_grayscale(uploadImage)
+    blur(uploadImage)
     text = pytesseract.image_to_string(uploadImage, config=myconfig)
     print(text)
     return correctText(text)
+
+def convert_grayscale(img):
+    img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    return img
+
+def blur(img, param):
+     img = cv2.medianBlur(img, param)
+     return img
 
 def correctText(text):
     common_words = []
