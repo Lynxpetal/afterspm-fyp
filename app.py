@@ -60,7 +60,7 @@ hollandCentroids = [
 ]
 
 #authenticate to firebase
-cred = credentials.Certificate("credentials4.json")
+cred = credentials.Certificate("credentials5.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -435,15 +435,15 @@ def correctText(text):
             # 1249 SEJARAH CEMERLANG   
             #if SEJARAH in line.upper() or subjectName == SEJARAH
             if subject in line.upper() or any(key in line and value == subject for key, value in subjectDictionary().items()):
-                print(line)
-                print(subject)
+                #print(line)
+                #print(subject)
                 
                 # Find the grade for the subject
                 match = re.search(grade_formatted_string, line)
-                print(match)
+                #print(match)
                 if match:
                     grade = match.group()
-                    print(grade)
+                    #print(grade)
                     # Print the grade for the subject
                     # {"BM": "A+"}
                     subject_abbr = subjectAbbreviationDictionary()[subject]
@@ -452,10 +452,10 @@ def correctText(text):
                 else:
                     #if input is 1249 SEJARAH A
                     matchGrade = re.search(grade_values_formatted_string, line)
-                    print(matchGrade)
+                    #print(matchGrade)
                     if matchGrade:
                         gradeValue = matchGrade.group()
-                        print(gradeValue)
+                        #print(gradeValue)
                         subject_abbr = subjectAbbreviationDictionary()[subject]
                         if subject_abbr not in subject_grade_dict.keys():
                             subject_grade_dict[subjectAbbreviationDictionary()[subject]] = gradeValue

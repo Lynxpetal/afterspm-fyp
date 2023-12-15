@@ -5,12 +5,12 @@ import { getStorage } from "firebase/storage"
 import { getAuth } from "firebase/auth"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC3uH_8vGqRPbwiFvApJDQn8LdjSy0ksvU",
-  authDomain: "afterspm-web-application-4.firebaseapp.com",
-  projectId: "afterspm-web-application-4",
-  storageBucket: "afterspm-web-application-4.appspot.com",
-  messagingSenderId: "472866006919",
-  appId: "1:472866006919:web:7f7264c7440f7fd8b81522"
+  apiKey: "AIzaSyBkd3OfNIMN_n_dEnajxFCMWFmFLXlW4WE",
+  authDomain: "afterspm-web-application-5.firebaseapp.com",
+  projectId: "afterspm-web-application-5",
+  storageBucket: "afterspm-web-application-5.appspot.com",
+  messagingSenderId: "980740504780",
+  appId: "1:980740504780:web:04b7c9bcc9a49040799669"
 }
 
 // Initialize Firebase

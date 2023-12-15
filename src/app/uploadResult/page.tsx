@@ -630,8 +630,9 @@ export default function uploadResult() {
       const subjectContainers = document.querySelectorAll(".qualificationSubject")
       const gradeContainers = document.querySelectorAll(".qualificationGrade")
 
-      const latestResultData: Record<string, string> = {}
+      const latestResultDataA: Record<string, string> = {}
 
+      console.log(subjectContainers.length)
       for (let i = 0; i < subjectContainers.length; i++) {
         const subjectSelect = subjectContainers[i] as HTMLSelectElement
         const gradeSelect = gradeContainers[i] as HTMLSelectElement
@@ -640,15 +641,19 @@ export default function uploadResult() {
         const gradeValue = gradeSelect.value
 
         if (subjectValue != "") {
-          latestResultData[subjectValue] = gradeValue
+          latestResultDataA[subjectValue] = gradeValue
+          console.log(latestResultDataA[subjectValue])
         }
 
+
       }
+
+      console.log(latestResultDataA)
 
       //collection - Result
       const resultDocRef = await addDoc(collection(db, "Result"), {
         ResultBelongTo: userId,
-        ResultData: latestResultData,
+        ResultData: latestResultDataA,
         ResultImageName: imageName,
         ResultImageFilePath: imagePath,
         ResultImageFileUrl: imageUrl,
@@ -676,6 +681,7 @@ export default function uploadResult() {
 
       const latestResultData: Record<string, string> = {}
 
+      console.log(subjectContainers.length)
       for (let i = 0; i < subjectContainers.length; i++) {
         const subjectSelect = subjectContainers[i] as HTMLSelectElement
         const gradeSelect = gradeContainers[i] as HTMLSelectElement
@@ -687,7 +693,10 @@ export default function uploadResult() {
           latestResultData[subjectValue] = gradeValue
         }
 
+
       }
+
+      console.log(latestResultData)
 
       await deleteImageResultDataToFirestore(userId)
 
