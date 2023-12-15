@@ -650,8 +650,6 @@ export default function uploadResult() {
 
       console.log(latestResultDataA)
 
-      await deleteImageResultDataToFirestore(userId)
-
       //collection - Result
       const resultDocRef = await addDoc(collection(db, "Result"), {
         ResultBelongTo: userId,

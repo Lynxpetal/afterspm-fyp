@@ -60,7 +60,7 @@ hollandCentroids = [
 ]
 
 #authenticate to firebase
-cred = credentials.Certificate("credentials4.json")
+cred = credentials.Certificate("credentials5.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
