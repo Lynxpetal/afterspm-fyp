@@ -407,16 +407,6 @@ def readImage(filename):
     text = pytesseract.image_to_string(uploadImage, config=myconfig)
     print(text)
     return correctText(text)
-    # Convert the PIL Image to a NumPy array
-    img_array = np.array(img)
-
-    # Apply median blur with the specified parameter
-    blurred_img = cv2.medianBlur(img_array, param)
-
-    # Convert the blurred array back to a PIL Image
-    blurred_image = Image.fromarray(blurred_img)
-
-    return blurred_image
 
 def correctText(text):
     common_words = []
