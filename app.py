@@ -13,8 +13,6 @@ from firebase_admin import db, credentials, firestore
 from openai import OpenAI
 import asyncio
 from difflib import SequenceMatcher
-import cv2
-
 
 
 #chatgpt init
@@ -406,19 +404,19 @@ def hello_world():
 def readImage(filename):
     myconfig = r"--psm 4 --oem 3"
     uploadImage = Image.open(f'{imageUploadPath}/{filename}')
-    convert_grayscale(uploadImage)
-    blur(uploadImage)
     text = pytesseract.image_to_string(uploadImage, config=myconfig)
     print(text)
     return correctText(text)
+    # Convert the PIL Image to a NumPy array
+    img_array = np.array(img)
 
-def convert_grayscale(img):
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-    return img
+    # Apply median blur with the specified parameter
+    blurred_img = cv2.medianBlur(img_array, param)
 
-def blur(img, param):
-     img = cv2.medianBlur(img, param)
-     return img
+    # Convert the blurred array back to a PIL Image
+    blurred_image = Image.fromarray(blurred_img)
+
+    return blurred_image
 
 def correctText(text):
     common_words = []
