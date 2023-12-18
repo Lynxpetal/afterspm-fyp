@@ -154,7 +154,7 @@ const PsychForm: FC<FormProps> = ({ className, Form, Title, Desc, ...props }) =>
                     return <div className={cn(" h-10 w-10 pb-0.5 border-solid border-2 border-white rounded-md text-center text", {
                         " bg-slate-600 text-white": element == 0,
                         " bg-green-400": element != 0 && element != null,
-                    })} key={index} onClick={() => teleport(index)}>{index}</div>
+                    })} key={index} onClick={() => teleport(index+1)}>{index+1}</div>
                 })
                 }</div></div>)
     }

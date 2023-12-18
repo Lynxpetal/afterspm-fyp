@@ -649,7 +649,7 @@ def recommend():
 def course():
     data = request.json
     inputPrompt = data["input"]
-    inputSystem = "Based on the career received you are to reccomend suitable programmes for the user to study in, if there are already programmes inserted by user you are to reccomend programmes only based on the input. You are also to provide a compatibility score beside the couse you reccomend for the career provided. Provide up to 12 only."
+    inputSystem = "Based on the career received you are to reccomend suitable programmes for the user to study in.You are also to provide a compatibility score beside the couse you reccomend for the career provided. Provide up to 12 only. "
     output = chatGPTAPI(inputSystem, inputPrompt)
     print(output)
     return jsonify({'message': output})

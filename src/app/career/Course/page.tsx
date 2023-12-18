@@ -84,21 +84,7 @@ export default function Reccomend() {
 
 
             </div>
-            <Banner className="absolute bottom-9 w-[80%] mx-12">
-                <div className="flex w-full justify-between border-b border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
-                    <div className="mx-auto flex items-center">
-                        <p className="flex items-center text-sm font-normal text-gray-500 dark:text-gray-400">
-                            <MdAnnouncement className="mr-4 h-4 w-4" />
-                            <span>
-                                You can insert multiple course inside the input to let the reccomender find the best course for your career. <br /> i.e. Software Developer, Diploma in Computer Science, Diploma in Information Technology, Diploma in Software Engineering.
-                            </span>
-                        </p>
-                    </div>
-                    <Banner.CollapseButton color="gray" className="border-0 bg-transparent text-gray-500 dark:text-gray-400">
-                        <HiX className="h-4 w-4" />
-                    </Banner.CollapseButton>
-                </div>
-            </Banner>
+            
         </div>
     )
 
