@@ -8,6 +8,7 @@ import app from '../FirebaseConfig/firebaseConfig'
 import { useRouter } from 'next/navigation'
 import { HiInformationCircle } from 'react-icons/hi'
 import Swal from 'sweetalert2'
+import Link from 'next/link'
 
 
 type RegisterFormValues = {
@@ -87,9 +88,9 @@ export default function Register() {
   }
 
   return (
-    <form style={{ margin: '20px' }} onSubmit={handleSubmit(createAccount)} noValidate>
-      <div className="card" style={{ margin: '30px' }}>
-        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '50%' }}>
+    <form style={{ margin: '20px' }} onSubmit={handleSubmit(createAccount)} className="flex justify-center items-center" noValidate>
+      <div className="card w-full p-3 m-3 flex justify-center items-center" style={{ margin: '30px' }}>
+        <div className='p-3 m-3 bg-slate-100 w-[60%]'>
           <div>
             {errorAlert && (
               <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setErrorAlert(false)}>
@@ -97,8 +98,8 @@ export default function Register() {
               </Alert>
             )}
           </div>
-          <h1 className="registerHeader">Register</h1>
-          <h1 className="registerDescription">Create an account and enjoy it</h1>
+          <div className="registerHeader">Register</div>
+          <div className="registerDescription">Create an account and enjoy it</div>
           <br />
           <div style={{ paddingBottom: '20px' }}>
             <div className="mb-2 block">
@@ -123,18 +124,15 @@ export default function Register() {
               onChange={(e) => setRegisterEmail(e.target.value)}
               helperText={
                 <>
-                  <h1 style={{fontSize:"13px"}}>Follow the format: abc@gmail.com</h1>
-                  <h1 style={{fontSize: "13px"}}>
-                  We'll never share your details. Read our
-                  <a href="/register/privacyPolicy" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                  "Follow the format: abc@gmail.com"
+                  We’ll never share your details. Read our
+                  <a href="#" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
                     Privacy Policy
                   </a>
-                  .
-                  </h1>
                 </>
               }
             />
-            <p className="registerValidationError">{errors[0]?.email?.message}</p>
+            <div className="registerValidationError">{errors[0]?.email?.message}</div>
           </div>
 
           <div style={{ paddingBottom: '20px' }}>
@@ -160,11 +158,10 @@ export default function Register() {
               onChange={(e) => setRegisterPassword(e.target.value)}
               helperText={
                 <>
-                  <h1 style={{fontSize:"13px"}}>Password must meet the criteria: at least 8 characters long including at least  one uppercase letter, one lowercase letter, one digit, and one special character</h1>
-                </>
-              }
+                  "Password must meet the criteria: at least 8 characters long including at least  one uppercase letter, one lowercase letter, one digit, and one special character"
+                </>}
             />
-            <p className="registerValidationError">{errors[0]?.password?.message}</p>
+            <div className="registerValidationError">{errors[0]?.password?.message}</div>
           </div>
 
           <div style={{ paddingBottom: '20px' }}>
@@ -189,18 +186,18 @@ export default function Register() {
               onChange={(e) => setRegisterConfirmPassword(e.target.value)}
               onPaste={(e) => e.preventDefault()}
             />
-            <p className="registerValidationError">{errors[0]?.confirmPassword?.message}</p>
+            <div className="registerValidationError">{errors[0]?.confirmPassword?.message}</div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
             <Button type="submit">Register</Button>
           </div>
 
-          <h2 className="haveAnAccountHeader">Have an account?
-            <a href="/login" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          <div className="haveAnAccountHeader">Have an account?
+            <Link href="/login" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
               Login
-            </a>
-          </h2>
+            </Link>
+          </div>
         </div>
       </div>
     </form>
