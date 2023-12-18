@@ -89,8 +89,8 @@ export default function Register() {
 
   return (
     <form style={{ margin: '20px' }} onSubmit={handleSubmit(createAccount)} className="flex justify-center items-center" noValidate>
-      <div className="card w-full p-3 m-3 flex justify-center items-center" style={{ margin: '30px' }}>
-        <div className='p-3 m-3 bg-slate-100 w-[60%]'>
+      <div className="card w-full p-3 m-3 flex justify-center items-center">
+        <div className='p-3 m-3 bg-slate-100 w-[60%]' style={{padding: "30px"}}>
           <div>
             {errorAlert && (
               <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setErrorAlert(false)}>
@@ -124,9 +124,10 @@ export default function Register() {
               onChange={(e) => setRegisterEmail(e.target.value)}
               helperText={
                 <>
-                  "Follow the format: abc@gmail.com"
-                  We’ll never share your details. Read our
-                  <a href="#" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                  Follow the format: abc@gmail.com
+                  <br />
+                  We'll never share your details. Read our
+                  <a href="/register/privacyPolicy" className="ml-1 font-medium text-cyan-600 hover:underline dark:text-cyan-500">
                     Privacy Policy
                   </a>
                 </>
@@ -158,7 +159,7 @@ export default function Register() {
               onChange={(e) => setRegisterPassword(e.target.value)}
               helperText={
                 <>
-                  "Password must meet the criteria: at least 8 characters long including at least  one uppercase letter, one lowercase letter, one digit, and one special character"
+                  Password must meet the criteria: at least 8 characters long including at least  one uppercase letter, one lowercase letter, one digit, and one special character
                 </>}
             />
             <div className="registerValidationError">{errors[0]?.password?.message}</div>

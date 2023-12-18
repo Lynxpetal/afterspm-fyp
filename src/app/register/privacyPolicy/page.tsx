@@ -11,10 +11,10 @@ export default function privacyPolicy() {
 
   return (
     <div>
-      <form style={{ margin: '20px' }}>
-        <div className="card" style={{ margin: '30px' }}>
-          <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
-            <h1 style={{ color: "black" }}>
+      <form style={{ margin: '20px' }} className="flex justify-center items-center">
+      <div className="card w-full p-3 m-3 flex justify-center items-center">
+        <div className='p-3 m-3 bg-slate-100 w-[80%]'>
+            <div style={{ color: "black" }}>
               This privacy policy will help you understand how AfterSPM Website uses and protects
               the data you provide to us when you visit and access AfterSPM Website.
               <br />
@@ -22,11 +22,10 @@ export default function privacyPolicy() {
               We reserve the right to change this policy at any given time, of which you will be
               promptly updated. If you want to make sure that you are up to date with the latest changes,
               we advise you to frequently visit this page.
-              <h2 style={{ color: "black", fontWeight: "bold" }}>
+              <div style={{ color: "black", fontWeight: "bold", textDecoration: "underline" }}>
                 <br />
                 What User Data We Collect
-              </h2>
-              <br />
+              </div>
               When you visit the website, we may collect the following data:
               <div>
                 <br />
@@ -35,10 +34,9 @@ export default function privacyPolicy() {
                 <li>Your Home Address (if got)</li>
                 <br />
               </div>
-              <h2 style={{ color: "black", fontWeight: "bold" }}>
+              <div style={{ color: "black", fontWeight: "bold", textDecoration: "underline" }}>
                 Why We Collect Your Data
-              </h2>
-              <br />
+              </div>
               We are collecting your data for several reasons:
               <div>
                 <br />
@@ -46,19 +44,17 @@ export default function privacyPolicy() {
                 <li>To improve our services</li>
                 <br />
               </div>
-              <h2 style={{ color: "black", fontWeight: "bold" }}>
+              <div style={{ color: "black", fontWeight: "bold", textDecoration: "underline" }}>
                 Safeguarding and Securing the Data
-              </h2>
-              <br />
+              </div>
               AfterSPM is committed to securing your data and keeping it confidential.
               AfterSPM has done all in its power to prevent data theft, unauthorized
               access, and disclosure by implementing the latest technologies and
               software, which help us safeguard all the information we collect online.
-              <h2 style={{ color: "black", fontWeight: "bold" }}>
+              <div style={{ color: "black", fontWeight: "bold", textDecoration: "underline" }}>
                 <br />
                 Our Cookie Policy
-              </h2>
-              <br />
+              </div>
               Once you agree to allow our website to use cookies, you also agree to use the
               data it collects regarding your online behavior (analyze web traffic, web pages you
               visit and spend the most time on).
@@ -79,7 +75,7 @@ export default function privacyPolicy() {
               to do this on a wide variery of browsers and devices.
               <br />
               <br />
-            </h1>
+            </div>
 
             <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: '10px' }}>
               <Button onClick={handleBackToRegister}>Back</Button>

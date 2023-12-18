@@ -141,9 +141,9 @@ export default function Login() {
 
 
   return (
-    <form style={{ margin: '20px' }} onSubmit={handleSubmit(loginAccount)} className="flex justify-center items-center" noValidate>
+    <form style={{ margin: '60px' }} onSubmit={handleSubmit(loginAccount)} className="flex justify-center items-center" noValidate>
       <div className="card w-full p-3 m-3 flex justify-center items-center" >
-        <div className='p-3 m-3 bg-slate-100 w-[60%]'>
+        <div className='p-3 m-3 bg-slate-100 w-[60%]' style={{padding: "30px"}}>
           {failureVerifyEmailAlert && (
             <Alert color="failure" icon={HiInformationCircle} onDismiss={() => setFailureVerifyEmailAlert(false)}>
               <span className="font-medium">Info alert!</span> Please verify your email address: <h1>{email}</h1>

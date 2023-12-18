@@ -243,9 +243,9 @@ export default function InstituteAdmin() {
 
   return (
     <div>
-      <form style={{ margin: '20px' }}>
-        <div className="card" style={{ margin: '30px' }}>
-          <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
+      <form className="flex justify-center items-center">
+      <div className="card w-full p-3 m-3 flex justify-center items-center">
+        <div className='p-3 m-3 bg-slate-100 w-[70%]' style={{padding: "30px"}}>
             <div style={{ paddingBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Link href={{ pathname: '/instituteAdmin' }}>

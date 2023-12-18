@@ -63,7 +63,7 @@ export default function InstituteDetails() {
       await fetchInstituteData()
       console.log("Institute Image Name:", instituteImageName)
     }
-  
+
     fetchData()
   }, [instituteImageName])
 
@@ -78,9 +78,9 @@ export default function InstituteDetails() {
       <h1>Loading...</h1>
     </div>
   return (
-    <form style={{ margin: '20px' }}>
-      <div className="card" style={{ margin: '30px' }}>
-        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '75%' }}>
+    <form className="flex justify-center items-center">
+      <div className="card w-full p-3 m-3 flex justify-center items-center">
+        <div className='p-3 m-3 bg-slate-100 w-[70%]' style={{ padding: "30px" }}>
           <div style={{ paddingBottom: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Link href={{ pathname: '/instituteAdmin' }}>
@@ -151,8 +151,8 @@ export default function InstituteDetails() {
             <div>
               <h1 style={{ color: "black" }}>Current File Name: {instituteImageName}</h1>
             </div>
-            <div>        
-              <img src={instituteImageUrl} height="auto" width="auto" style={{marginTop: "10px"}}/>
+            <div>
+              <img src={instituteImageUrl} height="auto" width="auto" style={{ marginTop: "10px" }} />
             </div>
           </div>
         </div>

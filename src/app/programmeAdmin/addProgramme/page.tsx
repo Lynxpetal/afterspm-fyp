@@ -444,17 +444,21 @@ export default function AddProgramme() {
 
   if (!allReady) {
     return (
-      <div className="grid">
-        <MoonLoader loading={!allReady} size={50} color="#8DD3E2" />
-        <h1>Loading...</h1>
+      <div className="flex justify-center items-center h-screen">
+        <div className="card p-3 m-3 flex justify-center items-center">
+          <div className="grid">
+            <MoonLoader loading={!allReady} size={50} color="#8DD3E2" />
+            <h1 style={{ color: "black" }}>Loading...</h1>
+          </div>
+        </div>
       </div>
     )
   }
   return (
     <div>
-      <form>
-        <div className="card" style={{ margin: '30px', width: "100%" }}>
-          <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '85%' }}>
+      <form className="flex justify-center items-center">
+        <div className="card w-full p-3 m-3 flex justify-center items-center">
+          <div className='p-3 m-3 bg-slate-100 w-[80%]' style={{ padding: "30px" }}>
             <div style={{ paddingBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Link href={{ pathname: '/programmeAdmin' }}>
@@ -671,7 +675,7 @@ export default function AddProgramme() {
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Button onClick={handleSubmit(addProgramme)} style={{ fontSize: '24px'}}>Submit</Button>
+              <Button onClick={handleSubmit(addProgramme)} style={{ fontSize: '24px' }}>Submit</Button>
             </div>
           </div>
         </div>

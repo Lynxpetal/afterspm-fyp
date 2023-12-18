@@ -312,19 +312,24 @@ export default function FilterInstituteProgramme() {
   }, [userId])
 
   if (filterDataReady)
-  return <div className="grid">
-    <MoonLoader
-      loading={filterDataReady}
-      size={50}
-      color="#8DD3E2"
-
-    />
-    <h1>Data Filtering...</h1>
-  </div>
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="card p-3 m-3 flex justify-center items-center">
+          <div className="grid">
+            <MoonLoader
+              loading={filterDataReady}
+              size={50}
+              color="#8DD3E2"
+            />
+            <h1 style={{ color: "black" }}>Matching data provided with all programmes in database...</h1>
+          </div>
+        </div>
+      </div>
+    )
   return (
-    <div style={{ margin: "20px" }}>
-      <div className="card" style={{ margin: '30px', width: "100%" }}>
-        <div style={{ backgroundColor: "#EDFDFF", margin: '30px', padding: '30px', width: '70%' }}>
+    <div className="flex justify-center items-center">
+      <div className="card w-full p-3 m-3 flex justify-center items-center">
+        <div className='p-3 m-3 bg-slate-100 w-[70%]' style={{ padding: "30px" }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Timeline horizontal>
               <Timeline.Item>
@@ -340,7 +345,7 @@ export default function FilterInstituteProgramme() {
                 <Timeline.Point icon={FaFilter} />
                 <Timeline.Content>
                   <Timeline.Title>Step 2</Timeline.Title>
-                  <Timeline.Body style={{ color: 'green', fontWeight: "bold" }}>
+                  <Timeline.Body style={{ color: 'black', fontWeight: "bold" }}>
                     Filter Institute and Programme
                   </Timeline.Body>
                 </Timeline.Content>
