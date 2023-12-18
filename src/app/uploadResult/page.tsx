@@ -597,73 +597,6 @@ export default function uploadResult() {
 
   }
 
-  //add image to storage
-  const addImageResult = async () => {
-    try {
-      if (resultImage) {
-        const resultImageRef = ref(storage, `ResultImage/${v4()}`)
-        const resultImageData = await uploadBytes(resultImageRef, resultImage)
-        const resultUrlVal = await getDownloadURL(resultImageData.ref)
-
-        const resultImageName = resultImage.name
-
-        await deleteImageResultDataToFirestore(userId)
-
-        await addImageResultDataToFirestore(
-          userId,
-          resultImageName,
-          resultImageData.metadata.name,
-          resultUrlVal
-        )
-
-      } else {
-        console.error('Image fill is null. Unable to upload')
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  //add data to firebase
-  async function addImageResultDataToFirestore(userId: string | null, imageName: string, imagePath: string, imageUrl: string) {
-    try {
-      const subjectContainers = document.querySelectorAll(".qualificationSubject")
-      const gradeContainers = document.querySelectorAll(".qualificationGrade")
-
-      const latestResultDataA: Record<string, string> = {}
-
-      console.log(subjectContainers.length)
-      for (let i = 0; i < subjectContainers.length; i++) {
-        const subjectSelect = subjectContainers[i] as HTMLSelectElement
-        const gradeSelect = gradeContainers[i] as HTMLSelectElement
-
-        const subjectValue = subjectSelect.value
-        const gradeValue = gradeSelect.value
-
-        if (subjectValue != "") {
-          latestResultDataA[subjectValue] = gradeValue
-          console.log(latestResultDataA[subjectValue])
-        }
-
-
-      }
-
-      console.log(latestResultDataA)
-
-      //collection - Result
-      const resultDocRef = await addDoc(collection(db, "Result"), {
-        ResultBelongTo: userId,
-        ResultData: latestResultDataA,
-        ResultImageName: imageName,
-        ResultImageFilePath: imagePath,
-        ResultImageFileUrl: imageUrl,
-      })
-      console.log("Document written with ID: ", resultDocRef.id)
-    } catch (error) {
-      console.error("Error adding document", error)
-    }
-  }
-
   async function deleteImageResultDataToFirestore(userId: string | null): Promise<void> {
     const q = query(collection(db, 'Result'), where('ResultBelongTo', '==', userId))
     const querySnapshot = await getDocs(q)
@@ -703,10 +636,7 @@ export default function uploadResult() {
       //collection - Result
       const resultDocRef = await addDoc(collection(db, "Result"), {
         ResultBelongTo: userId,
-        ResultData: latestResultData,
-        ResultImageName: null,
-        ResultImageFilePath: null,
-        ResultImageFileUrl: null,
+        ResultData: latestResultData
       })
       console.log("Document written with ID: ", resultDocRef.id)
     } catch (error) {
@@ -795,7 +725,7 @@ export default function uploadResult() {
         confirmButtonText: "Yes"
       }).then((result) => {
         if (result.isConfirmed) {
-          addImageResult()
+          addManualInputImage()
           Swal.fire({
             title: "Great",
             text: "Matching data provided with all programmes in database...",
@@ -809,6 +739,7 @@ export default function uploadResult() {
 
 
   }
+
 
   useEffect(() => {
     const auth = getAuth()
@@ -870,6 +801,7 @@ export default function uploadResult() {
 
     fetchData()
   }, [])
+
 
 
   // if (isDataProcessed)
@@ -958,14 +890,14 @@ export default function uploadResult() {
             )}
             {isDataProcessed && (
               <div className="grid">
-              <MoonLoader
-                loading={isDataProcessed}
-                size={50}
-                color="#8DD3E2"
-        
-              />
-              <h1 style={{color:"black"}}>Data processing...</h1>
-            </div>
+                <MoonLoader
+                  loading={isDataProcessed}
+                  size={50}
+                  color="#8DD3E2"
+
+                />
+                <h1 style={{ color: "black" }}>Data processing...</h1>
+              </div>
             )}
             <br />
             <div>

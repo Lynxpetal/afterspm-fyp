@@ -15,7 +15,6 @@ import asyncio
 from difflib import SequenceMatcher
 
 
-
 #chatgpt init
 client = OpenAI(
     # defaults to os.environ.get("OPENAI_API_KEY")
