@@ -7,6 +7,7 @@ import { HiMail } from 'react-icons/hi'
 import { useRouter } from 'next/navigation'
 import { sendPasswordResetEmail } from "firebase/auth"
 import app, { auth } from '../../FirebaseConfig/firebaseConfig'
+import Swal from 'sweetalert2'
 
 type ForgetPasswordFormValue = {
   email: string
@@ -33,8 +34,17 @@ export default function ForgetPassword() {
   const forgetPassword = () => {
     sendPasswordResetEmail(auth, email)
       .then(data => {
-        alert("A password reset request has been send to your email.")
-        router.push("/login")
+        Swal.fire({
+          title: "A password reset request has been send to your email.",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok"
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            router.push("/login")
+          }
+        })
+        
 
       }).catch(error => {
         const errorCode = error.code
